@@ -1,0 +1,79 @@
+// * {
+//     border: solid 1px;
+// }
+
+.thermometer {
+    display: block;
+    position: relative;
+    height: 100px;
+    // width: 50px;
+    // width: 100px;
+
+}
+
+.bulb {
+    display: inline-block;
+    border: 2px solid #134e4a;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    position: relative;
+    // position: absolute;
+    // left: 0px;
+    bottom: -100px;
+    // border-top: 2px solid #fff;
+    box-shadow: 0px 0px 0px 2px #fff inset;
+    background: var(--colorize);
+
+}
+
+
+
+.stem {
+    display: inline-block;
+    border: 2px solid #134e4a;
+    width: 20px;
+    height: 100px;
+    border-radius: 0px 0px 20px 20px;
+    border-top: 2px solid transparent;
+    position: absolute;
+    bottom: -6px;
+    left: 5px;
+    box-shadow: 0px 0px 0px 2px #fff inset;
+    transform: rotate(180deg);
+    z-index: 10;
+    padding-bottom: 3px;
+}
+
+.stem-perct {
+    height: var(--tempHeight);
+    width: 12px;
+    background: var(--colorize);
+    display: block;
+    margin: 0px auto;
+    border-bottom-right-radius: 10px;
+    border-bottom-left-radius: 10px;
+    animation-name: example;
+    animation-duration: 2s;
+}
+
+@keyframes example {
+    0% {
+        height: 10%;
+    }
+
+    100% {
+        height: var(--tempHeight);
+    }
+}
+
+.bulb:after {
+    content: '';
+    height: 30px;
+    width: 12px;
+    background: inherit;
+    position: absolute;
+    left: 7px;
+    bottom: 16px;
+    z-index: 12;
+}
