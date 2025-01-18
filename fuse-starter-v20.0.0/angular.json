@@ -50,9 +50,13 @@
                             "src/styles/vendors.scss",
                             "src/@fuse/styles/main.scss",
                             "src/styles/styles.scss",
-                            "src/styles/tailwind.scss"
+                            "src/styles/tailwind.scss",
+                            "node_modules/datatables.net-dt/css/dataTables.dataTables.min.css"
                         ],
-                        "scripts": []
+                        "scripts": [
+                            "node_modules/jquery/dist/jquery.min.js",
+                            "node_modules/datatables.net/js/dataTables.min.js"
+                        ]
                     },
                     "configurations": {
                         "production": {
