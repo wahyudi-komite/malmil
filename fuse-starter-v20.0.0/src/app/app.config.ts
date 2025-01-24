@@ -1,11 +1,11 @@
-import { registerLocaleData } from '@angular/common';
+import { DatePipe, registerLocaleData } from '@angular/common';
 import { provideHttpClient } from '@angular/common/http';
 import localeId from '@angular/common/locales/id';
 import {
     APP_INITIALIZER,
     ApplicationConfig,
-    inject,
     LOCALE_ID,
+    inject,
 } from '@angular/core';
 import { LuxonDateAdapter } from '@angular/material-luxon-adapter';
 import { DateAdapter, MAT_DATE_FORMATS } from '@angular/material/core';
@@ -17,13 +17,14 @@ import {
     withPreloading,
 } from '@angular/router';
 import { provideFuse } from '@fuse';
-import { provideTransloco, TranslocoService } from '@ngneat/transloco';
+import { TranslocoService, provideTransloco } from '@ngneat/transloco';
 import { appRoutes } from 'app/app.routes';
 import { provideAuth } from 'app/core/auth/auth.provider';
 import { provideIcons } from 'app/core/icons/icons.provider';
 import { mockApiServices } from 'app/mock-api';
 import { firstValueFrom } from 'rxjs';
 import { TranslocoHttpLoader } from './core/transloco/transloco.http-loader';
+import { DATE_PIPE_TOKEN } from './tokens/date-pipe.token';
 registerLocaleData(localeId, 'id-ID');
 
 export const appConfig: ApplicationConfig = {
@@ -135,6 +136,10 @@ export const appConfig: ApplicationConfig = {
                 ],
             },
         }),
+        {
+            provide: DATE_PIPE_TOKEN,
+            useValue: new DatePipe('id-ID'),
+        },
         { provide: LOCALE_ID, useValue: 'id-ID' },
     ],
 };

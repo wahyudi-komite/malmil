@@ -8,14 +8,18 @@
                     <h2 class="text-3xl font-semibold leading-8 tracking-tight">
                         List All Data Device
                     </h2>
-                    <div class="font-medium tracking-tight text-secondary">
+                    <div class="font-medium tracking-tight text-secondary ">
                         WA Line device status
                     </div>
                 </div>
             </div>
-            <div class="grid w-full grid-cols-1 gap-8 p-8 mt-8 shadow-sm bg-card rounded-2xl">
-                <table datatable [dtOptions]="dtOptions" class="row-border hover"></table>
-            </div>
+            <!-- <div class="grid w-full grid-cols-1 gap-8 p-8 mt-8 shadow-sm bg-card rounded-2xl"> -->
+            <ngx-datatable class="mt-4 material" [rows]="rows" [columns]="columns" [columnMode]="'force'"
+                [headerHeight]="'auto'" [footerHeight]="'auto'" [rowHeight]="'auto'" [count]="totalItems"
+                [offset]="currentPage - 1" [limit]="limit" (page)="onPage($event)">
+            </ngx-datatable>
+            <!-- </div> -->
+
         </div>
     </div>
 </div>

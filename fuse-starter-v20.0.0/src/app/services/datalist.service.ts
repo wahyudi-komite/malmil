@@ -1,6 +1,6 @@
-import { HttpClient } from '@angular/common/http';
-import { inject, Injectable } from '@angular/core';
-import { BehaviorSubject, catchError, Observable, tap, throwError } from 'rxjs';
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { Injectable, inject } from '@angular/core';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
 
 @Injectable({
@@ -12,27 +12,10 @@ export class DatalistService {
     private _httpClient = inject(HttpClient);
     private _data: BehaviorSubject<any> = new BehaviorSubject(null);
 
-    // get data$(): Observable<DatatablesResponse> {
-    //     return this._data.asObservable();
-    // }
-
-    getData(): Observable<any> {
-        return this._httpClient.get(this.url).pipe(
-            tap((response: any) => {
-                this._data.next(response);
-            }),
-            catchError((error) => {
-                console.error('Error fetching user data', error);
-                return throwError(() => new Error('Error fetching user data')); // Throw an error
-            })
-        );
-    }
-
-    // get(): Observable<DatatablesResponse> {
-    //     console.log('res');
-    //     return this._httpClient.get<DatatablesResponse>(this.url).pipe(
-    //         tap((res: DatatablesResponse) => {
-    //             this._data.next(res);
+    // getData(): Observable<any> {
+    //     return this._httpClient.get(this.url).pipe(
+    //         tap((response: any) => {
+    //             this._data.next(response);
     //         }),
     //         catchError((error) => {
     //             console.error('Error fetching user data', error);
@@ -40,4 +23,31 @@ export class DatalistService {
     //         })
     //     );
     // }
+
+    getData(
+        page?: number,
+        limit?: number,
+        direction?: string,
+        sort?: string,
+        find?: string,
+        filterParams?: any
+    ): Observable<any> {
+        let params = new HttpParams();
+        page ? (params = params.append('page', String(page))) : params;
+        limit ? (params = params.append('limit', String(limit))) : params;
+        sort ? (params = params.append('sort', String(sort))) : params;
+        direction
+            ? (params = params.append('direction', String(direction)))
+            : params;
+        find ? (params = params.append('keyword', String(find))) : params;
+        if (filterParams) {
+            const objectArray = Object.entries(filterParams);
+            objectArray.forEach(([key, value]) => {
+                if (value != null) {
+                    params = params.append(key, String(value));
+                }
+            });
+        }
+        return this._httpClient.get(this.url, { params });
+    }
 }

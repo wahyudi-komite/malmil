@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   Request,
+  Query,
 } from '@nestjs/common';
 import { DatalistService } from './datalist.service';
 import { CreateDatalistDto } from './dto/create-datalist.dto';
@@ -19,7 +20,8 @@ export class DatalistController {
   constructor(private readonly _service: DatalistService) {}
 
   @Get()
-  async findAll(@Request() request) {
+  async findAll(@Request() request, @Query() query: any) {
+    console.log(query);
     return this._service.paginate(tables, [], {
       limit: request.query.limit,
       page: request.query.page,
