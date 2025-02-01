@@ -23,6 +23,13 @@ export const defaultNavigation: FuseNavigationItem[] = [
         icon: 'heroicons_outline:chart-pie',
         link: '/query',
     },
+    {
+        id: 'test',
+        title: 'Test',
+        type: 'basic',
+        icon: 'heroicons_outline:eye',
+        link: '/test',
+    },
 ];
 export const compactNavigation: FuseNavigationItem[] = [
     {

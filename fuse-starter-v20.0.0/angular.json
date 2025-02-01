@@ -50,10 +50,7 @@
                             "src/styles/vendors.scss",
                             "src/@fuse/styles/main.scss",
                             "src/styles/styles.scss",
-                            "src/styles/tailwind.scss",
-                            "./node_modules/@swimlane/ngx-datatable/index.css",
-                            "./node_modules/@swimlane/ngx-datatable/themes/material.scss",
-                            "./node_modules/@swimlane/ngx-datatable/assets/icons.css"
+                            "src/styles/tailwind.scss"
                         ],
                         "scripts": []
                     },

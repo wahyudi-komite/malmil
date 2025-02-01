@@ -1,25 +1,47 @@
-<div class="flex flex-col flex-auto min-w-0">
+<div class="flex min-w-0 flex-auto flex-col">
     <!-- Main -->
-    <div class="flex-auto pt-4 -mt-px border-t sm:pt-6">
-        <div class="w-full max-w-screen-xl mx-auto">
+    <div class="-mt-px flex-auto border-t pt-4 sm:pt-6">
+        <div class="mx-auto w-full max-w-screen-xl">
             <!-- CONTENT GOES HERE -->
-            <div class="flex items-center justify-between w-full">
+            <div class="flex w-full items-center justify-between">
                 <div>
                     <h2 class="text-3xl font-semibold leading-8 tracking-tight">
                         List All Data Device
                     </h2>
-                    <div class="font-medium tracking-tight text-secondary ">
+                    <div class="text-secondary font-medium tracking-tight">
                         WA Line device status
                     </div>
                 </div>
             </div>
             <!-- <div class="grid w-full grid-cols-1 gap-8 p-8 mt-8 shadow-sm bg-card rounded-2xl"> -->
-            <ngx-datatable class="mt-4 material" [rows]="rows" [columns]="columns" [columnMode]="'force'"
-                [headerHeight]="'auto'" [footerHeight]="'auto'" [rowHeight]="'auto'" [count]="totalItems"
-                [offset]="currentPage - 1" [limit]="limit" (page)="onPage($event)">
-            </ngx-datatable>
-            <!-- </div> -->
+            <!-- Filter -->
+            <!-- <input
+                type="text"
+                [(ngModel)]="search"
+                (input)="onSearch()"
+                placeholder="Search name/email..."
+                class="w-full p-2 mb-4 border"
+            /> -->
 
+            <!-- AG Grid -->
+            <!-- <ag-grid-angular
+                style="width: 100%; height: 400px"
+                class="ag-theme-alpine"
+                [rowData]="filteredUsers"
+                [columnDefs]="columns"
+                [pagination]="true"
+                [paginationPageSize]="limit"
+                (gridReady)="onGridReady($event)"
+                (sortChanged)="onSort()"
+            ></ag-grid-angular> -->
+            <ag-grid-angular
+                style="width: 100%; height: 500px"
+                class="ag-theme-alpine"
+                [rowData]="rowData"
+                [columnDefs]="columns"
+                [pagination]="true"
+                [paginationPageSize]="10"
+            ></ag-grid-angular>
         </div>
     </div>
 </div>

@@ -1,16 +1,17 @@
 import { DatePipe } from '@angular/common';
-import { Component, Inject, OnInit, inject } from '@angular/core';
-import { NgxDatatableModule } from '@swimlane/ngx-datatable';
-import { Subject, takeUntil } from 'rxjs';
+import { Component, OnInit, inject } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { AgGridAngular } from 'ag-grid-angular';
+import { ColDef } from 'ag-grid-community';
+import { Subject } from 'rxjs';
 import { UserService } from '../../../../core/user/user.service';
 import { User } from '../../../../core/user/user.types';
 import { DatalistService } from '../../../../services/datalist.service';
-import { DATE_PIPE_TOKEN } from '../../../../tokens/date-pipe.token';
 
 @Component({
     selector: 'app-query',
     standalone: true,
-    imports: [NgxDatatableModule],
+    imports: [FormsModule, AgGridAngular],
     templateUrl: './query.component.html',
     styleUrl: './query.component.scss',
     providers: [DatePipe],
@@ -18,55 +19,59 @@ import { DATE_PIPE_TOKEN } from '../../../../tokens/date-pipe.token';
 export class QueryComponent implements OnInit {
     user: User;
 
-    totalItems = 0;
-    currentPage = 1;
-    limit = 10;
     private _unsubscribeAll: Subject<any> = new Subject<any>();
 
     _datalistService = inject(DatalistService);
     _userService = inject(UserService);
 
-    rows: any[] = [];
-    columns = [
-        { name: 'ID', prop: 'id' },
-        { name: 'Create', prop: 'create', cellClass: 'whitespace-nowrap' },
-        { name: 'RW', prop: 'rw_volt' },
-        { name: 'YW', prop: 'yw_volt' },
-        { name: 'BW', prop: 'bw_volt' },
-        { name: 'RY', prop: 'ry_volt' },
-        { name: 'YB', prop: 'yb_volt' },
-        { name: 'BR', prop: 'br_volt' },
-        { name: 'R', prop: 'r_ampere' },
-        { name: 'Y', prop: 'y_ampere' },
-        { name: 'B', prop: 'b_ampere' },
+    rowData: any[] = [];
+    columns: ColDef[] = [
+        { headerName: 'ID', field: 'id', sortable: true },
+        { headerName: 'Create Time', field: 'create', sortable: true },
+        { headerName: 'Time Job', field: 'timejob', sortable: true },
+        { headerName: 'RW Volt', field: 'rw_volt', sortable: true },
+        { headerName: 'YW Volt', field: 'yw_volt', sortable: true },
+        { headerName: 'BW Volt', field: 'bw_volt', sortable: true },
+        { headerName: 'RY Volt', field: 'ry_volt', sortable: true },
+        { headerName: 'YB Volt', field: 'yb_volt', sortable: true },
+        { headerName: 'BR Volt', field: 'br_volt', sortable: true },
+        { headerName: 'Active Power', field: 'active_power', sortable: true },
+        { headerName: 'Power Factor', field: 'power_factor', sortable: true },
     ];
 
-    constructor(@Inject(DATE_PIPE_TOKEN) private pipeDateInstance: DatePipe) {}
-
     ngOnInit(): void {
-        this.loadData();
-        this._userService.user$
-            .pipe(takeUntil(this._unsubscribeAll))
-            .subscribe((user: User) => {
-                this.user = user;
-            });
+        // this._userService.user$
+        //     .pipe(takeUntil(this._unsubscribeAll))
+        //     .subscribe((user: User) => {
+        //         this.user = user;
+        //     });
     }
-    range(start: number, end: number): number[] {
-        return Array.from({ length: end - start + 1 }, (_, i) => start + i);
-    }
-
-    loadData(page: number = 1, limit: number = 10): void {
-        this._datalistService
-            .getData(page, limit)
-            .subscribe((response: any) => {
-                this.rows = response.data;
-                this.totalItems = response.meta.total;
-                console.log(this.rows);
-            });
+    onGridReady(params: any) {
+        // this.gridApi = params.api;
     }
 
-    onPage(event: any): void {
-        this.currentPage = event.offset + 1;
-        this.loadData();
-    }
+    // onSort() {
+    //     if (!this.gridApi) return;
+    //     const sortModel = this.gridApi.getSortModel();
+    //     if (sortModel.length > 0) {
+    //         const { colId, sort } = sortModel[0];
+    //         this.filteredUsers.sort((a, b) =>
+    //             sort === 'asc'
+    //                 ? (a[colId as keyof User] as string).localeCompare(
+    //                       b[colId as keyof User] as string
+    //                   )
+    //                 : (b[colId as keyof User] as string).localeCompare(
+    //                       a[colId as keyof User] as string
+    //                   )
+    //         );
+    //     }
+    // }
+
+    // onSearch() {
+    //     this.filteredUsers = this.users.filter(
+    //         (user) =>
+    //             user.name.toLowerCase().includes(this.search.toLowerCase()) ||
+    //             user.email.toLowerCase().includes(this.search.toLowerCase())
+    //     );
+    // }
 }
