@@ -52,6 +52,6 @@ export class DatalistService {
     // }
 
     getData(): Observable<any> {
-        return this._httpClient.get<any[]>(this.url).subscribe();
+        return this._httpClient.get<any[]>(this.url);
     }
 }

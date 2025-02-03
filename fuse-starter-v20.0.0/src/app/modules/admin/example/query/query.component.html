@@ -14,33 +14,28 @@
                 </div>
             </div>
             <!-- <div class="grid w-full grid-cols-1 gap-8 p-8 mt-8 shadow-sm bg-card rounded-2xl"> -->
-            <!-- Filter -->
-            <!-- <input
-                type="text"
-                [(ngModel)]="search"
-                (input)="onSearch()"
-                placeholder="Search name/email..."
-                class="w-full p-2 mb-4 border"
-            /> -->
-
-            <!-- AG Grid -->
-            <!-- <ag-grid-angular
-                style="width: 100%; height: 400px"
-                class="ag-theme-alpine"
-                [rowData]="filteredUsers"
-                [columnDefs]="columns"
-                [pagination]="true"
-                [paginationPageSize]="limit"
-                (gridReady)="onGridReady($event)"
-                (sortChanged)="onSort()"
-            ></ag-grid-angular> -->
+            <div style="margin: 10px 0">
+                <input
+                    type="text"
+                    [(ngModel)]="quickFilterText"
+                    (input)="onGlobalFilterChanged($event)"
+                    placeholder="Search in all columns..."
+                    class="ag-filter-input"
+                />
+            </div>
+            <div style="margin-bottom: 10px">
+                <button (click)="exportToCSV()">📄 Export to CSV</button>
+            </div>
             <ag-grid-angular
-                style="width: 100%; height: 500px"
-                class="ag-theme-alpine"
+                style="width: 100%; height: 800px"
+                class="material"
                 [rowData]="rowData"
-                [columnDefs]="columns"
+                [columnDefs]="columnDefs"
+                (gridReady)="onGridReady($event)"
+                rowSelection="single"
+                [defaultColDef]="defaultColDef"
                 [pagination]="true"
-                [paginationPageSize]="10"
+                [paginationPageSize]="20"
             ></ag-grid-angular>
         </div>
     </div>

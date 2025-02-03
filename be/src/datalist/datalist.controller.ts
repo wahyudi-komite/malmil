@@ -65,6 +65,8 @@ export class DatalistController {
 
   @Get()
   async getData(): Promise<Datalist[]> {
+    console.log('test');
+
     return this._service.getAllData();
   }
 }

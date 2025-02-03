@@ -1,21 +1,15 @@
-// .ngx-datatable .datatable-row-left,
-// .ngx-datatable .datatable-row-center,
-// .ngx-datatable .datatable-row-grouping,
-// .ngx-datatable .datatable-row-right {
-//     display: flex;
-// }
+::ng-deep .ag-header {
+    background-color: #0a3d69 !important;
+    color: white !important;
 
-// .page-size-selector {
-//     display: flex;
-//     align-items: center;
-//     gap: 8px;
-//     font-size: 14px;
-// }
 
-// .page-size-selector select {
-//     padding: 4px 8px;
-//     font-size: 14px;
-//     border: 1px solid #ccc;
-//     border-radius: 4px;
-//     cursor: pointer;
-// }
+    // .ag-floating-filter-input {
+
+    .ag-input-field-input,
+    .ag-number-field-input {
+        background-color: rgb(255, 255, 255) !important;
+        // color: black;
+    }
+
+    // }
+}
