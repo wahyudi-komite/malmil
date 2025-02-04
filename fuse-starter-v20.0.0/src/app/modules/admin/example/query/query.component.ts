@@ -34,118 +34,124 @@ export class QueryComponent implements OnInit {
         floatingFilterComponentParams: {
             suppressFilterButton: true,
         },
-        cellStyle: { backgroundColor: 'white', color: 'black' },
+        cellStyle: {
+            backgroundColor: 'white',
+            color: 'black',
+            textAlign: 'right',
+        },
         editable: true,
         resizable: true,
-        // cellStyle: { textAlign: 'right' },
     };
 
     columnDefs: ColDef[] = [
         {
             headerName: 'Actions',
             field: 'actions',
-            cellClass: 'text-center my-1',
+            // cellClass: 'text-center my-1',
             sortable: false,
             filter: false,
             resizable: false,
-            cellRenderer: (params) => `<button>Edit</button>`,
-            // Menghindari kolom ini dari ekspor CSV
+            cellRenderer: (params) => {
+                return `<button class="edit-btn leading-normal px-2 py-1 cursor-pointer rounded text-white text-center">Edit</button>`;
+            },
+            // width: 100, // Sesuaikan lebar kolom
+            pinned: 'left', // Agar selalu terlihat di sebelah kiri
         },
-        // {
-        //     headerName: 'ID',
-        //     field: 'id',
-        //     sortable: true,
-        //     filter: 'agNumberColumnFilter',
-        //     cellClass: 'text-right',
-        // },
-        // {
-        //     headerName: 'Create Time',
-        //     field: 'create',
-        //     sortable: true,
-        //     filter: 'agDateColumnFilter',
-        //     minWidth: 180,
-        //     valueFormatter: (params: any) =>
-        //         new DatePipe('id-ID').transform(
-        //             params.value,
-        //             'dd-MM-yyyy HH:mm:ss'
-        //         ),
-        // },
-        // {
-        //     headerName: 'Time Job',
-        //     field: 'timejob',
-        //     sortable: true,
-        //     filter: 'agDateColumnFilter',
-        //     minWidth: 180,
-        //     valueFormatter: (params: any) =>
-        //         new DatePipe('id-ID').transform(
-        //             params.value,
-        //             'dd-MM-yyyy HH:mm:ss'
-        //         ),
-        // },
-        // {
-        //     headerName: 'RW Volt',
-        //     field: 'rw_volt',
-        //     sortable: true,
-        //     filter: 'agNumberColumnFilter',
-        //     cellClass: 'text-right',
-        //     valueFormatter: (params) => `${(params.value / 10).toFixed(2)} V`,
-        // },
-        // {
-        //     headerName: 'YW Volt',
-        //     field: 'yw_volt',
-        //     sortable: true,
-        //     filter: 'agNumberColumnFilter',
-        //     cellClass: 'text-right',
-        //     valueFormatter: (params) => `${(params.value / 10).toFixed(2)} V`,
-        // },
-        // {
-        //     headerName: 'BW Volt',
-        //     field: 'bw_volt',
-        //     sortable: true,
-        //     filter: 'agNumberColumnFilter',
-        //     cellClass: 'text-right',
-        //     valueFormatter: (params) => `${(params.value / 10).toFixed(2)} V`,
-        // },
-        // {
-        //     headerName: 'RY Volt',
-        //     field: 'ry_volt',
-        //     sortable: true,
-        //     filter: 'agNumberColumnFilter',
-        //     cellClass: 'text-right',
-        //     valueFormatter: (params) => `${(params.value / 10).toFixed(2)} V`,
-        // },
-        // {
-        //     headerName: 'YB Volt',
-        //     field: 'yb_volt',
-        //     sortable: true,
-        //     filter: 'agNumberColumnFilter',
-        //     cellClass: 'text-right',
-        //     valueFormatter: (params) => `${(params.value / 10).toFixed(2)} V`,
-        // },
-        // {
-        //     headerName: 'BR Volt',
-        //     field: 'br_volt',
-        //     sortable: true,
-        //     filter: 'agNumberColumnFilter',
-        //     cellClass: 'text-right',
-        //     valueFormatter: (params) => `${(params.value / 10).toFixed(2)} V`,
-        // },
-        // {
-        //     headerName: 'R Ampere',
-        //     field: 'r_ampere',
-        //     sortable: true,
-        //     filter: 'agNumberColumnFilter',
-        //     cellClass: 'text-right',
-        //     valueFormatter: (params) => `${(params.value / 10).toFixed(2)} A`,
-        // },
-        // {
-        //     headerName: 'Y Ampere',
-        //     field: 'y_ampere',
-        //     sortable: true,
-        //     filter: 'agNumberColumnFilter',
-        //     cellClass: 'text-right',
-        //     valueFormatter: (params) => `${(params.value / 10).toFixed(2)} A`,
-        // },
+        {
+            headerName: 'ID',
+            field: 'id',
+            sortable: true,
+            filter: false,
+            cellClass: 'text-right',
+        },
+        {
+            headerName: 'Create Time',
+            field: 'create',
+            sortable: true,
+            filter: 'agDateColumnFilter',
+            minWidth: 180,
+            valueFormatter: (params: any) =>
+                new DatePipe('id-ID').transform(
+                    params.value,
+                    'dd-MM-yyyy HH:mm:ss'
+                ),
+        },
+        {
+            headerName: 'Time Job',
+            field: 'timejob',
+            sortable: true,
+            filter: 'agDateColumnFilter',
+            minWidth: 180,
+            valueFormatter: (params: any) =>
+                new DatePipe('id-ID').transform(
+                    params.value,
+                    'dd-MM-yyyy HH:mm:ss'
+                ),
+        },
+        {
+            headerName: 'RW Volt',
+            field: 'rw_volt',
+            sortable: true,
+            filter: 'agNumberColumnFilter',
+            cellClass: 'text-right',
+            valueFormatter: (params) => `${(params.value / 10).toFixed(2)} V`,
+        },
+        {
+            headerName: 'YW Volt',
+            field: 'yw_volt',
+            sortable: true,
+            filter: 'agNumberColumnFilter',
+            cellClass: 'text-right',
+            valueFormatter: (params) => `${(params.value / 10).toFixed(2)} V`,
+        },
+        {
+            headerName: 'BW Volt',
+            field: 'bw_volt',
+            sortable: true,
+            filter: 'agNumberColumnFilter',
+            cellClass: 'text-right',
+            valueFormatter: (params) => `${(params.value / 10).toFixed(2)} V`,
+        },
+        {
+            headerName: 'RY Volt',
+            field: 'ry_volt',
+            sortable: true,
+            filter: 'agNumberColumnFilter',
+            cellClass: 'text-right',
+            valueFormatter: (params) => `${(params.value / 10).toFixed(2)} V`,
+        },
+        {
+            headerName: 'YB Volt',
+            field: 'yb_volt',
+            sortable: true,
+            filter: 'agNumberColumnFilter',
+            cellClass: 'text-right',
+            valueFormatter: (params) => `${(params.value / 10).toFixed(2)} V`,
+        },
+        {
+            headerName: 'BR Volt',
+            field: 'br_volt',
+            sortable: true,
+            filter: 'agNumberColumnFilter',
+            cellClass: 'text-right',
+            valueFormatter: (params) => `${(params.value / 10).toFixed(2)} V`,
+        },
+        {
+            headerName: 'R Ampere',
+            field: 'r_ampere',
+            sortable: true,
+            filter: 'agNumberColumnFilter',
+            cellClass: 'text-right',
+            valueFormatter: (params) => `${(params.value / 10).toFixed(2)} A`,
+        },
+        {
+            headerName: 'Y Ampere',
+            field: 'y_ampere',
+            sortable: true,
+            filter: 'agNumberColumnFilter',
+            cellClass: 'text-right',
+            valueFormatter: (params) => `${(params.value / 10).toFixed(2)} A`,
+        },
         {
             headerName: 'B Ampere',
             field: 'b_ampere',

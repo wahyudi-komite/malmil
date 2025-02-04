@@ -8,8 +8,29 @@
     .ag-input-field-input,
     .ag-number-field-input {
         background-color: rgb(255, 255, 255) !important;
-        // color: black;
+        @apply text-gray-800 px-1
     }
-
-    // }
 }
+
+::ng-deep .edit-btn {
+    background-color: #1d4ed8;
+    // color: white;
+    // padding: 2px 8px;
+    // font-size: 12px;
+    border: none;
+    // border-radius: 4px;
+    // cursor: pointer;
+    // text-align: center;
+    // height: 30px;
+    // line-height: 1.5;
+}
+
+// ::ng-deep .edit-btn:hover {
+//     background-color: #2563eb;
+// }
+
+// ::ng-deep .ag-cell {
+//     display: flex;
+//     align-items: center;
+//     justify-content: center;
+// }
