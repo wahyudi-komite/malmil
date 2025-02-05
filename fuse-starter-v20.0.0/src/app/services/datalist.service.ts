@@ -51,7 +51,20 @@ export class DatalistService {
     //     return this._httpClient.get(this.url, { params });
     // }
 
-    getData(): Observable<any> {
-        return this._httpClient.get<any[]>(this.url);
+    getData(
+        page: number,
+        pageSize: number,
+        sortField?: string,
+        sortOrder?: string
+    ): Observable<any> {
+        let apiUrl = `${this.url}?page=${page}&pageSize=${pageSize}`;
+
+        if (sortField && sortOrder) {
+            apiUrl += `&sortField=${sortField}&sortOrder=${sortOrder}`;
+        }
+
+        console.log(apiUrl);
+
+        return this._httpClient.get<any[]>(apiUrl);
     }
 }

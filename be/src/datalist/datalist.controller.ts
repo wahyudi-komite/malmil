@@ -63,10 +63,23 @@ export class DatalistController {
   //   });
   // }
 
-  @Get()
-  async getData(): Promise<Datalist[]> {
-    console.log('test');
+  // @Get()
+  // async getData(): Promise<Datalist[]> {
+  //   return this._service.getAllData();
+  // }
 
-    return this._service.getAllData();
+  @Get()
+  async getData(
+    @Query('page') page = 1,
+    @Query('pageSize') pageSize = 10,
+    @Query('sortField') sortField?: string,
+    @Query('sortOrder') sortOrder?: 'ASC' | 'DESC',
+  ) {
+    return this._service.getPaginatedData(
+      +page,
+      +pageSize,
+      sortField,
+      sortOrder,
+    );
   }
 }

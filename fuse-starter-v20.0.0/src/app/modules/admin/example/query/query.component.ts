@@ -52,10 +52,9 @@ export class QueryComponent implements OnInit {
             filter: false,
             resizable: false,
             cellRenderer: (params) => {
-                return `<button class="edit-btn leading-normal px-2 py-1 cursor-pointer rounded text-white text-center">Edit</button>`;
+                return `<button class="edit-btn leading-normal px-2 py-1 cursor-pointer rounded text-white text-center bg-blue-900">Edit</button>`;
             },
-            // width: 100, // Sesuaikan lebar kolom
-            pinned: 'left', // Agar selalu terlihat di sebelah kiri
+            pinned: 'left',
         },
         {
             headerName: 'ID',
@@ -257,9 +256,9 @@ export class QueryComponent implements OnInit {
     }
 
     onLoad() {
-        this._datalistService
-            .getData()
-            .subscribe((res) => (this.rowData = res));
+        //     this._datalistService
+        //         .getData()
+        //         .subscribe((res) => (this.rowData = res));
     }
 
     onGridReady(params: GridReadyEvent) {

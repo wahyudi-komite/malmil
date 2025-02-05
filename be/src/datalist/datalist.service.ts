@@ -17,10 +17,35 @@ export class DatalistService {
 
   constructor(
     @InjectRepository(Datalist)
-    private userRepository: Repository<Datalist>,
+    private _repository: Repository<Datalist>,
   ) {}
 
   async getAllData(): Promise<Datalist[]> {
-    return this.userRepository.find();
+    return this._repository.find();
+  }
+
+  async getPaginatedData(
+    page: number,
+    pageSize: number,
+    sortField?: string,
+    sortOrder?: 'ASC' | 'DESC',
+  ) {
+    const query = this._repository.createQueryBuilder('data');
+
+    // Sorting jika ada parameter sorting dari frontend
+    if (sortField && sortOrder) {
+      query.orderBy(`data.${sortField}`, sortOrder);
+    } else {
+      query.orderBy('data.create', 'DESC'); // Default sorting
+    }
+
+    console.log(sortField + '' + sortOrder);
+
+    const [data, total] = await query
+      .skip((page - 1) * pageSize)
+      .take(pageSize)
+      .getMany();
+
+    return { data, total };
   }
 }
