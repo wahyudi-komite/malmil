@@ -52,4 +52,12 @@ export class Datalist {
   hd3_temp: number;
   @Column()
   line_run: number;
+  @Column({ nullable: true })
+  plan_prod: number;
+  @Column({ nullable: true })
+  target_prod: number;
+  @Column({ nullable: true })
+  act_prod: number;
+  @Column({ nullable: true })
+  hd3_hum: number;
 }

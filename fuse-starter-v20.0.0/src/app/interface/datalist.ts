@@ -1,6 +1,6 @@
 export interface Datalist {
     id: number;
-    create: Date;
+    create: string;
     timejob: Date;
     rw_volt: number;
     yw_volt: number;

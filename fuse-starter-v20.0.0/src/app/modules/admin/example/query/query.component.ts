@@ -1,17 +1,19 @@
-import { DatePipe } from '@angular/common';
-import { Component, OnInit, inject } from '@angular/core';
+import { CommonModule, DatePipe } from '@angular/common';
+import { Component, OnInit, ViewChild, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { AgGridAngular } from 'ag-grid-angular';
-import { ColDef, GridReadyEvent } from 'ag-grid-community';
-import { Subject } from 'rxjs';
+import { MatSort, MatSortModule, Sort } from '@angular/material/sort';
+import { Subject, takeUntil } from 'rxjs';
+import { GlobalVariable } from '../../../../class/global-variable';
 import { UserService } from '../../../../core/user/user.service';
 import { User } from '../../../../core/user/user.types';
+import { Datalist } from '../../../../interface/datalist';
+import { Paginate } from '../../../../interface/paginate';
 import { DatalistService } from '../../../../services/datalist.service';
 
 @Component({
     selector: 'app-query',
     standalone: true,
-    imports: [FormsModule, AgGridAngular],
+    imports: [CommonModule, FormsModule, MatSortModule],
     templateUrl: './query.component.html',
     styleUrls: ['./query.component.scss'],
     providers: [DatePipe],
@@ -19,305 +21,236 @@ import { DatalistService } from '../../../../services/datalist.service';
 export class QueryComponent implements OnInit {
     user: User;
 
+    datas: Datalist[] = [];
+    total!: number;
+    page!: number;
+    pageSize!: number;
+    last_page!: number;
+    find: string = '';
+    limit: number = GlobalVariable.pageTake;
+    tblName: string = 'm_data15m';
+
     private _unsubscribeAll: Subject<any> = new Subject<any>();
+    @ViewChild(MatSort, { static: true }) sort!: MatSort;
 
     _datalistService = inject(DatalistService);
     _userService = inject(UserService);
-
-    private gridApi: any;
-    rowData: any[] = [];
-    quickFilterText = '';
-    defaultColDef = {
-        sortable: true,
-        filter: true,
-        floatingFilter: true,
-        floatingFilterComponentParams: {
-            suppressFilterButton: true,
-        },
-        cellStyle: {
-            backgroundColor: 'white',
-            color: 'black',
-            textAlign: 'right',
-        },
-        editable: true,
-        resizable: true,
-    };
-
-    columnDefs: ColDef[] = [
+    eyeIcon = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5">
+    <path d="M12 15a3 3 0 100-6 3 3 0 000 6z"/>
+    <path fill-rule="evenodd" d="M1.323 11.447C2.811 6.976 7.028 3.75 12.001 3.75c4.97 0 9.185 3.223 10.675 7.69.12.362.12.752 0 1.113-1.487 4.471-5.705 7.697-10.677 7.697-4.97 0-9.186-3.223-10.675-7.69a1.762 1.762 0 010-1.113zM17.25 12a5.25 5.25 0 11-10.5 0 5.25 5.25 0 0110.5 0z" clip-rule="evenodd"/>
+</svg>`;
+    columnTitles = [
         {
-            headerName: 'Actions',
-            field: 'actions',
-            // cellClass: 'text-center my-1',
-            sortable: false,
-            filter: false,
-            resizable: false,
-            cellRenderer: (params) => {
-                return `<button class="edit-btn leading-normal px-2 py-1 cursor-pointer rounded text-white text-center bg-blue-900">Edit</button>`;
-            },
-            pinned: 'left',
+            title: '#',
+            field: '',
+            class: 'whitespace-nowrap',
         },
         {
-            headerName: 'ID',
-            field: 'id',
-            sortable: true,
-            filter: false,
-            cellClass: 'text-right',
+            title: `<svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 24 24"
+                        fill="currentColor"
+                        class="h-5"
+                    >
+                        <path
+                            d="M12 15a3 3 0 100-6 3 3 0 000 6z"
+                        />
+                        <path
+                            fill-rule="evenodd"
+                            d="M1.323 11.447C2.811 6.976 7.028 3.75 12.001 3.75c4.97 0 9.185 3.223 10.675 7.69.12.362.12.752 0 1.113-1.487 4.471-5.705 7.697-10.677 7.697-4.97 0-9.186-3.223-10.675-7.69a1.762 1.762 0 010-1.113zM17.25 12a5.25 5.25 0 11-10.5 0 5.25 5.25 0 0110.5 0z"
+                            clip-rule="evenodd"
+                        />
+                    </svg>Test`,
+            field: '',
+            class: 'whitespace-nowrap',
         },
         {
-            headerName: 'Create Time',
+            title: 'CREATE',
             field: 'create',
-            sortable: true,
-            filter: 'agDateColumnFilter',
-            minWidth: 180,
-            valueFormatter: (params: any) =>
-                new DatePipe('id-ID').transform(
-                    params.value,
-                    'dd-MM-yyyy HH:mm:ss'
-                ),
+            class: 'whitespace-nowrap',
         },
         {
-            headerName: 'Time Job',
+            title: 'Time Job',
             field: 'timejob',
-            sortable: true,
-            filter: 'agDateColumnFilter',
-            minWidth: 180,
-            valueFormatter: (params: any) =>
-                new DatePipe('id-ID').transform(
-                    params.value,
-                    'dd-MM-yyyy HH:mm:ss'
-                ),
+            class: 'whitespace-nowrap',
         },
         {
-            headerName: 'RW Volt',
+            title: 'RW',
             field: 'rw_volt',
-            sortable: true,
-            filter: 'agNumberColumnFilter',
-            cellClass: 'text-right',
-            valueFormatter: (params) => `${(params.value / 10).toFixed(2)} V`,
+            class: 'whitespace-nowrap',
         },
         {
-            headerName: 'YW Volt',
+            title: 'YW',
             field: 'yw_volt',
-            sortable: true,
-            filter: 'agNumberColumnFilter',
-            cellClass: 'text-right',
-            valueFormatter: (params) => `${(params.value / 10).toFixed(2)} V`,
+            class: 'whitespace-nowrap',
         },
         {
-            headerName: 'BW Volt',
+            title: 'BW',
             field: 'bw_volt',
-            sortable: true,
-            filter: 'agNumberColumnFilter',
-            cellClass: 'text-right',
-            valueFormatter: (params) => `${(params.value / 10).toFixed(2)} V`,
+            class: 'whitespace-nowrap',
         },
         {
-            headerName: 'RY Volt',
+            title: 'RY',
             field: 'ry_volt',
-            sortable: true,
-            filter: 'agNumberColumnFilter',
-            cellClass: 'text-right',
-            valueFormatter: (params) => `${(params.value / 10).toFixed(2)} V`,
+            class: 'whitespace-nowrap',
         },
         {
-            headerName: 'YB Volt',
+            title: 'YB',
             field: 'yb_volt',
-            sortable: true,
-            filter: 'agNumberColumnFilter',
-            cellClass: 'text-right',
-            valueFormatter: (params) => `${(params.value / 10).toFixed(2)} V`,
+            class: 'whitespace-nowrap',
         },
         {
-            headerName: 'BR Volt',
+            title: 'BR',
             field: 'br_volt',
-            sortable: true,
-            filter: 'agNumberColumnFilter',
-            cellClass: 'text-right',
-            valueFormatter: (params) => `${(params.value / 10).toFixed(2)} V`,
+            class: 'whitespace-nowrap',
         },
         {
-            headerName: 'R Ampere',
+            title: 'R',
             field: 'r_ampere',
-            sortable: true,
-            filter: 'agNumberColumnFilter',
-            cellClass: 'text-right',
-            valueFormatter: (params) => `${(params.value / 10).toFixed(2)} A`,
+            class: 'whitespace-nowrap',
         },
         {
-            headerName: 'Y Ampere',
+            title: 'Y',
             field: 'y_ampere',
-            sortable: true,
-            filter: 'agNumberColumnFilter',
-            cellClass: 'text-right',
-            valueFormatter: (params) => `${(params.value / 10).toFixed(2)} A`,
+            class: 'whitespace-nowrap',
         },
         {
-            headerName: 'B Ampere',
+            title: 'B',
             field: 'b_ampere',
-            sortable: true,
-            filter: 'agNumberColumnFilter',
-            cellClass: 'text-right',
-            valueFormatter: (params) => `${(params.value / 10).toFixed(2)} A`,
-            floatingFilterComponentParams: {
-                suppressFilterButton: true,
-            },
-            cellStyle: { backgroundColor: 'white', color: 'black' },
+            class: 'whitespace-nowrap',
         },
         {
-            headerName: 'W Ampere',
+            title: 'W',
             field: 'w_ampere',
-            sortable: true,
-            filter: 'agNumberColumnFilter',
-            cellClass: 'text-right',
-            valueFormatter: (params) => `${(params.value / 10).toFixed(2)} A`,
+            class: 'whitespace-nowrap',
         },
         {
-            headerName: 'WH Power Received',
+            title: 'POWER RECEIVE',
             field: 'wh_powerrecv',
-            sortable: true,
-            filter: 'agNumberColumnFilter',
+            class: '',
         },
         {
-            headerName: 'Active Power',
+            title: 'ACTIVE POWER',
             field: 'active_power',
-            sortable: true,
-            filter: 'agNumberColumnFilter',
+            class: '',
         },
         {
-            headerName: 'Apparent Power',
+            title: 'APPARENT',
             field: 'apparent_power',
-            sortable: true,
-            filter: 'agNumberColumnFilter',
+            class: '',
         },
         {
-            headerName: 'Reactive Power',
+            title: 'REACTIVE',
             field: 'reactive_power',
-            sortable: true,
-            filter: 'agNumberColumnFilter',
+            class: '',
         },
         {
-            headerName: 'Power Factor',
+            title: 'POWER FACTOR',
             field: 'power_factor',
-            sortable: true,
-            filter: 'agNumberColumnFilter',
+            class: '',
         },
         {
-            headerName: 'Frequency',
+            title: 'FREQ',
             field: 'freq',
-            sortable: true,
-            filter: 'agNumberColumnFilter',
+            class: '',
         },
         {
-            headerName: 'HD1 Temp',
+            title: 'TEMP 1',
             field: 'hd1_temp',
-            sortable: true,
-            filter: 'agNumberColumnFilter',
+            class: '',
         },
         {
-            headerName: 'HD1 Humidity',
+            title: 'HUM 1',
             field: 'hd1_hum',
-            sortable: true,
-            filter: 'agNumberColumnFilter',
+            class: '',
         },
         {
-            headerName: 'HD2 Temp',
+            title: 'TEMP 2',
             field: 'hd2_temp',
-            sortable: true,
-            filter: 'agNumberColumnFilter',
+            class: '',
         },
         {
-            headerName: 'HD2 Humidity',
+            title: 'HUM 2',
             field: 'hd2_hum',
-            sortable: true,
-            filter: 'agNumberColumnFilter',
+            class: '',
         },
         {
-            headerName: 'HD3 Temp',
+            title: 'TEMP 3',
             field: 'hd3_temp',
-            sortable: true,
-            filter: 'agNumberColumnFilter',
+            class: '',
         },
         {
-            headerName: 'Line Run',
+            title: 'HUM 3',
+            field: 'hd3_hum',
+            class: '',
+        },
+        {
+            title: 'LINE RUN',
             field: 'line_run',
-            sortable: true,
-            filter: 'agNumberColumnFilter',
+            class: '',
+        },
+        {
+            title: 'PLAN',
+            field: 'plan_prod',
+            class: '',
+        },
+        {
+            title: 'TARGET PROD',
+            field: 'target_prod',
+            class: '',
+        },
+        {
+            title: 'ACTUAL PROD',
+            field: 'act_prod',
+            class: '',
         },
     ];
-
     ngOnInit(): void {
-        // this._userService.user$
-        //     .pipe(takeUntil(this._unsubscribeAll))
-        //     .subscribe((user: User) => {
-        //         this.user = user;
-        //     });
+        this._userService.user$
+            .pipe(takeUntil(this._unsubscribeAll))
+            .subscribe((user: User) => {
+                this.user = user;
+            });
 
-        this.onLoad();
+        this.load();
     }
 
-    onLoad() {
-        //     this._datalistService
-        //         .getData()
-        //         .subscribe((res) => (this.rowData = res));
+    load(
+        page: number = 1,
+        limit: number = 10
+        // start = this.start,
+        // end = this.end
+    ): void {
+        this._datalistService
+            .all(
+                page,
+                this.limit,
+                this.sort.active,
+                this.sort.direction,
+                this.find
+                // start,
+                // end
+            )
+            .subscribe((res: Paginate) => {
+                this.datas = res.data;
+                this.total = res.meta.total;
+                this.page = res.meta.page;
+                this.pageSize = res.meta.pageSize;
+                this.last_page = res.meta.last_page;
+            });
     }
 
-    onGridReady(params: GridReadyEvent) {
-        this.gridApi = params.api;
-        setTimeout(() => {
-            this.gridApi.autoSizeAllColumns();
-        }, 100);
+    sortData(sort: Sort) {
+        this.load();
     }
 
-    onGlobalFilterChanged(event: any) {
-        const filterValue = event.target.value;
-        this.gridApi.setGridOption('quickFilterText', filterValue);
+    applyFilter(event: Event) {
+        this.find = (event.target as HTMLInputElement).value;
+        this.load();
     }
 
-    exportToCSV() {
-        const timestamp = new Date()
-            .toISOString()
-            .replace(/T/, '_')
-            .replace(/:/g, '-')
-            .split('.')[0];
-        this.gridApi.exportDataAsCsv({
-            fileName: `Report_${timestamp}.csv`,
-            columnSeparator: '|',
-        });
+    changeLimit(limit: number): void {
+        this.limit = limit;
+        this.load();
     }
-
-    exportToExcel() {
-        const timestamp = new Date()
-            .toISOString()
-            .replace(/T/, '_')
-            .replace(/:/g, '-')
-            .split('.')[0];
-        this.gridApi.exportDataAsExcel({
-            fileName: `Report_${timestamp}.xlsx`,
-        });
-    }
-
-    // onSort() {
-    //     if (!this.gridApi) return;
-    //     const sortModel = this.gridApi.getSortModel();
-    //     if (sortModel.length > 0) {
-    //         const { colId, sort } = sortModel[0];
-    //         this.filteredUsers.sort((a, b) =>
-    //             sort === 'asc'
-    //                 ? (a[colId as keyof User] as string).localeCompare(
-    //                       b[colId as keyof User] as string
-    //                   )
-    //                 : (b[colId as keyof User] as string).localeCompare(
-    //                       a[colId as keyof User] as string
-    //                   )
-    //         );
-    //     }
-    // }
-
-    // onSearch() {
-    //     this.filteredUsers = this.users.filter(
-    //         (user) =>
-    //             user.name.toLowerCase().includes(this.search.toLowerCase()) ||
-    //             user.email.toLowerCase().includes(this.search.toLowerCase())
-    //     );
-    // }
 }

@@ -13,30 +13,6 @@
                     </div>
                 </div>
             </div>
-
-            <!-- <div style="margin: 10px 0">
-                <input
-                    type="text"
-                    [(ngModel)]="quickFilterText"
-                    (input)="onGlobalFilterChanged($event)"
-                    placeholder="Search in all columns..."
-                    class="ag-filter-input"
-                />
-            </div> -->
-            <div style="margin-bottom: 10px">
-                <button (click)="exportToCSV()">📄 Export to CSV</button>
-            </div>
-            <ag-grid-angular
-                style="width: 100%; height: 800px"
-                class="ag-theme-alpine striped"
-                [rowData]="rowData"
-                [columnDefs]="columnDefs"
-                (gridReady)="onGridReady($event)"
-                rowSelection="single"
-                [defaultColDef]="defaultColDef"
-                [pagination]="true"
-                [paginationPageSize]="20"
-            ></ag-grid-angular>
         </div>
     </div>
 </div>

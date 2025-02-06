@@ -1,10 +1,65 @@
-::ng-deep .ag-header {
-    background-color: #0a3d69 !important;
-    color: white !important;
+table {
 
-    .ag-input-field-input,
-    .ag-number-field-input {
-        background-color: rgb(255, 255, 255) !important;
-        @apply text-gray-800 px-1
+    thead {
+        font-size: 0.875rem;
+        line-height: 1.25rem;
+        font-weight: 700;
+        letter-spacing: 0.05em;
+        border: none;
+
+        &.with-border {
+            tr {
+                th {
+                    border: 1px solid #fff;
+                }
+            }
+        }
+
+        tr {
+            border: none;
+
+            th {
+                border: none;
+                padding: 1rem 1.5rem;
+
+                svg {
+                    width: 1.5rem;
+                }
+            }
+
+            .mat-sort-header-stem {
+                color: #fff;
+                background-color: #fff;
+            }
+        }
+    }
+
+    tbody {
+
+        tr {
+
+            td {
+                white-space: nowrap;
+                text-align: center;
+                padding: 0.4rem 1rem;
+                font-size: 0.875rem;
+
+                a {
+                    width: 1rem;
+                    // color: var(--wa-primary);
+                }
+
+                span {
+                    padding: 0.3rem;
+                    color: #fff;
+                    font-weight: 500;
+                    border-radius: 0.125rem;
+                }
+
+                svg {
+                    width: 1.5rem;
+                }
+            }
+        }
     }
 }

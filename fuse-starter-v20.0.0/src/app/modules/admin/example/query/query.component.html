@@ -4,39 +4,154 @@
         <div class="mx-auto w-full max-w-screen-xl">
             <!-- CONTENT GOES HERE -->
             <div class="flex w-full items-center justify-between">
-                <div>
+                <div class="overflow-x-auto">
                     <h2 class="text-3xl font-semibold leading-8 tracking-tight">
                         List All Data Device
                     </h2>
                     <div class="text-secondary font-medium tracking-tight">
                         WA Line device status
                     </div>
+                    <div class="relative overflow-x-auto">
+                        <table
+                            id="excel-table"
+                            matSort
+                            (matSortChange)="sortData($event)"
+                            matSortActive="{{ tblName }}.create"
+                            matSortDirection="desc"
+                            matSortDisableClear
+                            class="w-full border-collapse overflow-x-scroll border-2 border-blue-50"
+                        >
+                            <thead
+                                class="with-border bg-blue-900 p-8 text-white"
+                            >
+                                <tr>
+                                    @for (
+                                        columnTitle of columnTitles;
+                                        track columnTitle.title
+                                    ) {
+                                        <th
+                                            mat-sort-header="{{
+                                                tblName +
+                                                    '.' +
+                                                    columnTitle.field
+                                            }}"
+                                            class="{{ columnTitle.class }}"
+                                            [innerHTML]="columnTitle.title"
+                                        ></th>
+                                    }
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                @if (this.total == 0) {
+                                    <tr
+                                        style="
+                                            border-bottom: 2px;
+                                            text-align: center;
+                                            font-weight: 500;
+                                            font-size: 1.5rem;
+                                            line-height: 1.25rem;
+                                            padding: 1rem 1.5rem;
+                                            color: #be123c;
+                                        "
+                                    >
+                                        <td colspan="18" class="h-12">
+                                            No Data Avalaible
+                                        </td>
+                                    </tr>
+                                }
+
+                                @for (data of datas; track $index) {
+                                    <tr class="odd:bg-gray-50 even:bg-blue-100">
+                                        <td>
+                                            {{
+                                                $index +
+                                                    1 +
+                                                    (this.page - 1) *
+                                                        this.pageSize
+                                            }}
+                                        </td>
+                                        <td class="">
+                                            <a
+                                                href="javascript:void(0)"
+                                                (click)="
+                                                    openDialog('Read', data)
+                                                "
+                                            >
+                                                <svg
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                    viewBox="0 0 24 24"
+                                                    fill="currentColor"
+                                                    class="h-5"
+                                                >
+                                                    <path
+                                                        d="M12 15a3 3 0 100-6 3 3 0 000 6z"
+                                                    />
+                                                    <path
+                                                        fill-rule="evenodd"
+                                                        d="M1.323 11.447C2.811 6.976 7.028 3.75 12.001 3.75c4.97 0 9.185 3.223 10.675 7.69.12.362.12.752 0 1.113-1.487 4.471-5.705 7.697-10.677 7.697-4.97 0-9.186-3.223-10.675-7.69a1.762 1.762 0 010-1.113zM17.25 12a5.25 5.25 0 11-10.5 0 5.25 5.25 0 0110.5 0z"
+                                                        clip-rule="evenodd"
+                                                    />
+                                                </svg>
+                                            </a>
+                                        </td>
+                                        <td class="whitespace-nowrap">
+                                            {{
+                                                data.create
+                                                    | date
+                                                        : 'dd-MM-yyyy HH:mm:ss'
+                                            }}
+                                        </td>
+                                        <td class="whitespace-nowrap">
+                                            {{
+                                                data.timejob
+                                                    | date
+                                                        : 'dd-MM-yyyy HH:mm:ss'
+                                            }}
+                                        </td>
+                                        <td class="">{{ data.id }}</td>
+                                        <td class="">{{ data.yw_volt }}</td>
+                                        <td class="">{{ data.bw_volt }}</td>
+                                        <td class="">{{ data.ry_volt }}</td>
+                                        <td class="">{{ data.yb_volt }}</td>
+                                        <td class="">{{ data.br_volt }}</td>
+                                        <td class="">{{ data.r_ampere }}</td>
+                                        <td class="">{{ data.y_ampere }}</td>
+                                        <td class="">{{ data.b_ampere }}</td>
+                                        <td class="">{{ data.w_ampere }}</td>
+                                        <td class="">
+                                            {{ data.wh_powerrecv }}
+                                        </td>
+                                        <td class="">
+                                            {{ data.active_power }}
+                                        </td>
+                                        <td class="">
+                                            {{ data.apparent_power }}
+                                        </td>
+                                        <td class="">
+                                            {{ data.reactive_power }}
+                                        </td>
+                                        <td class="">
+                                            {{ data.power_factor }}
+                                        </td>
+                                        <td class="">{{ data.freq }}</td>
+                                        <td class="">{{ data.hd1_temp }}</td>
+                                        <td class="">{{ data.hd1_hum }}</td>
+                                        <td class="">{{ data.hd2_temp }}</td>
+                                        <td class="">{{ data.hd2_hum }}</td>
+                                        <td class="">{{ data.hd3_temp }}</td>
+                                        <td class="">{{ data.hd3_hum }}</td>
+                                        <td class="">{{ data.line_run }}</td>
+                                        <td class="">{{ data.plan_prod }}</td>
+                                        <td class="">{{ data.target_prod }}</td>
+                                        <td class="">{{ data.act_prod }}</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
-
-            <div style="margin: 10px 0">
-                <input
-                    type="text"
-                    [(ngModel)]="quickFilterText"
-                    (input)="onGlobalFilterChanged($event)"
-                    placeholder="Search in all columns..."
-                    class="ag-filter-input"
-                />
-            </div>
-            <div style="margin-bottom: 10px">
-                <button (click)="exportToCSV()">📄 Export to CSV</button>
-            </div>
-            <ag-grid-angular
-                style="width: 100%; height: 800px"
-                class="ag-theme-alpine striped"
-                [rowData]="rowData"
-                [columnDefs]="columnDefs"
-                (gridReady)="onGridReady($event)"
-                rowSelection="single"
-                [defaultColDef]="defaultColDef"
-                [pagination]="true"
-                [paginationPageSize]="20"
-            ></ag-grid-angular>
         </div>
     </div>
 </div>
