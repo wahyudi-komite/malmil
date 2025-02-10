@@ -7,6 +7,7 @@ table {
         letter-spacing: 0.05em;
         border: none;
 
+
         &.with-border {
             tr {
                 th {
@@ -37,7 +38,6 @@ table {
     tbody {
 
         tr {
-
             td {
                 white-space: nowrap;
                 text-align: center;
@@ -63,28 +63,3 @@ table {
         }
     }
 }
-
-
-
-
-/* Works on Firefox */
-* {
-    scrollbar-width: auto;
-    scrollbar-color: rgb(124, 124, 179) rgb(211, 208, 201);
-}
-
-// /* Works on Chrome, Edge, and Safari */
-// *::-webkit-scrollbar {
-//     width: 120px;
-//     height: 120px;
-// }s
-
-// *::-webkit-scrollbar-track {
-//     background: orange;
-// }
-
-// *::-webkit-scrollbar-thumb {
-//     background-color: blue;
-//     border-radius: 200px;
-//     border: 300px solid orange;
-// }

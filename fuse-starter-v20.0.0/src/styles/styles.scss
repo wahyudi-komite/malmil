@@ -2,3 +2,8 @@
 /*  @ Import/write your custom styles here.
 /*  @ Styles from this file will override 'vendors.scss' and Fuse's base styles.
 /* ----------------------------------------------------------------------------------------------------- */
+
+* {
+    scrollbar-width: auto;
+    scrollbar-color: rgb(124, 124, 179) rgb(211, 208, 201);
+}

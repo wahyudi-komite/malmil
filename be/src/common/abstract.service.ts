@@ -55,15 +55,15 @@ export class AbstractService {
       const objectArray = Object.entries(query.filterParams);
       objectArray.forEach(([key, value]) => {
         if (value != '') {
-          if (key == 'problem_date') {
-            const start = new Date(value + ' 00:00:00');
-            const end = new Date(value + ' 23:59:59');
-            myQuery
-              .andWhere(tbl + '.problem_date >= :start', { start: start })
-              .andWhere(tbl + '.problem_date <= :end', { end: end });
-          } else {
-            myQuery.andWhere(tbl + '.' + key + ' =:' + key, { [key]: value });
-          }
+          // if (key == 'problem_date') {
+          //   const start = new Date(value + ' 00:00:00');
+          //   const end = new Date(value + ' 23:59:59');
+          //   myQuery
+          //     .andWhere(tbl + '.problem_date >= :start', { start: start })
+          //     .andWhere(tbl + '.problem_date <= :end', { end: end });
+          // } else {
+          myQuery.andWhere(tbl + '.' + key + ' =:' + key, { [key]: value });
+          // }
         }
       });
     }

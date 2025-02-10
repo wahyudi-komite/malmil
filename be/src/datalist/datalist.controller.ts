@@ -25,6 +25,7 @@ export class DatalistController {
   async findAll(@Request() request) {
     const returnData = await this._service.paginate(tables, [], {
       limit: request.query.limit,
+      // limit: 88,
       page: request.query.page,
       sort: request.query.sort,
       direction: request.query.direction,
