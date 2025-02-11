@@ -8,12 +8,15 @@ import {
   Delete,
   Request,
   Query,
+  Res,
 } from '@nestjs/common';
+import { Response } from 'express';
 import { DatalistService } from './datalist.service';
 import { CreateDatalistDto } from './dto/create-datalist.dto';
 import { UpdateDatalistDto } from './dto/update-datalist.dto';
 import { Datalist } from './entities/datalist.entity';
 import { formatDate } from '../utils/date.utils';
+import * as ExcelJS from 'exceljs';
 
 const tables = 'm_data15m';
 
@@ -70,5 +73,35 @@ export class DatalistController {
     }));
 
     return returnData;
+  }
+
+  @Get('excel')
+  async exportExcel(@Res() res: Response) {
+    console.log(1);
+
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet('Data');
+
+    // Tambahkan kolom
+    worksheet.columns = [
+      { header: 'ID', key: 'id', width: 10 },
+      { header: 'Nama', key: 'name', width: 30 },
+      { header: 'Email', key: 'email', width: 30 },
+    ];
+
+    // Tambahkan data contoh
+    worksheet.addRow({ id: 1, name: 'John Doe', email: 'john@example.com' });
+    worksheet.addRow({ id: 2, name: 'Jane Doe', email: 'jane@example.com' });
+
+    // Pastikan header benar
+    res.setHeader(
+      'Content-Type',
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    );
+    res.setHeader('Content-Disposition', 'attachment; filename="data.xlsx"');
+
+    // Stream workbook langsung ke response
+    const buffer = await workbook.xlsx.writeBuffer();
+    res.end(buffer);
   }
 }

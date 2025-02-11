@@ -12,6 +12,10 @@ import { Datalist } from '../../../../interface/datalist';
 import { Paginate } from '../../../../interface/paginate';
 import { DatalistService } from '../../../../services/datalist.service';
 
+const EXCEL_TYPE =
+    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
+const EXCEL_EXTENSION = '.xlsx';
+
 @Component({
     selector: 'app-query',
     standalone: true,
@@ -247,5 +251,7 @@ export class QueryComponent implements OnInit {
         this.load();
     }
 
-    exportexcel() {}
+    exportexcel(): void {
+        this._datalistService.exportExcel();
+    }
 }
