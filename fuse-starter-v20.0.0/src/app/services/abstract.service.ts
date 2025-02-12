@@ -11,6 +11,32 @@ export abstract class AbstractService {
 
     constructor(protected http: HttpClient) {}
 
+    private buildHttpParams(
+        page?: number,
+        limit?: number,
+        direction?: string,
+        sort?: string,
+        find?: string,
+        filterParams?: any
+    ): HttpParams {
+        let params = new HttpParams();
+        if (page) params = params.append('page', String(page));
+        if (limit) params = params.append('limit', String(limit));
+        if (sort) params = params.append('sort', String(sort));
+        if (direction) params = params.append('direction', String(direction));
+        if (find) params = params.append('keyword', String(find));
+
+        if (filterParams) {
+            Object.entries(filterParams).forEach(([key, value]) => {
+                if (value != null) {
+                    params = params.append(key, String(value));
+                }
+            });
+        }
+
+        return params;
+    }
+
     all(
         page?: number,
         limit?: number,
@@ -19,22 +45,14 @@ export abstract class AbstractService {
         find?: string,
         filterParams?: any
     ): Observable<any> {
-        let params = new HttpParams();
-        page ? (params = params.append('page', String(page))) : params;
-        limit ? (params = params.append('limit', String(limit))) : params;
-        sort ? (params = params.append('sort', String(sort))) : params;
-        direction
-            ? (params = params.append('direction', String(direction)))
-            : params;
-        find ? (params = params.append('keyword', String(find))) : params;
-        if (filterParams) {
-            const objectArray = Object.entries(filterParams);
-            objectArray.forEach(([key, value]) => {
-                if (value != null) {
-                    params = params.append(key, String(value));
-                }
-            });
-        }
+        const params = this.buildHttpParams(
+            page,
+            limit,
+            direction,
+            sort,
+            find,
+            filterParams
+        );
         return this.http.get(this.url, { params });
     }
 
@@ -65,33 +83,35 @@ export abstract class AbstractService {
         return this.http.post(`${this.url}/findIn`, data);
     }
 
-    getAll(
-        direction: string,
-        sort: string,
-        field?: string,
-        keyword?: string | number
-    ): Observable<any> {
-        let params = new HttpParams();
-        params = params.append('sort', String(sort));
-        params = params.append('direction', String(direction));
-
-        field ? (params = params.append('field', String(field))) : params;
-        keyword ? (params = params.append('keyword', keyword)) : params;
-
-        return this.http.get(`${this.url}/all`, { params });
-    }
-
-    exportExcel(): void {
-        this.http.get(`${this.url}/excel`, { responseType: 'blob' }).subscribe(
-            (response) => {
-                const blob = new Blob([response], {
-                    type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-                });
-                saveAs(blob, 'data.xlsx');
-            },
-            (error) => {
-                console.error('Gagal mengunduh file:', error);
-            }
+    exportExcel(
+        page?: number,
+        limit?: number,
+        direction?: string,
+        sort?: string,
+        find?: string,
+        filterParams?: any
+    ): void {
+        const params = this.buildHttpParams(
+            page,
+            limit,
+            direction,
+            sort,
+            find,
+            filterParams
         );
+
+        this.http
+            .get(`${this.url}/excel`, { params, responseType: 'blob' })
+            .subscribe(
+                (response) => {
+                    const blob = new Blob([response], {
+                        type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                    });
+                    saveAs(blob, 'Ems-Wa-Line.xlsx');
+                },
+                (error) => {
+                    console.error('Gagal mengunduh file:', error);
+                }
+            );
     }
 }

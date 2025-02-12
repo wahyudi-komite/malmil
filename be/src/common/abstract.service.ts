@@ -1,6 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { Brackets, Repository } from 'typeorm';
 import { PaginatedResult } from './paginated-result.interface';
+import { Response } from 'express';
+import * as ExcelJS from 'exceljs';
 
 @Injectable()
 export class AbstractService {
@@ -109,5 +111,36 @@ export class AbstractService {
 
   async remove(id: number): Promise<any> {
     return this.repository.delete(id);
+  }
+
+  async exportDataToExcel(data: any[], res: Response) {
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet('Data Export');
+
+    // Header Columns
+    worksheet.columns = Object.keys(data[0]).map((key) => ({
+      header: key.toUpperCase(),
+      key: key,
+      width: 15,
+    }));
+
+    // Insert Data Rows
+    data.forEach((row) => {
+      worksheet.addRow(row);
+    });
+
+    // Set Response Headers
+    res.setHeader(
+      'Content-Type',
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    );
+    res.setHeader(
+      'Content-Disposition',
+      'attachment; filename=data_export.xlsx',
+    );
+
+    // Write and Send Excel File
+    await workbook.xlsx.write(res);
+    res.end();
   }
 }

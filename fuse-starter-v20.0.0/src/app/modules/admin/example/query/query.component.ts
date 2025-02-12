@@ -1,9 +1,17 @@
 import { CommonModule, DatePipe } from '@angular/common';
 import { Component, OnInit, ViewChild, inject } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import {
+    FormBuilder,
+    FormGroup,
+    FormsModule,
+    ReactiveFormsModule,
+} from '@angular/forms';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
 import { MatSort, MatSortModule, Sort } from '@angular/material/sort';
 import { Subject, takeUntil } from 'rxjs';
 import { GlobalVariable } from '../../../../class/global-variable';
+import { DateTimePickerComponentComponent } from '../../../../common/date-time-picker-component/date-time-picker-component.component';
 import { PaginateTakeComponent } from '../../../../common/paginate-take/paginate-take.component';
 import { PaginateComponent } from '../../../../common/paginate/paginate.component';
 import { UserService } from '../../../../core/user/user.service';
@@ -11,6 +19,7 @@ import { User } from '../../../../core/user/user.types';
 import { Datalist } from '../../../../interface/datalist';
 import { Paginate } from '../../../../interface/paginate';
 import { DatalistService } from '../../../../services/datalist.service';
+import { COLUMN_TITLES } from './query-column-title';
 
 const EXCEL_TYPE =
     'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
@@ -25,6 +34,11 @@ const EXCEL_EXTENSION = '.xlsx';
         MatSortModule,
         PaginateComponent,
         PaginateTakeComponent,
+        MatInputModule,
+        MatIconModule,
+        FormsModule,
+        ReactiveFormsModule,
+        DateTimePickerComponentComponent,
     ],
     templateUrl: './query.component.html',
     styleUrls: ['./query.component.scss'],
@@ -42,164 +56,17 @@ export class QueryComponent implements OnInit {
     limit: number = GlobalVariable.pageTake;
     tblName: string = 'm_data15m';
 
+    form: FormGroup;
+
     private _unsubscribeAll: Subject<any> = new Subject<any>();
     @ViewChild(MatSort, { static: true }) sort!: MatSort;
 
     _datalistService = inject(DatalistService);
     _userService = inject(UserService);
+    fb = inject(FormBuilder);
 
-    columnTitles = [
-        // {
-        //     title: '#',
-        //     field: '',
-        //     class: '',
-        // },
-        {
-            title: '-',
-            field: '',
-            class: '',
-        },
-        {
-            title: 'CREATE',
-            field: 'create',
-            class: 'whitespace-nowrap',
-        },
-        {
-            title: 'Time Job',
-            field: 'timejob',
-            class: 'whitespace-nowrap',
-        },
-        {
-            title: 'RW',
-            field: 'rw_volt',
-            class: 'whitespace-nowrap',
-        },
-        {
-            title: 'YW',
-            field: 'yw_volt',
-            class: 'whitespace-nowrap',
-        },
-        {
-            title: 'BW',
-            field: 'bw_volt',
-            class: 'whitespace-nowrap',
-        },
-        {
-            title: 'RY',
-            field: 'ry_volt',
-            class: 'whitespace-nowrap',
-        },
-        {
-            title: 'YB',
-            field: 'yb_volt',
-            class: 'whitespace-nowrap',
-        },
-        {
-            title: 'BR',
-            field: 'br_volt',
-            class: 'whitespace-nowrap',
-        },
-        {
-            title: 'R',
-            field: 'r_ampere',
-            class: 'whitespace-nowrap',
-        },
-        {
-            title: 'Y',
-            field: 'y_ampere',
-            class: 'whitespace-nowrap',
-        },
-        {
-            title: 'B',
-            field: 'b_ampere',
-            class: 'whitespace-nowrap',
-        },
-        {
-            title: 'W',
-            field: 'w_ampere',
-            class: 'whitespace-nowrap',
-        },
-        {
-            title: 'POWER RECEIVE',
-            field: 'wh_powerrecv',
-            class: '',
-        },
-        {
-            title: 'ACTIVE POWER',
-            field: 'active_power',
-            class: '',
-        },
-        {
-            title: 'APPARENT',
-            field: 'apparent_power',
-            class: '',
-        },
-        {
-            title: 'REACTIVE',
-            field: 'reactive_power',
-            class: '',
-        },
-        {
-            title: 'POWER FACTOR',
-            field: 'power_factor',
-            class: '',
-        },
-        {
-            title: 'FREQ',
-            field: 'freq',
-            class: '',
-        },
-        {
-            title: 'TEMP 1',
-            field: 'hd1_temp',
-            class: '',
-        },
-        {
-            title: 'HUM 1',
-            field: 'hd1_hum',
-            class: '',
-        },
-        {
-            title: 'TEMP 2',
-            field: 'hd2_temp',
-            class: '',
-        },
-        {
-            title: 'HUM 2',
-            field: 'hd2_hum',
-            class: '',
-        },
-        {
-            title: 'TEMP 3',
-            field: 'hd3_temp',
-            class: '',
-        },
-        {
-            title: 'HUM 3',
-            field: 'hd3_hum',
-            class: '',
-        },
-        {
-            title: 'LINE RUN',
-            field: 'line_run',
-            class: '',
-        },
-        {
-            title: 'PLAN',
-            field: 'plan_prod',
-            class: '',
-        },
-        {
-            title: 'TARGET PROD',
-            field: 'target_prod',
-            class: '',
-        },
-        {
-            title: 'ACTUAL PROD',
-            field: 'act_prod',
-            class: '',
-        },
-    ];
+    columnTitles = COLUMN_TITLES;
+
     ngOnInit(): void {
         this._userService.user$
             .pipe(takeUntil(this._unsubscribeAll))
@@ -207,15 +74,16 @@ export class QueryComponent implements OnInit {
                 this.user = user;
             });
 
+        this.form = this.fb.group({
+            // eg: [''],
+            // uniq: [''],
+            // start: [this.tanggalMulai],
+            // end: [this.tanggalEnd],
+        });
         this.load();
     }
 
-    load(
-        page: number = 1,
-        limit: number = 10
-        // start = this.start,
-        // end = this.end
-    ): void {
+    load(page: number = 1, limit: number = 10): void {
         this._datalistService
             .all(
                 page,
@@ -223,8 +91,6 @@ export class QueryComponent implements OnInit {
                 this.sort.active,
                 this.sort.direction,
                 this.find
-                // start,
-                // end
             )
             .subscribe((res: Paginate) => {
                 this.datas = res.data;
@@ -236,8 +102,6 @@ export class QueryComponent implements OnInit {
     }
 
     sortData(sort: Sort) {
-        console.log(sort);
-
         this.load();
     }
 
@@ -251,7 +115,21 @@ export class QueryComponent implements OnInit {
         this.load();
     }
 
-    exportexcel(): void {
-        this._datalistService.exportExcel();
+    exportToExcel(): void {
+        this._datalistService.exportExcel(
+            this.page,
+            this.total,
+            this.sort?.active,
+            this.sort?.direction,
+            this.find
+        );
+    }
+
+    submit() {
+        // this.start = this.form.value.start;
+        // this.end = this.form.value.end;
+        // this.eg = this.form.value.eg;
+        // this.uniq = this.form.value.uniq;
+        this.load();
     }
 }

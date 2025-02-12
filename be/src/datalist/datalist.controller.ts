@@ -1,22 +1,7 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-  Request,
-  Query,
-  Res,
-} from '@nestjs/common';
+import { Controller, Get, Request, Res } from '@nestjs/common';
 import { Response } from 'express';
 import { DatalistService } from './datalist.service';
-import { CreateDatalistDto } from './dto/create-datalist.dto';
-import { UpdateDatalistDto } from './dto/update-datalist.dto';
-import { Datalist } from './entities/datalist.entity';
 import { formatDate } from '../utils/date.utils';
-import * as ExcelJS from 'exceljs';
 
 const tables = 'm_data15m';
 
@@ -24,11 +9,12 @@ const tables = 'm_data15m';
 export class DatalistController {
   constructor(private readonly _service: DatalistService) {}
 
-  @Get()
-  async findAll(@Request() request) {
+  /**
+   * Fungsi untuk mengambil data dengan filter, sorting, dan pagination.
+   */
+  private async getData(request, isExport = false): Promise<any> {
     const returnData = await this._service.paginate(tables, [], {
-      limit: request.query.limit,
-      // limit: 88,
+      limit: isExport ? 100000 : request.query.limit,
       page: request.query.page,
       sort: request.query.sort,
       direction: request.query.direction,
@@ -66,6 +52,7 @@ export class DatalistController {
       ],
     });
 
+    // Format tanggal sebelum dikembalikan
     returnData.data = returnData.data.map((item) => ({
       ...item,
       create: formatDate(new Date(item.create)),
@@ -75,33 +62,20 @@ export class DatalistController {
     return returnData;
   }
 
+  /**
+   * Endpoint untuk mendapatkan data dengan pagination
+   */
+  @Get()
+  async findAll(@Request() request) {
+    return await this.getData(request);
+  }
+
+  /**
+   * Endpoint untuk export data ke Excel
+   */
   @Get('excel')
-  async exportExcel(@Res() res: Response) {
-    console.log(1);
-
-    const workbook = new ExcelJS.Workbook();
-    const worksheet = workbook.addWorksheet('Data');
-
-    // Tambahkan kolom
-    worksheet.columns = [
-      { header: 'ID', key: 'id', width: 10 },
-      { header: 'Nama', key: 'name', width: 30 },
-      { header: 'Email', key: 'email', width: 30 },
-    ];
-
-    // Tambahkan data contoh
-    worksheet.addRow({ id: 1, name: 'John Doe', email: 'john@example.com' });
-    worksheet.addRow({ id: 2, name: 'Jane Doe', email: 'jane@example.com' });
-
-    // Pastikan header benar
-    res.setHeader(
-      'Content-Type',
-      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-    );
-    res.setHeader('Content-Disposition', 'attachment; filename="data.xlsx"');
-
-    // Stream workbook langsung ke response
-    const buffer = await workbook.xlsx.writeBuffer();
-    res.end(buffer);
+  async exportExcel(@Res() res: Response, @Request() request) {
+    const returnData = await this.getData(request, true);
+    await this._service.exportDataToExcel(returnData.data, res);
   }
 }

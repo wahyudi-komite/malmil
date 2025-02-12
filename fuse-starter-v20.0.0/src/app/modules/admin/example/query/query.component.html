@@ -11,6 +11,80 @@
                     <div class="text-secondary font-medium tracking-tight">
                         WA Line device status
                     </div>
+                    <form
+                        [formGroup]="form"
+                        (submit)="submit()"
+                        autocomplete="off"
+                    >
+                        <div class="gt-xs:flex-row flex space-x-4">
+                            <mat-form-field class="gt-xs:pr-3 flex-auto">
+                                <input
+                                    matInput
+                                    [placeholder]="'Create from :'"
+                                    (keyup)="applyFilter($event)"
+                                />
+                                <mat-icon
+                                    class="icon-size-5"
+                                    matPrefix
+                                    [svgIcon]="
+                                        'heroicons_solid:magnifying-glass'
+                                    "
+                                ></mat-icon>
+                            </mat-form-field>
+
+                            <mat-form-field class="gt-xs:pl-3 flex-auto">
+                                <input matInput [placeholder]="'Create to :'" />
+                                <mat-icon
+                                    class="icon-size-5"
+                                    matPrefix
+                                    [svgIcon]="'heroicons_solid:user-circle'"
+                                ></mat-icon>
+                            </mat-form-field>
+                            <mat-form-field class="gt-xs:pl-3 flex-auto">
+                                <input
+                                    matInput
+                                    [placeholder]="'Time Job from :'"
+                                />
+                                <mat-icon
+                                    class="icon-size-5"
+                                    matPrefix
+                                    [svgIcon]="'heroicons_solid:user-circle'"
+                                ></mat-icon>
+                            </mat-form-field>
+                            <mat-form-field class="gt-xs:pl-3 flex-auto">
+                                <input
+                                    matInput
+                                    [placeholder]="'Time Job to :'"
+                                />
+                                <mat-icon
+                                    class="icon-size-5"
+                                    matPrefix
+                                    [svgIcon]="'heroicons_solid:user-circle'"
+                                ></mat-icon>
+                            </mat-form-field>
+                            <mat-form-field class="gt-xs:pl-3 flex-auto">
+                                <input matInput [placeholder]="'RW'" />
+                                <mat-icon
+                                    class="icon-size-5"
+                                    matPrefix
+                                    [svgIcon]="
+                                        'heroicons_solid:magnifying-glass'
+                                    "
+                                ></mat-icon>
+                            </mat-form-field>
+                            <mat-form-field class="gt-xs:pl-3 flex-auto">
+                                <input matInput [placeholder]="'YW'" />
+                                <mat-icon
+                                    class="icon-size-5"
+                                    matPrefix
+                                    [svgIcon]="
+                                        'heroicons_solid:magnifying-glass'
+                                    "
+                                ></mat-icon>
+                            </mat-form-field>
+                            <app-date-time-picker-component></app-date-time-picker-component>
+                        </div>
+                    </form>
                     <div class="flex items-center justify-between">
                         <div class="paginator-div">
                             <app-paginate-take
@@ -20,8 +94,8 @@
                         <div class="group relative">
                             <button
                                 data-tooltip-target="tooltip-default"
-                                (click)="exportexcel()"
-                                class="relative flex items-center gap-2 rounded-md border-[1.5px] border-green-600 px-4 py-2 text-sm font-medium text-green-800 shadow-md transition-all duration-300 ease-in-out hover:border-green-700 hover:bg-green-100 hover:shadow-lg active:scale-95"
+                                (click)="exportToExcel()"
+                                class="hover:indigo-green-700 relative flex items-center gap-2 rounded-md border-[1.5px] border-indigo-600 px-4 py-2 text-sm font-medium text-indigo-800 shadow-md transition-all duration-300 ease-in-out hover:bg-indigo-100 hover:shadow-lg active:scale-95"
                             >
                                 <svg
                                     xmlns="http://www.w3.org/2000/svg"
@@ -29,7 +103,7 @@
                                     viewBox="0 0 24 24"
                                     stroke-width="1.5"
                                     stroke="currentColor"
-                                    class="h-5 w-5 text-green-600"
+                                    class="h-5 w-5 text-indigo-600"
                                 >
                                     <path
                                         stroke-linecap="round"
