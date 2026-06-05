@@ -1,5 +1,6 @@
 # Ignore public assets
-fuse-starter-v20.0.0/public/
+frontend-ems/public/
+
 
 # Ignore image and asset formats
 *.png

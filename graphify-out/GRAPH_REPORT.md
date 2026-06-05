@@ -92,9 +92,9 @@
 
 ## Surprising Connections (you probably didn't know these)
 - `bootstrap()` --calls--> `create()`  [INFERRED]
-  be\src\main.ts → fuse-starter-v20.0.0\src\app\services\abstract.service.ts
+  be\src\main.ts → frontend-ems\src\app\services\abstract.service.ts
 - `initialDataResolver()` --calls--> `get()`  [INFERRED]
-  fuse-starter-v20.0.0\src\app\app.resolvers.ts → fuse-starter-v20.0.0\src\app\services\abstract.service.ts
+  frontend-ems\src\app\app.resolvers.ts → frontend-ems\src\app\services\abstract.service.ts
 
 ## Hyperedges (group relationships)
 - **Authentication System Flow** — auth_auth_controller_authcontroller, auth_auth_guard_authguard, auth_auth_service_authservice, sign_in_sign_in_component_authsignincomponent [INFERRED 0.85]
@@ -419,7 +419,7 @@ Nodes (1): DatalistService
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
 - **Thin community `Community 31`** (3 nodes): `FuseAnimationCurves`, `FuseAnimationDurations`, `defaults.ts`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Fullscreen UI Component`** (3 nodes): `FuseFullscreenComponent`, `.toggleFullscreen()`, `fullscreen.component.ts`
+- **Thin community `Fullscreen UI Component`** (3 nodes): `fullscreen.component.ts`, `FuseFullscreenComponent`, `.toggleFullscreen()`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
 - **Thin community `Community 33`** (3 nodes): `mock-api.utils.ts`, `FuseMockApiUtils`, `.guid()`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
