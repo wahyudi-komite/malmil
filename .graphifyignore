@@ -1,0 +1,20 @@
+# Ignore public assets
+fuse-starter-v20.0.0/public/
+
+# Ignore image and asset formats
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.ico
+*.svg
+*.woff
+*.woff2
+*.eot
+*.ttf
+
+# Ignore build/dist and package locks
+node_modules/
+dist/
+package-lock.json
+yarn.lock
