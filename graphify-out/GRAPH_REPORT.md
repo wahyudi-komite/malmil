@@ -92,7 +92,7 @@
 
 ## Surprising Connections (you probably didn't know these)
 - `bootstrap()` --calls--> `create()`  [INFERRED]
-  be\src\main.ts → frontend-ems\src\app\services\abstract.service.ts
+  backend-ems\src\main.ts → frontend-ems\src\app\services\abstract.service.ts
 - `initialDataResolver()` --calls--> `get()`  [INFERRED]
   frontend-ems\src\app\app.resolvers.ts → frontend-ems\src\app\services\abstract.service.ts
 

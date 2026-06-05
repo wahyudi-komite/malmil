@@ -1,0 +1,45 @@
+# Dependency directories
+node_modules/
+**/node_modules/
+
+# Build outputs
+dist/
+**/dist/
+.angular/
+**/.angular/
+**/main-es2015.*.js
+**/main-es5.*.js
+
+# Environment variables
+.env
+.env.*
+!.env.example
+**/be/.env
+**/backend-ems/.env
+
+# IDEs and editors
+.idea/
+.vscode/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# OS metadata
+.DS_Store
+Thumbs.db
+
+# Log files
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# NestJS build output
+/backend-ems/dist
+/backend-ems/coverage
+
+# Angular build output
+/frontend-ems/dist
+/frontend-ems/tmp
