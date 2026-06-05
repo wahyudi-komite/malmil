@@ -43,3 +43,8 @@ pnpm-debug.log*
 # Angular build output
 /frontend-ems/dist
 /frontend-ems/tmp
+
+# Agent and Graphify folders
+.agents/
+graphify-out/
+
