@@ -65,16 +65,18 @@ export const authInterceptor = (
     return next(newReq).pipe(
         catchError((error) => {
             if (error instanceof HttpErrorResponse && error.status === 401) {
-                // Attempt token refresh
                 return authService.refreshToken().pipe(
                     switchMap((resp: any) => {
                         if (resp && resp.accessToken) {
-                            // Update access token and retry original request
                             authService.accessToken = resp.accessToken;
-                            const retryReq = req.clone({ withCredentials: true });
+                            const retryReq = req.clone({
+                                withCredentials: true,
+                                setHeaders: {
+                                    Authorization: `Bearer ${authService.accessToken}`,
+                                },
+                            });
                             return next(retryReq);
                         }
-                        // Refresh failed, sign out
                         authService.signOut();
                         location.reload();
                         return throwError(error);

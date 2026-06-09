@@ -40,7 +40,22 @@
 <thin-layout></thin-layout>
 }
 
+@if (layout === 'centered') {
+    <centered-layout></centered-layout>
+}
+@if (layout === 'enterprise') {
+    <enterprise-layout></enterprise-layout>
+}
+@if (layout === 'material') {
+    <material-layout></material-layout>
+}
+@if (layout === 'modern') {
+    <modern-layout></modern-layout>
+}
 <!-- ----------------------------------------------------------------------------------------------------- -->
+<!-- Settings drawer - Remove this to remove the drawer and its button -->
+<!-- ----------------------------------------------------------------------------------------------------- -->
+<!-- <settings></settings> -->
 <!-- Settings drawer - Remove this to remove the drawer and its button -->
 <!-- ----------------------------------------------------------------------------------------------------- -->
 <!-- <settings></settings> -->

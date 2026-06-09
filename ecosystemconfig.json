@@ -1,0 +1,24 @@
+{
+  "apps": [
+    {
+      "name": "backend-ems",
+      "script": "npm",
+      "args": "run start:dev",
+      "cwd": "backend-ems",
+      "watch": true,
+      "env": {
+        "NODE_ENV": "development"
+      }
+    },
+    {
+      "name": "frontend-ems",
+      "script": "npm",
+      "args": "run start",
+      "cwd": "frontend-ems",
+      "watch": true,
+      "env": {
+        "NODE_ENV": "development"
+      }
+    }
+  ]
+}

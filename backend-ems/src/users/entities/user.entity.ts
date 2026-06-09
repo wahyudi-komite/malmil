@@ -26,9 +26,7 @@ export class User {
   @Exclude()
   password: string;
 
-  @Column({ length: 20 })
-  @Exclude()
-  salt: string;
+
 
   @ManyToOne(() => Role)
   @JoinColumn({ name: 'role_id' })

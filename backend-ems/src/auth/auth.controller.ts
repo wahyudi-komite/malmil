@@ -62,7 +62,7 @@ export class AuthController {
     if (!user) {
       throw new NotFoundException('User not found');
     }
-    if (!(await bcrypt.compare(user.salt + password, user.password))) {
+    if (!(await bcrypt.compare(password, user.password))) {
       throw new BadRequestException('Invalid credentials');
     }
     const accessJwt = await this.jwtService.signAsync({ id: user.id });
@@ -95,6 +95,7 @@ export class AuthController {
   }
 
   @UseInterceptors(ClassSerializerInterceptor)
+  @UseGuards(CsrfGuard)
   @Post('sign-in-with-token')
   async signInWithToken(@Body('accessToken') token: string, @Res() res: Response) {
     if (!token) {
@@ -102,18 +103,17 @@ export class AuthController {
     }
 
     try {
-      const { user, newToken, payload } = await this.authService.signInWithToken(token);
-      
-      const refreshToken = this.jwtService.sign(payload, { expiresIn: '30d', jwtid: this.authService.generateJti() });
-      const csrfToken = this.authService.generateCsrfToken();
-      
-      res.cookie('refreshToken', refreshToken, {
+      const { user, newToken } = await this.authService.signInWithToken(token);
+
+      const rawRefresh = await this.authService.generateRefreshToken(user.id);
+      res.cookie('refreshToken', rawRefresh, {
         httpOnly: true,
         secure: true,
         sameSite: 'none',
         maxAge: 30 * 24 * 60 * 60 * 1000,
       });
-      
+
+      const csrfToken = this.authService.generateCsrfToken();
       res.cookie('XSRF-TOKEN', csrfToken, {
         httpOnly: false,
         secure: true,
@@ -145,7 +145,7 @@ export class AuthController {
     // Issue new refresh token and store
     const newRawRefresh = await this.authService.generateRefreshToken(userId);
     // Issue new access token
-    const newAccessToken = this.jwtService.sign({ id: userId });
+    const newAccessToken = this.jwtService.sign({ id: userId }, { expiresIn: '1d' });
 
     // Set new cookies
     res.cookie('refreshToken', newRawRefresh, {
@@ -167,8 +167,10 @@ export class AuthController {
   async logout(@Req() req: Request, @Res({ passthrough: true }) response: Response) {
     const refreshToken = req.cookies['refreshToken'];
     if (refreshToken) {
-      const jti = this.authService.extractJti(refreshToken);
-      if (jti) this.authService.revokeToken(jti);
+      const stored = await this.authService.validateRefreshToken(refreshToken);
+      if (stored) {
+        await this.authService.revokeRefreshToken(stored.id);
+      }
     }
     response.clearCookie('refreshToken');
     response.clearCookie('accessToken');

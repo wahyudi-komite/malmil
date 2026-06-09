@@ -25,15 +25,13 @@ export class UsersController {
 
   @Post()
   async create(@Body() createUserDto: CreateUserDto) {
-    const salt = Math.random().toString(36).substr(2, 10);
-    const password = await bcrypt.hash(salt + createUserDto.password, 12);
+    const password = await bcrypt.hash(createUserDto.password, 12);
 
     const { role_id, ...data } = createUserDto;
 
     return this.usersService.create({
       ...data,
       password,
-      salt: salt,
       role: { id: role_id },
     });
   }
