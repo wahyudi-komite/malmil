@@ -20,6 +20,7 @@ import { UsersService } from '../users/users.service';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import { Request, Response } from 'express';
+import { CsrfGuard } from './guards/csrf.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -64,37 +65,104 @@ export class AuthController {
       throw new BadRequestException('Invalid credentials');
     }
     const jwt = await this.jwtService.signAsync({ id: user.id });
-    response.cookie('accessToken', jwt, { httpOnly: true });
+    response.cookie('accessToken', jwt, {
+      httpOnly: true,
+      secure: true,
+      sameSite: 'strict',
+      maxAge: 15 * 60 * 1000, // 15 minutes
+    });
 
     return { accessToken: jwt, user: user };
   }
 
   @UseInterceptors(ClassSerializerInterceptor)
   @Post('sign-in-with-token')
-  async signInWithToken(@Body('accessToken') token: string) {
+  async signInWithToken(@Body('accessToken') token: string, @Res() res: Response) {
     if (!token) {
       throw new UnauthorizedException('Token tidak disediakan');
     }
 
     try {
-      const { user, newToken } = await this.authService.signInWithToken(token);
+      const { user, newToken, payload } = await this.authService.signInWithToken(token);
+      
+      const refreshToken = this.jwtService.sign(payload, { expiresIn: '30d', jwtid: this.generateJti() });
+      const csrfToken = this.generateCsrfToken();
+      
+      res.cookie('refreshToken', refreshToken, {
+        httpOnly: true,
+        secure: true,
+        sameSite: 'none',
+        maxAge: 30 * 24 * 60 * 60 * 1000,
+      });
+      
+      res.cookie('XSRF-TOKEN', csrfToken, {
+        httpOnly: false,
+        secure: true,
+        sameSite: 'none',
+      });
 
-      return {
-        message: 'Sign in berhasil',
-        user: user,
-        accessToken: newToken,
-      };
+      return res.json({ accessToken: newToken, user: user });
     } catch (error) {
       throw new UnauthorizedException(error.message);
     }
   }
 
   // @UseGuards(AuthGuard)
+  @Post('refresh')
+  @UseGuards(CsrfGuard)
+  async refresh(@Req() req: Request, @Res() res: Response) {
+    const refreshToken = req.cookies['refreshToken'];
+    if (!refreshToken) {
+      return res.status(401).json({ message: 'Refresh token missing' });
+    }
+
+    let payload: any;
+    try {
+      payload = this.jwtService.verify(refreshToken);
+    } catch (e) {
+      return res.status(401).json({ message: 'Invalid refresh token' });
+    }
+
+    const jti = this.authService.extractJti(refreshToken);
+    if (jti && this.authService.isTokenRevoked(jti)) {
+      return res.status(401).json({ message: 'Refresh token revoked' });
+    }
+
+    // Issue new access token
+    const newAccessToken = this.jwtService.sign({ id: payload.id });
+
+    // Rotate refresh token
+    const newRefreshToken = this.jwtService.sign({ id: payload.id }, { expiresIn: '30d', jwtid: this.authService.generateJti() });
+    const newCsrfToken = this.authService.generateCsrfToken();
+
+    // Revoke old refresh token
+    if (jti) this.authService.revokeToken(jti);
+
+    // Set new cookies
+    res.cookie('refreshToken', newRefreshToken, {
+      httpOnly: true,
+      secure: true,
+      sameSite: 'none',
+      maxAge: 30 * 24 * 60 * 60 * 1000,
+    });
+    res.cookie('XSRF-TOKEN', newCsrfToken, {
+      httpOnly: false,
+      secure: true,
+      sameSite: 'none',
+    });
+
+    return res.json({ accessToken: newAccessToken });
+  }
+
   @Post('logout')
-  async logout(@Res({ passthrough: true }) response: Response) {
+  async logout(@Req() req: Request, @Res({ passthrough: true }) response: Response) {
+    const refreshToken = req.cookies['refreshToken'];
+    if (refreshToken) {
+      const jti = this.authService.extractJti(refreshToken);
+      if (jti) this.authService.revokeToken(jti);
+    }
+    response.clearCookie('refreshToken');
     response.clearCookie('accessToken');
-    return {
-      message: 'Success',
-    };
+    return { message: 'Success' };
   }
 }
