@@ -50,6 +50,7 @@ export class AuthController {
     }
   }
 
+  // Sign-in endpoint – generate access and refresh tokens, store refresh token hash
   @UseInterceptors(ClassSerializerInterceptor)
   @Post('sign-in')
   async login(
@@ -64,15 +65,33 @@ export class AuthController {
     if (!(await bcrypt.compare(user.salt + password, user.password))) {
       throw new BadRequestException('Invalid credentials');
     }
-    const jwt = await this.jwtService.signAsync({ id: user.id });
-    response.cookie('accessToken', jwt, {
+    const accessJwt = await this.jwtService.signAsync({ id: user.id });
+    // Store access token in HttpOnly cookie (optional) – here we keep existing logic
+    response.cookie('accessToken', accessJwt, {
       httpOnly: true,
       secure: true,
       sameSite: 'strict',
       maxAge: 15 * 60 * 1000, // 15 minutes
     });
 
-    return { accessToken: jwt, user: user };
+    // Generate and store refresh token in DB
+    const rawRefresh = await this.authService.generateRefreshToken(user.id);
+    response.cookie('refreshToken', rawRefresh, {
+      httpOnly: true,
+      secure: true,
+      sameSite: 'none',
+      maxAge: 30 * 24 * 60 * 60 * 1000,
+    });
+
+    // CSRF token for double‑submit
+    const csrfToken = this.authService.generateCsrfToken();
+    response.cookie('XSRF-TOKEN', csrfToken, {
+      httpOnly: false,
+      secure: true,
+      sameSite: 'none',
+    });
+
+    return { accessToken: accessJwt, user: user };
   }
 
   @UseInterceptors(ClassSerializerInterceptor)
@@ -107,50 +126,40 @@ export class AuthController {
     }
   }
 
-  // @UseGuards(AuthGuard)
+  // Refresh endpoint – validate DB‑stored refresh token, rotate, revoke old
   @Post('refresh')
   @UseGuards(CsrfGuard)
   async refresh(@Req() req: Request, @Res() res: Response) {
-    const refreshToken = req.cookies['refreshToken'];
-    if (!refreshToken) {
+    const rawRefresh = req.cookies['refreshToken'];
+    if (!rawRefresh) {
       return res.status(401).json({ message: 'Refresh token missing' });
     }
-
-    let payload: any;
-    try {
-      payload = this.jwtService.verify(refreshToken);
-    } catch (e) {
-      return res.status(401).json({ message: 'Invalid refresh token' });
+    const stored = await this.authService.validateRefreshToken(rawRefresh);
+    if (!stored) {
+      return res.status(401).json({ message: 'Invalid or revoked refresh token' });
     }
-
-    const jti = this.authService.extractJti(refreshToken);
-    if (jti && this.authService.isTokenRevoked(jti)) {
-      return res.status(401).json({ message: 'Refresh token revoked' });
-    }
-
+    // Rotate token
+    const userId = stored.user.id;
+    // Revoke old token record
+    await this.authService.revokeRefreshToken(stored.id);
+    // Issue new refresh token and store
+    const newRawRefresh = await this.authService.generateRefreshToken(userId);
     // Issue new access token
-    const newAccessToken = this.jwtService.sign({ id: payload.id });
-
-    // Rotate refresh token
-    const newRefreshToken = this.jwtService.sign({ id: payload.id }, { expiresIn: '30d', jwtid: this.authService.generateJti() });
-    const newCsrfToken = this.authService.generateCsrfToken();
-
-    // Revoke old refresh token
-    if (jti) this.authService.revokeToken(jti);
+    const newAccessToken = this.jwtService.sign({ id: userId });
 
     // Set new cookies
-    res.cookie('refreshToken', newRefreshToken, {
+    res.cookie('refreshToken', newRawRefresh, {
       httpOnly: true,
       secure: true,
       sameSite: 'none',
       maxAge: 30 * 24 * 60 * 60 * 1000,
     });
+    const newCsrfToken = this.authService.generateCsrfToken();
     res.cookie('XSRF-TOKEN', newCsrfToken, {
       httpOnly: false,
       secure: true,
       sameSite: 'none',
     });
-
     return res.json({ accessToken: newAccessToken });
   }
 

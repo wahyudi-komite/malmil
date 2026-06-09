@@ -28,16 +28,33 @@ export class AuthService {
     // -----------------------------------------------------------------------------------------------------
 
     /**
-     * Setter & getter for access token
+     * Setter & getter for access token with sessionStorage persistence
      */
     set accessToken(token: string) {
-        // localStorage.setItem('accessToken', token);
+        // Store in BehaviorSubject and sessionStorage
         this.accessTokenSubject.next(token);
+        sessionStorage.setItem('accessToken', token);
     }
 
     get accessToken(): string | null {
-        // return localStorage.getItem('accessToken') ?? '';
-        return this.accessTokenSubject.value;
+        // Return from BehaviorSubject; if null, attempt to read from sessionStorage
+        const current = this.accessTokenSubject.value;
+        if (current) {
+            return current;
+        }
+        const stored = sessionStorage.getItem('accessToken');
+        if (stored) {
+            this.accessTokenSubject.next(stored);
+            return stored;
+        }
+        return null;
+    }
+
+    /**
+     * Refresh the access token using the refresh token cookie.
+     */
+    refreshToken(): Observable<any> {
+        return this._httpClient.post(`${environment.apiUrl}/auth/refresh`, {});
     }
 
     private checkAuthStatus(): Observable<boolean> {

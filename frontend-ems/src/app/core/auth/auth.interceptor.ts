@@ -7,7 +7,7 @@ import {
 import { inject } from '@angular/core';
 import { AuthService } from 'app/core/auth/auth.service';
 import { AuthUtils } from 'app/core/auth/auth.utils';
-import { Observable, catchError, throwError } from 'rxjs';
+import { Observable, catchError, throwError, switchMap } from 'rxjs';
 
 /**
  * Intercept
@@ -32,27 +32,55 @@ export const authInterceptor = (
     // for the protected API routes which our response interceptor will
     // catch and delete the access token from the local storage while logging
     // the user out from the app.
+    // Helper to read cookie
+    const getCookie = (name: string): string | null => {
+        const match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
+        return match ? decodeURIComponent(match[2]) : null;
+    };
+
+    const xsrfToken = getCookie('XSRF-TOKEN');
+
     if (
         authService.accessToken &&
         !AuthUtils.isTokenExpired(authService.accessToken)
     ) {
-        newReq = req.clone({
-            withCredentials: true,
-        });
+        if (xsrfToken) {
+            newReq = req.clone({
+                withCredentials: true,
+                setHeaders: {
+                    Authorization: `Bearer ${authService.accessToken}`,
+                    'x-xsrf-token': xsrfToken,
+                },
+            });
+        } else {
+            newReq = req.clone({
+                withCredentials: true,
+                setHeaders: {
+                    Authorization: `Bearer ${authService.accessToken}`,
+                },
+            });
+        }
     }
 
-    // Response
     return next(newReq).pipe(
         catchError((error) => {
-            // Catch "401 Unauthorized" responses
             if (error instanceof HttpErrorResponse && error.status === 401) {
-                // Sign out
-                authService.signOut();
-
-                // Reload the app
-                location.reload();
+                // Attempt token refresh
+                return authService.refreshToken().pipe(
+                    switchMap((resp: any) => {
+                        if (resp && resp.accessToken) {
+                            // Update access token and retry original request
+                            authService.accessToken = resp.accessToken;
+                            const retryReq = req.clone({ withCredentials: true });
+                            return next(retryReq);
+                        }
+                        // Refresh failed, sign out
+                        authService.signOut();
+                        location.reload();
+                        return throwError(error);
+                    })
+                );
             }
-
             return throwError(error);
         })
     );
