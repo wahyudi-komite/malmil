@@ -5,12 +5,11 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
-  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 import { Role } from '../../roles/entities/role.entity';
-import { RefreshToken } from '../../auth/entities/refresh-token.entity';
+
 
 @Entity('users')
 export class User {
@@ -38,8 +37,7 @@ export class User {
   @Column({ length: 50 })
   avatar: string;
 
-  @Column({ type: 'boolean', default: true })
-  status: number;
+
 
   @CreateDateColumn()
   @Exclude()

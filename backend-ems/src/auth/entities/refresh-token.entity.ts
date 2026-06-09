@@ -1,5 +1,4 @@
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn } from 'typeorm';
-import { User } from '../../users/entities/user.entity';
+import { Column, Entity, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn } from 'typeorm';
 
 /**
  * Stores a hashed version of a refresh token.
@@ -15,8 +14,9 @@ export class RefreshToken {
   @Column({ length: 64 })
   tokenHash: string;
 
-  @ManyToOne(() => User, (user) => user.refreshTokens, { onDelete: 'CASCADE' })
-  user: User;
+  /** Foreign key to user */
+  @Column({ name: 'user_id' })
+  userId: number;
 
   /** Expiration date – same as cookie max‑age (30 days) */
   @Column()

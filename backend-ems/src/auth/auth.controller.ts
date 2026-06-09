@@ -104,8 +104,8 @@ export class AuthController {
     try {
       const { user, newToken, payload } = await this.authService.signInWithToken(token);
       
-      const refreshToken = this.jwtService.sign(payload, { expiresIn: '30d', jwtid: this.generateJti() });
-      const csrfToken = this.generateCsrfToken();
+      const refreshToken = this.jwtService.sign(payload, { expiresIn: '30d', jwtid: this.authService.generateJti() });
+      const csrfToken = this.authService.generateCsrfToken();
       
       res.cookie('refreshToken', refreshToken, {
         httpOnly: true,
@@ -139,7 +139,7 @@ export class AuthController {
       return res.status(401).json({ message: 'Invalid or revoked refresh token' });
     }
     // Rotate token
-    const userId = stored.user.id;
+    const userId = stored.userId;
     // Revoke old token record
     await this.authService.revokeRefreshToken(stored.id);
     // Issue new refresh token and store
