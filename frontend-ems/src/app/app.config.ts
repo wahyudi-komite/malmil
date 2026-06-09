@@ -22,7 +22,7 @@ import { appRoutes } from 'app/app.routes';
 import { provideAuth } from 'app/core/auth/auth.provider';
 import { provideIcons } from 'app/core/icons/icons.provider';
 import { mockApiServices } from 'app/mock-api';
-import { firstValueFrom } from 'rxjs';
+import { firstValueFrom, catchError, of } from 'rxjs';
 import { TranslocoHttpLoader } from './core/transloco/transloco.http-loader';
 import { DATE_PIPE_TOKEN } from './tokens/date-pipe.token';
 registerLocaleData(localeId, 'id-ID');
@@ -78,14 +78,23 @@ export const appConfig: ApplicationConfig = {
             loader: TranslocoHttpLoader,
         }),
         {
-            // Preload the default language before the app starts to prevent empty/jumping content
+            // Preload the default language before the app starts. If the language file
+            // is missing or empty, `firstValueFrom` would throw an `EmptyError`. We guard against
+            // that by catching the error and completing with an empty object, ensuring the app
+            // bootstrap never hangs.
             provide: APP_INITIALIZER,
             useFactory: () => {
                 const translocoService = inject(TranslocoService);
                 const defaultLang = translocoService.getDefaultLang();
                 translocoService.setActiveLang(defaultLang);
-
-                return () => firstValueFrom(translocoService.load(defaultLang));
+                // Load the language file and swallow any EmptyError
+                return () =>
+                    firstValueFrom(
+                        translocoService.load(defaultLang).pipe(
+                            // If the observable completes without emitting, provide a fallback.
+                            catchError(() => of({}))
+                        )
+                    );
             },
             multi: true,
         },
