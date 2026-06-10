@@ -10,6 +10,7 @@ import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
 import { DatarealModule } from './datareal/datareal.module';
 import { DatalistModule } from './datalist/datalist.module';
+import { SeedModule } from './database/seeders/seed.module';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { DatalistModule } from './datalist/datalist.module';
     AuthModule,
     DatarealModule,
     DatalistModule,
+    SeedModule,
   ],
   controllers: [],
   providers: [
