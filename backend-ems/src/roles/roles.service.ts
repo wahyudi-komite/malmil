@@ -1,8 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { CreateRoleDto } from './dto/create-role.dto';
-import { UpdateRoleDto } from './dto/update-role.dto';
 import { Role } from './entities/role.entity';
 import { AbstractService } from '../common/abstract.service';
 
@@ -12,5 +10,22 @@ export class RolesService extends AbstractService {
     @InjectRepository(Role) private readonly roleRepository: Repository<Role>,
   ) {
     super(roleRepository);
+  }
+
+  async updatePermissions(
+    id: string,
+    name: string,
+    permissionIds: string[],
+  ): Promise<Role> {
+    const role = await this.roleRepository.findOne({
+      where: { id } as any,
+      relations: ['permissions'],
+    });
+    if (!role) {
+      throw new Error('Role not found');
+    }
+    role.name = name;
+    role.permissions = permissionIds.map((id) => ({ id })) as any;
+    return this.roleRepository.save(role);
   }
 }

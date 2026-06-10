@@ -2,9 +2,9 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Request } from 'express';
 import { randomBytes, createHash } from 'crypto';
 import { UsersService } from '../users/users.service';
+import { User } from '../users/entities/user.entity';
 import { RefreshToken } from './entities/refresh-token.entity';
 
 @Injectable()
@@ -17,28 +17,45 @@ export class AuthService {
   ) {}
 
   /** Generate a raw refresh token and persist its hash */
-  async generateRefreshToken(userId: number): Promise<string> {
+  async generateRefreshToken(
+    userId: string,
+    familyId?: string,
+  ): Promise<string> {
     const raw = randomBytes(48).toString('hex');
     const hash = createHash('sha256').update(raw).digest('hex');
     const expiresAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000); // 30 days
     await this.refreshTokenRepository.save({
       tokenHash: hash,
-      user: { id: userId } as any,
+      userId,
       expiresAt,
+      familyId: familyId ?? randomBytes(16).toString('hex'),
     });
     return raw;
   }
 
-  /** Validate a raw refresh token, returns entity or null */
-  async validateRefreshToken(rawToken: string): Promise<RefreshToken | null> {
+  /** Validate a raw refresh token. Returns null for invalid/expired/reused tokens. */
+  async validateRefreshToken(
+    rawToken: string,
+  ): Promise<{ token: RefreshToken; isReused: boolean } | null> {
     const hash = createHash('sha256').update(rawToken).digest('hex');
     const token = await this.refreshTokenRepository.findOne({
-      where: { tokenHash: hash, isRevoked: false },
-      relations: ['user'],
+      where: { tokenHash: hash },
     });
     if (!token) return null;
     if (token.expiresAt < new Date()) return null;
-    return token;
+
+    if (token.isRevoked) {
+      // Reuse detected – revoke entire token family
+      if (token.familyId) {
+        await this.refreshTokenRepository.update(
+          { familyId: token.familyId, isRevoked: false },
+          { isRevoked: true },
+        );
+      }
+      return { token, isReused: true };
+    }
+
+    return { token, isReused: false };
   }
 
   /** Revoke a refresh token by its id */
@@ -46,30 +63,51 @@ export class AuthService {
     await this.refreshTokenRepository.update(id, { isRevoked: true });
   }
 
+  /** Revoke all active refresh tokens for a user (e.g., on password change) */
+  async revokeAllUserRefreshTokens(userId: string): Promise<void> {
+    await this.refreshTokenRepository.update(
+      { userId, isRevoked: false },
+      { isRevoked: true },
+    );
+  }
+
   /** Generate a CSRF double‑submit token */
   generateCsrfToken(): string {
     return randomBytes(24).toString('hex');
   }
 
-  /** Extract user ID from the access token in the request cookie */
-  async userId(request: Request): Promise<number> {
-    const cookie = request.cookies['accessToken'];
-    const data = await this.jwtService.verifyAsync(cookie);
-    return data['id'];
+  async issueAccessToken(userId: string): Promise<string> {
+    const user = await this.userService.findOne(
+      { id: userId },
+      { role: { permissions: true } },
+    );
+    const payload: Record<string, any> = { id: userId };
+    if (user?.role) {
+      payload.role = user.role.name;
+      payload.permissions = (user.role.permissions ?? []).map(
+        (p: any) => p.name,
+      );
+    }
+    return this.jwtService.sign(payload);
   }
 
-  // Sign in using an existing access token and issue a fresh access token
-  async signInWithToken(token: string): Promise<{ user: any; newToken: string }> {
+  async userFromAccessToken(token: string): Promise<User> {
     try {
-      const payload = this.jwtService.verify(token);
+      const payload = await this.jwtService.verifyAsync(token);
       const user = await this.userService.findById(payload.id);
       if (!user) {
         throw new UnauthorizedException('User tidak ditemukan');
       }
-      const newToken = this.jwtService.sign({ id: user.id });
-      return { user, newToken };
-    } catch (err) {
+      return user;
+    } catch {
       throw new UnauthorizedException('Token tidak valid atau kadaluarsa');
     }
+  }
+
+  // Sign in using an existing access token and issue a fresh access token
+  async signInWithToken(token: string): Promise<{ user: any; newToken: string }> {
+    const user = await this.userFromAccessToken(token);
+    const newToken = await this.issueAccessToken(user.id);
+    return { user, newToken };
   }
 }

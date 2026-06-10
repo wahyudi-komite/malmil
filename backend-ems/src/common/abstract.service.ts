@@ -94,22 +94,22 @@ export class AbstractService {
     return this.repository.save(data);
   }
 
-  async findOne(data: any, relations = []): Promise<any> {
+  async findOne(data: any, relations: any = []): Promise<any> {
     return this.repository.findOne({
       where: data,
       relations: relations,
     });
   }
 
-  async update(id: number, data): Promise<any> {
+  async update(id: any, data): Promise<any> {
     return this.repository.update(id, data);
   }
 
-  async delete(id: number): Promise<any> {
+  async delete(id: any): Promise<any> {
     return this.repository.delete(id);
   }
 
-  async remove(id: number): Promise<any> {
+  async remove(id: any): Promise<any> {
     return this.repository.delete(id);
   }
 

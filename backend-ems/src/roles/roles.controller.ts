@@ -3,7 +3,6 @@ import {
   Get,
   Post,
   Body,
-  Patch,
   Param,
   Delete,
   Request,
@@ -13,12 +12,11 @@ import {
   ClassSerializerInterceptor,
 } from '@nestjs/common';
 import { RolesService } from './roles.service';
-import { CreateRoleDto } from './dto/create-role.dto';
-import { UpdateRoleDto } from './dto/update-role.dto';
 import { HasPermission } from 'src/permissions/has-permission.decorator';
 import { AuthGuard } from '../auth/auth.guard';
+import { PermissionsGuard } from '../permissions/permissions.guard';
 
-@UseGuards(AuthGuard)
+@UseGuards(AuthGuard, PermissionsGuard)
 @UseInterceptors(ClassSerializerInterceptor)
 @Controller('roles')
 export class RolesController {
@@ -26,7 +24,7 @@ export class RolesController {
 
   @Post()
   @HasPermission('roles')
-  async create(@Body('name') name: string, @Body('permissions') ids: number[]) {
+  async create(@Body('name') name: string, @Body('permissions') ids: string[]) {
     return this.rolesService.create({
       name,
       permissions: ids.map((id) => ({ id })),
@@ -34,6 +32,7 @@ export class RolesController {
   }
 
   @Post('findName')
+  @HasPermission('roles')
   get(@Body('name') name: string) {
     return this.rolesService.findOne({ name });
   }
@@ -67,32 +66,23 @@ export class RolesController {
 
   @Get(':id')
   @HasPermission('roles')
-  async findOne(@Param('id') id: number) {
-    return this.rolesService.findOne(+id, ['permissions']);
+  async findOne(@Param('id') id: string) {
+    return this.rolesService.findOne(id, ['permissions']);
   }
 
   @Put(':id')
   @HasPermission('roles')
   async update(
-    @Param('id') id: number,
+    @Param('id') id: string,
     @Body('name') name: string,
-    @Body('permissions') ids: number[],
+    @Body('permissions') ids: string[],
   ) {
-    await this.rolesService.update(id, {
-      name,
-    });
-
-    const role = await this.rolesService.findOne({ id });
-
-    return this.rolesService.create({
-      ...role,
-      permissions: ids.map((id) => ({ id })),
-    });
+    return this.rolesService.updatePermissions(id, name, ids);
   }
 
   @Delete(':id')
   @HasPermission('roles')
   remove(@Param('id') id: string) {
-    return this.rolesService.remove(+id);
+    return this.rolesService.remove(id);
   }
 }

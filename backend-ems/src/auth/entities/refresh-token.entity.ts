@@ -16,7 +16,7 @@ export class RefreshToken {
 
   /** Foreign key to user */
   @Column({ name: 'user_id' })
-  userId: number;
+  userId: string;
 
   /** Expiration date – same as cookie max‑age (30 days) */
   @Column()
@@ -25,6 +25,10 @@ export class RefreshToken {
   /** Flag for revocation (soft‑delete) */
   @Column({ default: false })
   isRevoked: boolean;
+
+  /** Token family ID for reuse detection */
+  @Column({ nullable: true })
+  familyId: string;
 
   @CreateDateColumn()
   createdAt: Date;

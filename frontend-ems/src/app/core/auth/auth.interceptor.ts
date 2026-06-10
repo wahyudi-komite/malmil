@@ -29,6 +29,10 @@ export const authInterceptor = (
         });
     }
 
+    if (req.url.includes('/auth/refresh')) {
+        return next(newReq);
+    }
+
     return next(newReq).pipe(
         catchError((error) => {
             if (error instanceof HttpErrorResponse && error.status === 401) {

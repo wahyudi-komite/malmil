@@ -1,6 +1,8 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
+import { APP_GUARD } from '@nestjs/core';
 import { TypeOrmConfigService } from './common/typeorm.service';
 import { RolesModule } from './roles/roles.module';
 import { PermissionsModule } from './permissions/permissions.module';
@@ -16,6 +18,7 @@ import { DatalistModule } from './datalist/datalist.module';
       useClass: TypeOrmConfigService,
       imports: undefined,
     }),
+    ThrottlerModule.forRoot([{ ttl: 60000, limit: 10 }]),
     UsersModule,
     RolesModule,
     PermissionsModule,
@@ -24,6 +27,8 @@ import { DatalistModule } from './datalist/datalist.module';
     DatalistModule,
   ],
   controllers: [],
-  providers: [],
+  providers: [
+    { provide: APP_GUARD, useClass: ThrottlerGuard },
+  ],
 })
 export class AppModule {}

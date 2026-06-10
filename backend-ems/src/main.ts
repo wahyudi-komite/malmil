@@ -12,7 +12,13 @@ async function bootstrap() {
     credentials: true,
   });
   app.setGlobalPrefix('api-newapps/v1/');
-  app.useGlobalPipes(new ValidationPipe());
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: true,
+      forbidNonWhitelisted: true,
+      transform: true,
+    }),
+  );
   await app.listen(port);
   console.log(port);
 }

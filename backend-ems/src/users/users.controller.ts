@@ -16,14 +16,21 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import * as bcrypt from 'bcrypt';
 import { AuthGuard } from '../auth/auth.guard';
+import { PermissionsGuard } from '../permissions/permissions.guard';
+import { HasPermission } from '../permissions/has-permission.decorator';
+import { AuthService } from '../auth/auth.service';
 
 @UseInterceptors(ClassSerializerInterceptor)
-@UseGuards(AuthGuard)
+@UseGuards(AuthGuard, PermissionsGuard)
 @Controller('users')
 export class UsersController {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(
+    private readonly usersService: UsersService,
+    private readonly authService: AuthService,
+  ) {}
 
   @Post()
+  @HasPermission('users')
   async create(@Body() createUserDto: CreateUserDto) {
     const password = await bcrypt.hash(createUserDto.password, 12);
 
@@ -37,6 +44,7 @@ export class UsersController {
   }
 
   @Get()
+  @HasPermission('users')
   async findAll(@Request() request) {
     return this.usersService.paginate('users', [['users.role', 'role']], {
       limit: request.query.limit,
@@ -46,5 +54,17 @@ export class UsersController {
       keyword: request.query.keyword,
       column: ['users.name'],
     });
+  }
+
+  @Patch(':id/password')
+  @HasPermission('users')
+  async changePassword(
+    @Param('id') id: string,
+    @Body('password') password: string,
+  ) {
+    const hashed = await bcrypt.hash(password, 12);
+    await this.usersService.update(id, { password: hashed });
+    await this.authService.revokeAllUserRefreshTokens(id);
+    return { message: 'Password updated, all sessions revoked' };
   }
 }
