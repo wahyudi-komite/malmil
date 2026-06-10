@@ -13,22 +13,24 @@
             </a>
         </li>
 
-        <li
-            *ngFor="let pageNumber of pages"
-            [ngClass]="{
-                'bg-indigo-200 text-indigo-600': page === pageNumber,
-                'cursor-not-allowed text-gray-500': !isPageEnabled(pageNumber),
-            }"
-            class="list-none border-l border-gray-300 px-3 py-2 text-md leading-5 text-gray-500 first:border-l-0"
-        >
-            <a
-                href="javascript:void(0)"
-                (click)="goToPage(pageNumber)"
-                class="font-medium decoration-current"
+        @for (pageNumber of pages; track pageNumber) {
+            <li
+                [ngClass]="{
+                    'bg-indigo-200 text-indigo-600': page === pageNumber,
+                    'cursor-not-allowed text-gray-500':
+                        !isPageEnabled(pageNumber),
+                }"
+                class="list-none border-l border-gray-300 px-3 py-2 text-md leading-5 text-gray-500 first:border-l-0"
             >
-                {{ pageNumber }}
-            </a>
-        </li>
+                <a
+                    href="javascript:void(0)"
+                    (click)="goToPage(pageNumber)"
+                    class="font-medium decoration-current"
+                >
+                    {{ pageNumber }}
+                </a>
+            </li>
+        }
 
         <li
             [ngClass]="{
