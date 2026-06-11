@@ -15,33 +15,31 @@
                         <div class="flex flex-wrap gap-2">
                             <!-- Create from -->
                             <mat-form-field class="gt-xs:pr-3 flex-auto">
-                                <input matInput formControlName="start" placeholder="Create from :" />
-                                <mat-icon class="icon-size-5" matPrefix
-                                    [svgIcon]="'heroicons_solid:magnifying-glass'"></mat-icon>
+                                <mat-label>Create from</mat-label>
+                                <input matInput [matDatepicker]="fromPicker" formControlName="start" />
+                                <mat-datepicker-toggle matIconSuffix [for]="fromPicker"></mat-datepicker-toggle>
+                                <mat-datepicker #fromPicker></mat-datepicker>
                             </mat-form-field>
 
                             <!-- Create to -->
                             <mat-form-field class="gt-xs:pl-3 flex-auto">
-                                <input matInput formControlName="end" placeholder="Create to :" />
-                                <mat-icon class="icon-size-5" matPrefix
-                                    [svgIcon]="'heroicons_solid:user-circle'"></mat-icon>
+                                <mat-label>Create to</mat-label>
+                                <input matInput [matDatepicker]="toPicker" formControlName="end" />
+                                <mat-datepicker-toggle matIconSuffix [for]="toPicker"></mat-datepicker-toggle>
+                                <mat-datepicker #toPicker></mat-datepicker>
                             </mat-form-field>
 
-                            <!-- RW -->
-                            <mat-form-field class="gt-xs:pl-3 flex-auto">
-                                <input matInput formControlName="rw" placeholder="RW" />
-                                <mat-icon class="icon-size-5" matPrefix
-                                    [svgIcon]="'heroicons_solid:magnifying-glass'"></mat-icon>
-                            </mat-form-field>
+                            <div class="flex items-center gap-2">
+                                <button mat-flat-button color="primary" type="submit">
+                                    <mat-icon svgIcon="heroicons_outline:funnel" class="mr-1"></mat-icon>
+                                    Filter
+                                </button>
+                                <button mat-stroked-button type="button" (click)="clearFilter()">
+                                    <mat-icon svgIcon="heroicons_outline:x-mark" class="mr-1"></mat-icon>
+                                    Clear
+                                </button>
+                            </div>
 
-                            <!-- YW -->
-                            <mat-form-field class="gt-xs:pl-3 flex-auto">
-                                <input matInput formControlName="yw" placeholder="YW" />
-                                <mat-icon class="icon-size-5" matPrefix
-                                    [svgIcon]="'heroicons_solid:magnifying-glass'"></mat-icon>
-                            </mat-form-field>
-
-                            <app-date-time-picker-component></app-date-time-picker-component>
                         </div>
                     </form>
                     <div class="flex items-center justify-between">
