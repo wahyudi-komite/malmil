@@ -10,13 +10,6 @@ export const defaultNavigation: FuseNavigationItem[] = [
         link: '/dashboard',
     },
     {
-        id: 'example',
-        title: 'Examples',
-        type: 'basic',
-        icon: 'heroicons_outline:chart-pie',
-        link: '/example',
-    },
-    {
         id: 'query',
         title: 'Query',
         type: 'basic',
@@ -24,44 +17,14 @@ export const defaultNavigation: FuseNavigationItem[] = [
         link: '/query',
     },
     {
-        id: 'test',
-        title: 'Test',
+        id: 'audit-log',
+        title: 'Audit Log',
         type: 'basic',
-        icon: 'heroicons_outline:eye',
-        link: '/test',
+        icon: 'heroicons_outline:document-text',
+        link: '/audit-log',
     },
+
 ];
-export const compactNavigation: FuseNavigationItem[] = [
-    {
-        id: 'example',
-        title: 'Example',
-        type: 'basic',
-        icon: 'heroicons_outline:chart-pie',
-        link: '/example',
-    },
-    {
-        id: 'test',
-        title: 'Test',
-        type: 'basic',
-        icon: 'heroicons_outline:chart-pie',
-        link: '/example/test',
-    },
-];
-export const futuristicNavigation: FuseNavigationItem[] = [
-    {
-        id: 'example',
-        title: 'Example',
-        type: 'basic',
-        icon: 'heroicons_outline:chart-pie',
-        link: '/example',
-    },
-];
-export const horizontalNavigation: FuseNavigationItem[] = [
-    {
-        id: 'example',
-        title: 'Example',
-        type: 'basic',
-        icon: 'heroicons_outline:chart-pie',
-        link: '/example',
-    },
-];
+export const compactNavigation: FuseNavigationItem[] = [];
+export const futuristicNavigation: FuseNavigationItem[] = [];
+export const horizontalNavigation: FuseNavigationItem[] = [];

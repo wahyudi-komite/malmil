@@ -21,11 +21,13 @@ export class PermissionsGuard implements CanActivate {
     const resource = access[0];
 
     if (request.method === 'GET') {
-      return user.permissions.some(
-        (p: string) => p === `${resource} read` || p === `${resource} update`,
-      );
+      return user.permissions.includes(`${resource}_view`);
     }
 
-    return user.permissions.some((p: string) => p === `${resource} update`);
+    return (
+      user.permissions.includes(`${resource}_create`) ||
+      user.permissions.includes(`${resource}_edit`) ||
+      user.permissions.includes(`${resource}_delete`)
+    );
   }
 }

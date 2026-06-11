@@ -10,13 +10,14 @@ import {
   UnauthorizedException,
   Req,
 } from '@nestjs/common';
-import { Throttle, SkipThrottle } from '@nestjs/throttler';
+import { Throttle } from '@nestjs/throttler';
 import { AuthService } from './auth.service';
 import { UsersService } from '../users/users.service';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import { Request, Response } from 'express';
 import { CsrfGuard } from './guards/csrf.guard';
+import { AuditService } from '../audit/audit.service';
 
 @Controller('auth')
 export class AuthController {
@@ -27,6 +28,7 @@ export class AuthController {
     private readonly authService: AuthService,
     private userService: UsersService,
     private jwtService: JwtService,
+    private readonly auditService: AuditService,
   ) {}
 
   private setAccessTokenCookie(response: Response, accessToken: string): void {
@@ -52,6 +54,7 @@ export class AuthController {
       httpOnly: false,
       secure: true,
       sameSite: 'none',
+      maxAge: this.accessTokenMaxAge,
     });
   }
 
@@ -73,7 +76,6 @@ export class AuthController {
     });
   }
 
-  @SkipThrottle()
   @Get('check-auth')
   async checkAuth(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
     const token = req.cookies['accessToken'];
@@ -100,12 +102,19 @@ export class AuthController {
   async login(
     @Body('email') email: string,
     @Body('password') password: string,
+    @Req() req: Request,
     @Res({ passthrough: true }) response: Response,
   ) {
-    const user = await this.userService.findOne({ email: email });
+    const user = await this.userService.findOne(
+      { email: email },
+      ['role', 'role.permissions'],
+    );
     if (!user || !(await bcrypt.compare(password, user.password))) {
+      await this.auditService.log('SYSTEM', email, 'LOGIN_FAILED', 'auth', null, 'Invalid credentials', req.ip);
       throw new UnauthorizedException('Invalid credentials');
     }
+    this.auditService.log(user.id, email, 'LOGIN', 'auth', null, 'Login success', req.ip);
+
     const accessJwt = await this.authService.issueAccessToken(user.id);
     this.setAccessTokenCookie(response, accessJwt);
 
@@ -129,6 +138,7 @@ export class AuthController {
 
     try {
       const { user, newToken } = await this.authService.signInWithToken(token);
+      this.auditService.log(user.id, user.email, 'TOKEN_SIGN_IN', 'auth', null, 'Re-authenticated via token', req.ip);
       this.setAccessTokenCookie(res, newToken);
 
       const rawRefresh = await this.authService.generateRefreshToken(user.id);
@@ -144,7 +154,7 @@ export class AuthController {
   }
 
   // Refresh endpoint – validate DB‑stored refresh token, rotate, revoke old
-  @SkipThrottle()
+  @Throttle({ default: { limit: 20, ttl: 60000 } })
   @Post('refresh')
   @UseGuards(CsrfGuard)
   async refresh(@Req() req: Request, @Res() res: Response) {
@@ -160,6 +170,7 @@ export class AuthController {
     const { token: stored, isReused } = result;
 
     if (isReused) {
+      this.auditService.log(stored.userId, 'unknown', 'TOKEN_REUSE', 'auth', null, 'Token reuse detected, family revoked', req.ip);
       // Token reuse detected – revoke entire family, force logout
       this.clearAuthCookies(res);
       return res
@@ -178,6 +189,11 @@ export class AuthController {
     );
     // Issue new access token
     const newAccessToken = await this.authService.issueAccessToken(userId);
+
+    this.auditService.log(userId, 'unknown', 'TOKEN_REFRESH', 'auth', null, 'Token refreshed', req.ip);
+
+    // Cleanup expired tokens (fire-and-forget)
+    this.authService.cleanupExpiredTokens();
 
     // Set new cookies
     this.setAccessTokenCookie(res, newAccessToken);

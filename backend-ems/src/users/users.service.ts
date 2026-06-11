@@ -15,7 +15,10 @@ export class UsersService extends AbstractService {
   }
 
   async findById(id: string): Promise<User> {
-    const user = await this.userRepository.findOne({ where: { id } });
+    const user = await this.userRepository.findOne({
+      where: { id },
+      relations: ['role', 'role.permissions'],
+    });
     if (!user) {
       throw new NotFoundException(`User dengan ID ${id} tidak ditemukan`);
     }

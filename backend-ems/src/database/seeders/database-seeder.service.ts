@@ -20,19 +20,19 @@ export class DatabaseSeeder implements OnApplicationBootstrap {
   ) {}
 
   async onApplicationBootstrap(): Promise<void> {
-    const userCount = await this.userRepository.count();
-    if (userCount > 0) {
-      this.logger.log('Database already seeded, skipping');
-      return;
-    }
-
-    this.logger.log('Seeding database...');
-
+    this.logger.log('Seeding permissions...');
     const permissions = await this.seedPermissions();
-    const roles = await this.seedRoles(permissions);
-    await this.seedUsers(roles);
 
-    this.logger.log('Seeding complete');
+    this.logger.log('Seeding roles...');
+    const roles = await this.seedRoles(permissions);
+
+    const userCount = await this.userRepository.count();
+    if (userCount === 0) {
+      await this.seedUsers(roles);
+      this.logger.log('Seeding complete');
+    } else {
+      this.logger.log('Users already exist, skipping user seed');
+    }
   }
 
   private async seedPermissions(): Promise<Permission[]> {
@@ -48,6 +48,7 @@ export class DatabaseSeeder implements OnApplicationBootstrap {
       'datareal_view',
       'datalist_view',
       'settings_view',
+      'audit_view',
     ];
 
     const permissions: Permission[] = [];
@@ -87,17 +88,19 @@ export class DatabaseSeeder implements OnApplicationBootstrap {
 
     const roles: Role[] = [];
     for (const data of rolesData) {
-      const existing = await this.roleRepository.findOne({
+      let role = await this.roleRepository.findOne({
         where: { name: data.name },
+        relations: ['permissions'],
       });
-      if (!existing) {
-        const role = this.roleRepository.create({
+      if (!role) {
+        role = this.roleRepository.create({
           name: data.name,
           permissions: data.permissions,
         });
         roles.push(await this.roleRepository.save(role));
       } else {
-        roles.push(existing);
+        role.permissions = data.permissions;
+        roles.push(await this.roleRepository.save(role));
       }
     }
 
@@ -109,7 +112,7 @@ export class DatabaseSeeder implements OnApplicationBootstrap {
     const adminRole = roles.find((r) => r.name === 'super_admin');
     const operatorRole = roles.find((r) => r.name === 'operator');
 
-    const hashedPassword = await bcrypt.hash('Astra123#', 10);
+    const hashedPassword = await bcrypt.hash('Astra123#', 12);
 
     const usersData = [
       {

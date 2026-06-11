@@ -9,7 +9,8 @@ import {
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSort, MatSortModule, Sort } from '@angular/material/sort';
-import { Subject, takeUntil } from 'rxjs';
+import { Subject } from 'rxjs';
+import { debounceTime, distinctUntilChanged, takeUntil } from 'rxjs/operators';
 import { GlobalVariable } from '../../../../class/global-variable';
 import { DateTimePickerComponentComponent } from '../../../../common/date-time-picker-component/date-time-picker-component.component';
 import { PaginateTakeComponent } from '../../../../common/paginate-take/paginate-take.component';
@@ -75,22 +76,32 @@ export class QueryComponent implements OnInit {
             });
 
         this.form = this.fb.group({
-            // eg: [''],
-            // uniq: [''],
-            // start: [this.tanggalMulai],
-            // end: [this.tanggalEnd],
+            start: [''],
+            end: [''],
+            rw: [''],
+            yw: [''],
+            timeJobFrom: [''],
+            timeJobTo: [''],
         });
+        // Subscribe to filter changes
+        this.form.valueChanges
+            .pipe(debounceTime(300), distinctUntilChanged())
+            .subscribe(() => {
+                this.load();
+            });
         this.load();
     }
 
     load(page: number = 1, limit: number = 10): void {
+        const filters = this.form.value;
         this._datalistService
             .all(
                 page,
                 this.limit,
                 this.sort.active,
                 this.sort.direction,
-                this.find
+                this.find,
+                filters
             )
             .subscribe((res: Paginate) => {
                 this.datas = res.data;
@@ -105,10 +116,11 @@ export class QueryComponent implements OnInit {
         this.load();
     }
 
-    applyFilter(event: Event) {
-        this.find = (event.target as HTMLInputElement).value;
-        this.load();
-    }
+    // Removed applyFilter method; filters now handled via form valueChanges subscription.
+    // No longer needed: applyFilter(event: Event) {
+    //   this.find = (event.target as HTMLInputElement).value;
+    //   this.load();
+    // }
 
     changeLimit(limit: number): void {
         this.limit = limit;
@@ -126,10 +138,10 @@ export class QueryComponent implements OnInit {
     }
 
     submit() {
-        // this.start = this.form.value.start;
-        // this.end = this.form.value.end;
-        // this.eg = this.form.value.eg;
-        // this.uniq = this.form.value.uniq;
+        // Extract filter values from the form
+        const { start, end, rw, yw, timeJobFrom, timeJobTo } = this.form.value;
+        // You can customize the service call to include these parameters if supported.
+        // For now we simply trigger a reload which will use the generic search (find).
         this.load();
     }
 }

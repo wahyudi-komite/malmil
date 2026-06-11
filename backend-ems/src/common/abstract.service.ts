@@ -3,19 +3,19 @@ import { Brackets, Repository } from 'typeorm';
 import { PaginatedResult } from './paginated-result.interface';
 import { Response } from 'express';
 import * as ExcelJS from 'exceljs';
+import { sanitizeColumn, sanitizeColumns, sanitizeSortDirection } from './sanitize.utils';
 
 @Injectable()
 export class AbstractService {
   constructor(protected readonly repository: Repository<any>) {}
 
   async findAll(relations: any[] = [], query): Promise<any[]> {
-    const order: any = {
-      [query.direction ? query.direction : 'id']: query.sort
-        ? query.sort.toUpperCase()
-        : 'DESC',
+    const orderCol = query.direction ? sanitizeColumn(query.direction) : 'id';
+    const order: Record<string, 'ASC' | 'DESC'> = {
+      [orderCol]: sanitizeSortDirection(query.sort),
     };
 
-    const where: any = query.field ? { [query.field]: query.keyword } : {};
+    const where: any = query.field ? { [sanitizeColumn(query.field)]: query.keyword } : {};
 
     return this.repository.find({
       where: where,
@@ -25,31 +25,33 @@ export class AbstractService {
   }
 
   async paginate(tbl, relations, query): Promise<PaginatedResult> {
+    const safeTbl = sanitizeColumn(tbl);
     const take: number = query.limit ? query.limit : 10;
     const page: number = query.page ? query.page : 1;
     const keyword: string = query.keyword ? query.keyword : '';
-    const direction: string = query.direction ? query.direction : tbl + '.id';
-    const sortData = query.sort ? query.sort.toUpperCase() : 'DESC';
+    const sortCol = query.direction ? sanitizeColumn(query.direction) : safeTbl + '.id';
+    const sortDir = sanitizeSortDirection(query.sort);
 
     const myQuery = this.repository
-      .createQueryBuilder(tbl)
-      .where(tbl + '.id >=:id', { id: 0 })
+      .createQueryBuilder(safeTbl)
+      .where(safeTbl + '.id >=:id', { id: 0 })
       .andWhere(
         new Brackets((qb) => {
-          query.column.map((data) => {
-            qb.orWhere(data + ' like :keyword', {
+          const cols = query.column ? sanitizeColumns(query.column) : [];
+          cols.map((col) => {
+            qb.orWhere(col + ' like :keyword', {
               keyword: `%${keyword}%`,
             });
           });
         }),
       )
-      .orderBy(direction, sortData)
+      .orderBy(sortCol, sortDir)
       .take(take)
       .skip((page - 1) * take);
 
     if (relations) {
       relations.map((relation) => {
-        myQuery.leftJoinAndSelect(relation[0], relation[1]);
+        myQuery.leftJoinAndSelect(sanitizeColumn(relation[0]), sanitizeColumn(relation[1]));
       });
     }
 
@@ -57,26 +59,12 @@ export class AbstractService {
       const objectArray = Object.entries(query.filterParams);
       objectArray.forEach(([key, value]) => {
         if (value != '') {
-          // if (key == 'problem_date') {
-          //   const start = new Date(value + ' 00:00:00');
-          //   const end = new Date(value + ' 23:59:59');
-          //   myQuery
-          //     .andWhere(tbl + '.problem_date >= :start', { start: start })
-          //     .andWhere(tbl + '.problem_date <= :end', { end: end });
-          // } else {
-          myQuery.andWhere(tbl + '.' + key + ' =:' + key, { [key]: value });
-          // }
+          const safeKey = sanitizeColumn(key);
+          myQuery.andWhere(safeTbl + '.' + safeKey + ' =:' + safeKey, { [safeKey]: value });
         }
       });
     }
 
-    // if (query.column) {
-    //   query.column.map((data) => {
-    //     myQuery.orWhere(data + ' like :keyword', {
-    //       keyword: `%${keyword}%`,
-    //     });
-    //   });
-    // }
     const [data, total] = await myQuery.getManyAndCount();
 
     return {

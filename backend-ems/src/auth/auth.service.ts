@@ -71,6 +71,15 @@ export class AuthService {
     );
   }
 
+  /** Remove expired refresh tokens from DB */
+  async cleanupExpiredTokens(): Promise<void> {
+    await this.refreshTokenRepository
+      .createQueryBuilder()
+      .delete()
+      .where('expiresAt < :now', { now: new Date() })
+      .execute();
+  }
+
   /** Generate a CSRF double‑submit token */
   generateCsrfToken(): string {
     return randomBytes(24).toString('hex');

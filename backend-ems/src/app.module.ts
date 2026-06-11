@@ -11,6 +11,7 @@ import { AuthModule } from './auth/auth.module';
 import { DatarealModule } from './datareal/datareal.module';
 import { DatalistModule } from './datalist/datalist.module';
 import { SeedModule } from './database/seeders/seed.module';
+import { AuditModule } from './audit/audit.module';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { SeedModule } from './database/seeders/seed.module';
     DatarealModule,
     DatalistModule,
     SeedModule,
+    AuditModule,
   ],
   controllers: [],
   providers: [

@@ -3,7 +3,6 @@ import {
   Get,
   Post,
   Body,
-  Patch,
   Param,
   Delete,
   Put,
@@ -18,17 +17,30 @@ import { UpdatePermissionDto } from './dto/update-permission.dto';
 import { HasPermission } from './has-permission.decorator';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { PermissionsGuard } from './permissions.guard';
+import { AuditService } from '../audit/audit.service';
 
 @UseGuards(AuthGuard, PermissionsGuard)
 @UseInterceptors(ClassSerializerInterceptor)
 @Controller('permissions')
 export class PermissionsController {
-  constructor(private readonly permissionsService: PermissionsService) {}
+  constructor(
+    private readonly permissionsService: PermissionsService,
+    private readonly auditService: AuditService,
+  ) {}
 
   @Post()
   @HasPermission('permissions')
-  create(@Body() createPermissionDto: CreatePermissionDto) {
-    return this.permissionsService.create(createPermissionDto);
+  async create(@Body() createPermissionDto: CreatePermissionDto, @Request() req) {
+    const perm = await this.permissionsService.create(createPermissionDto);
+
+    this.auditService.log(
+      req.user.id, req.user.email,
+      'CREATE', 'permission', perm.id,
+      `Created permission ${createPermissionDto.name}`,
+      req.ip,
+    );
+
+    return perm;
   }
 
   @Get('all')
@@ -61,17 +73,32 @@ export class PermissionsController {
 
   @Put(':id')
   @HasPermission('permissions')
-  update(
+  async update(
     @Param('id') id: string,
     @Body() updatePermissionDto: UpdatePermissionDto,
+    @Request() req,
   ) {
-    return this.permissionsService.update(id, updatePermissionDto);
+    await this.permissionsService.update(id, updatePermissionDto);
+
+    this.auditService.log(
+      req.user.id, req.user.email,
+      'UPDATE', 'permission', id,
+      'Updated permission',
+      req.ip,
+    );
   }
 
   @Delete(':id')
   @HasPermission('permissions')
-  remove(@Param('id') id: string) {
-    return this.permissionsService.remove(id);
+  async remove(@Param('id') id: string, @Request() req) {
+    await this.permissionsService.remove(id);
+
+    this.auditService.log(
+      req.user.id, req.user.email,
+      'DELETE', 'permission', id,
+      'Deleted permission',
+      req.ip,
+    );
   }
 
   @Post('findName')

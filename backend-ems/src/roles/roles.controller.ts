@@ -15,20 +15,33 @@ import { RolesService } from './roles.service';
 import { HasPermission } from 'src/permissions/has-permission.decorator';
 import { AuthGuard } from '../auth/auth.guard';
 import { PermissionsGuard } from '../permissions/permissions.guard';
+import { AuditService } from '../audit/audit.service';
 
 @UseGuards(AuthGuard, PermissionsGuard)
 @UseInterceptors(ClassSerializerInterceptor)
 @Controller('roles')
 export class RolesController {
-  constructor(private readonly rolesService: RolesService) {}
+  constructor(
+    private readonly rolesService: RolesService,
+    private readonly auditService: AuditService,
+  ) {}
 
   @Post()
   @HasPermission('roles')
-  async create(@Body('name') name: string, @Body('permissions') ids: string[]) {
-    return this.rolesService.create({
+  async create(@Body('name') name: string, @Body('permissions') ids: string[], @Request() req) {
+    const role = await this.rolesService.create({
       name,
       permissions: ids.map((id) => ({ id })),
     });
+
+    this.auditService.log(
+      req.user.id, req.user.email,
+      'CREATE', 'role', role.id,
+      `Created role ${name}`,
+      req.ip,
+    );
+
+    return role;
   }
 
   @Post('findName')
@@ -76,13 +89,30 @@ export class RolesController {
     @Param('id') id: string,
     @Body('name') name: string,
     @Body('permissions') ids: string[],
+    @Request() req,
   ) {
-    return this.rolesService.updatePermissions(id, name, ids);
+    const role = await this.rolesService.updatePermissions(id, name, ids);
+
+    this.auditService.log(
+      req.user.id, req.user.email,
+      'UPDATE', 'role', id,
+      `Updated role to ${name}`,
+      req.ip,
+    );
+
+    return role;
   }
 
   @Delete(':id')
   @HasPermission('roles')
-  remove(@Param('id') id: string) {
-    return this.rolesService.remove(id);
+  async remove(@Param('id') id: string, @Request() req) {
+    await this.rolesService.remove(id);
+
+    this.auditService.log(
+      req.user.id, req.user.email,
+      'DELETE', 'role', id,
+      'Deleted role',
+      req.ip,
+    );
   }
 }

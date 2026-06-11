@@ -66,6 +66,40 @@ export class AuthMockApi {
                     ];
                 }
 
+                // Quick login - Administrator
+                if (
+                    request.body.email === 'adhye.yudhie@gmail.com' &&
+                    request.body.password === 'Astra123#'
+                ) {
+                    const adminUser = cloneDeep(this._user);
+                    adminUser.role = { name: 'super_admin' };
+                    return [
+                        200,
+                        {
+                            user: adminUser,
+                            accessToken: this._generateJWTToken(),
+                            tokenType: 'bearer',
+                        },
+                    ];
+                }
+
+                // Quick login - Operator
+                if (
+                    request.body.email === 'operator@example.com' &&
+                    request.body.password === 'Astra123#'
+                ) {
+                    const operatorUser = cloneDeep(this._user);
+                    operatorUser.role = { name: 'operator' };
+                    return [
+                        200,
+                        {
+                            user: operatorUser,
+                            accessToken: this._generateJWTToken(),
+                            tokenType: 'bearer',
+                        },
+                    ];
+                }
+
                 // Invalid credentials
                 return [404, false];
             });

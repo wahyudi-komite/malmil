@@ -2,6 +2,7 @@ import { Route } from '@angular/router';
 import { initialDataResolver } from 'app/app.resolvers';
 import { AuthGuard } from 'app/core/auth/guards/auth.guard';
 import { NoAuthGuard } from 'app/core/auth/guards/noAuth.guard';
+import { RoleGuard } from 'app/core/auth/guards/role.guard';
 import { LayoutComponent } from 'app/layout/layout.component';
 
 // @formatter:off
@@ -104,10 +105,11 @@ export const appRoutes: Route[] = [
     // Admin routes
     {
         path: '',
-        canActivate: [AuthGuard],
+        canActivate: [AuthGuard, RoleGuard],
         component: LayoutComponent,
         data: {
             layout: 'classy',
+            roles: ['super_admin', 'admin', 'operator'],
         },
         resolve: {
             initialData: initialDataResolver,
@@ -118,10 +120,11 @@ export const appRoutes: Route[] = [
                 loadChildren: () =>
                     import('app/modules/admin/example/example.routes'),
             },
-            // {
-            //     path: 'dashboard',
-            //     component: DashboardComponent,
-            // },
+            {
+                path: '',
+                loadChildren: () =>
+                    import('app/modules/admin/audit-log/audit-log.routes'),
+            },
         ],
     },
 ];

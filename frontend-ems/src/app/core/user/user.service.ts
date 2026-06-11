@@ -6,7 +6,7 @@ import { map, Observable, ReplaySubject, tap } from 'rxjs';
 @Injectable({ providedIn: 'root' })
 export class UserService {
     private _httpClient = inject(HttpClient);
-    private _user: ReplaySubject<User> = new ReplaySubject<User>(1);
+    private _user: ReplaySubject<User | null> = new ReplaySubject<User | null>(1);
 
     // -----------------------------------------------------------------------------------------------------
     // @ Accessors
@@ -17,12 +17,11 @@ export class UserService {
      *
      * @param value
      */
-    set user(value: User) {
-        // Store the value
+    set user(value: User | null) {
         this._user.next(value);
     }
 
-    get user$(): Observable<User> {
+    get user$(): Observable<User | null> {
         return this._user.asObservable();
     }
 
@@ -37,7 +36,6 @@ export class UserService {
         return this._httpClient.get<User>('api/common/user').pipe(
             tap((user) => {
                 this._user.next(user);
-                console.log(user);
             })
         );
     }
@@ -53,5 +51,17 @@ export class UserService {
                 this._user.next(response);
             })
         );
+    }
+
+    hasPermission(permission: string): boolean {
+        let user: User | null = null;
+        this._user.subscribe((u) => (user = u)).unsubscribe();
+        return user?.permissions?.includes(permission) ?? false;
+    }
+
+    hasRole(...roles: string[]): boolean {
+        let user: User | null = null;
+        this._user.subscribe((u) => (user = u)).unsubscribe();
+        return user?.role ? roles.includes(user.role) : false;
     }
 }

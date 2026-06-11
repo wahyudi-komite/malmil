@@ -4,7 +4,7 @@ import { ExampleComponent } from 'app/modules/admin/example/example.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { DashboardService } from './dashboard/dashboard.service';
 import { QueryComponent } from './query/query.component';
-import { TestComponent } from './test/test.component';
+
 
 export default [
     {
@@ -22,10 +22,7 @@ export default [
     //     path: 'example',
     //     component: ExampleComponent,
     // },
-    {
-        path: 'test',
-        component: TestComponent,
-    },
+
     {
         path: 'query',
         component: QueryComponent,

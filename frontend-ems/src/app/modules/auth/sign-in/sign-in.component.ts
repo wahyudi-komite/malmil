@@ -18,6 +18,7 @@ import { fuseAnimations } from '@fuse/animations';
 import { FuseAlertComponent, FuseAlertType } from '@fuse/components/alert';
 import { AuthService } from 'app/core/auth/auth.service';
 
+
 @Component({
     selector: 'auth-sign-in',
     templateUrl: './sign-in.component.html',
@@ -68,10 +69,14 @@ export class AuthSignInComponent implements OnInit {
     ngOnInit(): void {
         // Create the form
         this.signInForm = this._formBuilder.group({
-            email: ['adhye.yudhie@gmail.com', [Validators.required]],
-            password: ['Astra123#', Validators.required],
-            // rememberMe: [''],
+            email: ['', [Validators.required, Validators.email]],
+            password: ['', Validators.required],
         });
+    }
+
+    loginAs(email: string, password: string): void {
+        this.signInForm.setValue({ email, password });
+        this.signIn();
     }
 
     // -----------------------------------------------------------------------------------------------------

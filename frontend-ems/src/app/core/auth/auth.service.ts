@@ -31,7 +31,7 @@ export class AuthService {
                 map((response: any) => {
                     this._authenticated = response.isAuthenticated;
                     if (response.user) {
-                        this._userService.user = response.user;
+                        this._userService.user = this._mapUser(response.user);
                     }
                     return response.isAuthenticated;
                 }),
@@ -39,12 +39,23 @@ export class AuthService {
             );
     }
 
+    private _mapUser(user: any): any {
+        return {
+            id: user.id,
+            name: user.name,
+            email: user.email,
+            avatar: user.avatar,
+            role: user.role?.name,
+            permissions: user.role?.permissions?.map((p: any) => p.name) ?? [],
+        };
+    }
+
     forgotPassword(email: string): Observable<any> {
-        return this._httpClient.post('api/auth/forgot-password', email);
+        return this._httpClient.post(`${environment.apiUrl}/auth/forgot-password`, email);
     }
 
     resetPassword(password: string): Observable<any> {
-        return this._httpClient.post('api/auth/reset-password', password);
+        return this._httpClient.post(`${environment.apiUrl}/auth/reset-password`, password);
     }
 
     signIn(credentials: { email: string; password: string }): Observable<any> {
@@ -58,7 +69,7 @@ export class AuthService {
                 tap((response: any) => {
                     this._authenticated = true;
                     if (response.user) {
-                        this._userService.user = response.user;
+                        this._userService.user = this._mapUser(response.user);
                     }
                 })
             );
@@ -71,7 +82,7 @@ export class AuthService {
                 tap((response: any) => {
                     this._authenticated = true;
                     if (response.user) {
-                        this._userService.user = response.user;
+                        this._userService.user = this._mapUser(response.user);
                     }
                 }),
                 catchError(() => of(false))
@@ -84,6 +95,7 @@ export class AuthService {
             .pipe(
                 tap(() => {
                     this._authenticated = false;
+                    this._userService.user = null;
                 }),
                 switchMap(() => of(true))
             );
@@ -95,14 +107,14 @@ export class AuthService {
         password: string;
         company: string;
     }): Observable<any> {
-        return this._httpClient.post('api/auth/sign-up', user);
+        return this._httpClient.post(`${environment.apiUrl}/auth/sign-up`, user);
     }
 
     unlockSession(credentials: {
         email: string;
         password: string;
     }): Observable<any> {
-        return this._httpClient.post('api/auth/unlock-session', credentials);
+        return this._httpClient.post(`${environment.apiUrl}/auth/unlock-session`, credentials);
     }
 
     check(): Observable<boolean> {

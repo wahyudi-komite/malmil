@@ -1,0 +1,82 @@
+<div class="flex flex-col flex-auto min-w-0">
+    <div class="flex-auto p-6 sm:p-10">
+        <div class="max-w-7xl mx-auto">
+            <h2 class="text-2xl font-bold text-teal-600 mb-6">Audit Log</h2>
+
+            <div class="flex items-center gap-4 mb-4">
+                <mat-form-field class="flex-auto" subscriptSizing="dynamic">
+                    <mat-label>Search</mat-label>
+                    <input matInput [(ngModel)]="keyword" (keyup.enter)="search()" placeholder="email, action, resource..." />
+                </mat-form-field>
+                <button mat-flat-button color="primary" (click)="search()">
+                    <mat-icon svgIcon="heroicons_outline:magnifying-glass" class="mr-1"></mat-icon>
+                    Search
+                </button>
+            </div>
+
+            <div class="overflow-auto bg-card rounded-2xl shadow">
+                <table mat-table [dataSource]="data" class="w-full">
+                    <ng-container matColumnDef="createdAt">
+                        <th mat-header-cell *matHeaderCellDef class="text-sm font-semibold">Time</th>
+                        <td mat-cell *matCellDef="let row">{{ row.createdAt | date:'dd/MM/yy HH:mm:ss' }}</td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="userEmail">
+                        <th mat-header-cell *matHeaderCellDef class="text-sm font-semibold">User</th>
+                        <td mat-cell *matCellDef="let row">{{ row.userEmail }}</td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="action">
+                        <th mat-header-cell *matHeaderCellDef class="text-sm font-semibold">Action</th>
+                        <td mat-cell *matCellDef="let row">
+                            <span class="px-2 py-0.5 rounded text-xs font-mono font-bold"
+                                [class.bg-green-100]="row.action.startsWith('LOGIN') || row.action === 'TOKEN_REFRESH'"
+                                [class.text-green-700]="row.action.startsWith('LOGIN') || row.action === 'TOKEN_REFRESH'"
+                                [class.bg-red-100]="row.action === 'LOGIN_FAILED' || row.action === 'TOKEN_REUSE'"
+                                [class.text-red-700]="row.action === 'LOGIN_FAILED' || row.action === 'TOKEN_REUSE'"
+                                [class.bg-blue-100]="row.action.startsWith('CREATE')"
+                                [class.text-blue-700]="row.action.startsWith('CREATE')"
+                                [class.bg-amber-100]="row.action.startsWith('UPDATE') || row.action.startsWith('CHANGE')"
+                                [class.text-amber-700]="row.action.startsWith('UPDATE') || row.action.startsWith('CHANGE')"
+                                [class.bg-purple-100]="row.action.startsWith('DELETE')"
+                                [class.text-purple-700]="row.action.startsWith('DELETE')">
+                                {{ row.action }}
+                            </span>
+                        </td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="resource">
+                        <th mat-header-cell *matHeaderCellDef class="text-sm font-semibold">Resource</th>
+                        <td mat-cell *matCellDef="let row">{{ row.resource }} {{ row.resourceId ? '#' + row.resourceId.slice(0,8) : '' }}</td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="detail">
+                        <th mat-header-cell *matHeaderCellDef class="text-sm font-semibold">Detail</th>
+                        <td mat-cell *matCellDef="let row" class="max-w-xs truncate">{{ row.detail }}</td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="ip">
+                        <th mat-header-cell *matHeaderCellDef class="text-sm font-semibold">IP</th>
+                        <td mat-cell *matCellDef="let row" class="font-mono text-xs">{{ row.ip }}</td>
+                    </ng-container>
+
+                    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                    <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="hover:bg-gray-50"></tr>
+
+                    @if (data.length === 0) {
+                    <tr><td [attr.colspan]="displayedColumns.length" class="text-center py-8 text-gray-400">No audit logs found</td></tr>
+                    }
+                </table>
+
+                <mat-paginator
+                    [length]="total"
+                    [pageSize]="pageSize"
+                    [pageSizeOptions]="[10, 25, 50, 100]"
+                    [pageIndex]="page - 1"
+                    (page)="onPageChange($event)"
+                    class="border-t">
+                </mat-paginator>
+            </div>
+        </div>
+    </div>
+</div>
