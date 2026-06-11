@@ -13,12 +13,21 @@ export class DatalistController {
    * Fungsi untuk mengambil data dengan filter, sorting, dan pagination.
    */
   private async getData(request, isExport = false): Promise<any> {
+    const filterParams: Record<string, any> = {};
+    if (request.query.start) filterParams.start = request.query.start;
+    if (request.query.end) filterParams.end = request.query.end;
+    if (request.query.rw) filterParams.rw = request.query.rw;
+    if (request.query.yw) filterParams.yw = request.query.yw;
+    if (request.query.timeJobFrom) filterParams.timeJobFrom = request.query.timeJobFrom;
+    if (request.query.timeJobTo) filterParams.timeJobTo = request.query.timeJobTo;
+
     const returnData = await this._service.paginate(tables, [], {
       limit: isExport ? 100000 : request.query.limit,
       page: request.query.page,
       sort: request.query.sort,
       direction: request.query.direction,
       keyword: request.query.keyword,
+      filterParams,
       column: [
         tables + '.id',
         tables + '.create',

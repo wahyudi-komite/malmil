@@ -59,8 +59,18 @@ export class AbstractService {
       const objectArray = Object.entries(query.filterParams);
       objectArray.forEach(([key, value]) => {
         if (value != '') {
-          const safeKey = sanitizeColumn(key);
-          myQuery.andWhere(safeTbl + '.' + safeKey + ' =:' + safeKey, { [safeKey]: value });
+          if (key === 'start') {
+            myQuery.andWhere(safeTbl + '.create >= :createStart', { createStart: value });
+          } else if (key === 'end') {
+            myQuery.andWhere(safeTbl + '.create <= :createEnd', { createEnd: value + ' 23:59:59' });
+          } else if (key === 'timeJobFrom') {
+            myQuery.andWhere(safeTbl + '.timejob >= :timeJobFrom', { timeJobFrom: value });
+          } else if (key === 'timeJobTo') {
+            myQuery.andWhere(safeTbl + '.timejob <= :timeJobTo', { timeJobTo: value + ' 23:59:59' });
+          } else {
+            const safeKey = sanitizeColumn(key);
+            myQuery.andWhere(safeTbl + '.' + safeKey + ' =:' + safeKey, { [safeKey]: value });
+          }
         }
       });
     }
