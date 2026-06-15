@@ -13,7 +13,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { fuseAnimations } from '@fuse/animations';
 import { FuseAlertComponent, FuseAlertType } from '@fuse/components/alert';
 import { AuthService } from 'app/core/auth/auth.service';
@@ -26,7 +26,7 @@ import { AuthService } from 'app/core/auth/auth.service';
     animations: fuseAnimations,
     standalone: true,
     imports: [
-
+        RouterLink,
         FuseAlertComponent,
         FormsModule,
         ReactiveFormsModule,
@@ -39,7 +39,6 @@ import { AuthService } from 'app/core/auth/auth.service';
     ],
 })
 export class AuthSignInComponent implements OnInit {
-    private apiUrl = '/api';
     @ViewChild('signInNgForm') signInNgForm: NgForm;
 
     alert: { type: FuseAlertType; message: string } = {
@@ -120,10 +119,9 @@ export class AuthSignInComponent implements OnInit {
                 // Reset the form
                 this.signInNgForm.resetForm();
 
-                // Set the alert
                 this.alert = {
                     type: 'error',
-                    message: 'Wrong email or password',
+                    message: 'Email atau password salah',
                 };
 
                 // Show the alert
