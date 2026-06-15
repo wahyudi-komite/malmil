@@ -51,6 +51,13 @@ export const defaultNavigation: FuseNavigationItem[] = [
         ],
     },
     {
+        id: 'roles',
+        title: 'Roles & Permissions',
+        type: 'basic',
+        icon: 'heroicons_outline:lock-closed',
+        link: '/roles',
+    },
+    {
         id: 'settings',
         title: 'Pengaturan',
         type: 'basic',
