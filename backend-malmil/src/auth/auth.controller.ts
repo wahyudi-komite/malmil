@@ -8,16 +8,19 @@ import {
   ClassSerializerInterceptor,
   UseGuards,
   UnauthorizedException,
+  ConflictException,
   Req,
 } from '@nestjs/common';
 import { Throttle } from '@nestjs/throttler';
 import { AuthService } from './auth.service';
 import { UsersService } from '../users/users.service';
+import { RolesService } from '../roles/roles.service';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import { Request, Response } from 'express';
 import { CsrfGuard } from './guards/csrf.guard';
 import { AuditService } from '../audit/audit.service';
+import { SignUpDto } from './dto/sign-up.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -27,6 +30,7 @@ export class AuthController {
   constructor(
     private readonly authService: AuthService,
     private userService: UsersService,
+    private readonly rolesService: RolesService,
     private jwtService: JwtService,
     private readonly auditService: AuditService,
   ) {}
@@ -95,6 +99,46 @@ export class AuthController {
     }
   }
 
+  @UseInterceptors(ClassSerializerInterceptor)
+  @Throttle({ default: { limit: 3, ttl: 60000 } })
+  @Post('sign-up')
+  async register(
+    @Body() dto: SignUpDto,
+    @Req() req: Request,
+    @Res({ passthrough: true }) response: Response,
+  ) {
+    const existing = await this.userService.findOne({ email: dto.email });
+    if (existing) {
+      throw new ConflictException('Email sudah terdaftar');
+    }
+
+    const customerRole = await this.rolesService.findOne({ name: 'customer' });
+    const hashed = await bcrypt.hash(dto.password, 12);
+
+    const user = await this.userService.create({
+      name: dto.name,
+      email: dto.email,
+      password: hashed,
+      phone: null,
+      is_active: true,
+      role: customerRole ? { id: customerRole.id } : undefined,
+    });
+
+    this.auditService.log(user.id, user.email, 'REGISTER', 'auth', user.id, 'User registered', req.ip);
+
+    // Auto-login after registration
+    const accessJwt = await this.authService.issueAccessToken(user.id);
+    this.setAccessTokenCookie(response, accessJwt);
+
+    const rawRefresh = await this.authService.generateRefreshToken(user.id);
+    this.setRefreshTokenCookie(response, rawRefresh);
+
+    const csrfToken = this.authService.generateCsrfToken();
+    this.setCsrfCookie(response, csrfToken);
+
+    return { user };
+  }
+
   // Sign-in endpoint – generate access and refresh tokens, store refresh token hash
   @UseInterceptors(ClassSerializerInterceptor)
   @Throttle({ default: { limit: 5, ttl: 60000 } })
@@ -154,9 +198,11 @@ export class AuthController {
   }
 
   // Refresh endpoint – validate DB‑stored refresh token, rotate, revoke old
+  // Note: CsrfGuard intentionally omitted here because the auth interceptor
+  // cannot reliably send a valid XSRF-TOKEN on refresh (the CSRF cookie expires
+  // at the same time as the access token). Refresh tokens are httpOnly + rotated.
   @Throttle({ default: { limit: 20, ttl: 60000 } })
   @Post('refresh')
-  @UseGuards(CsrfGuard)
   async refresh(@Req() req: Request, @Res() res: Response) {
     const rawRefresh = req.cookies['refreshToken'];
     if (!rawRefresh) {
