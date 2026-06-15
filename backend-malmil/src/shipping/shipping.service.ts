@@ -8,6 +8,9 @@ import { UpdateAddressDto } from './dto/update-address.dto';
 
 @Injectable()
 export class ShippingService {
+  private readonly rateCache = new Map<string, { data: any; expiry: number }>();
+  private readonly CACHE_TTL_MS = 15 * 60 * 1000;
+
   constructor(
     @InjectRepository(ShippingAddress)
     private readonly addressRepo: Repository<ShippingAddress>,
@@ -92,9 +95,15 @@ export class ShippingService {
   // ─── Rate Calculation ───────────────────────────────
 
   async calculateRates(dto: { destination: string; weight: number; couriers?: string[] }) {
-    const couriers = dto.couriers || ['jne', 'jnt', 'sicepat', 'anteraja', 'pos'];
+    const couriers = (dto.couriers?.length ? dto.couriers : ['jne', 'jnt', 'sicepat', 'anteraja', 'pos']).sort();
+    const cacheKey = `${dto.destination}:${dto.weight}:${couriers.join(',')}`;
 
-    const mockRates = couriers.flatMap((code) => {
+    const cached = this.rateCache.get(cacheKey);
+    if (cached && Date.now() < cached.expiry) {
+      return cached.data;
+    }
+
+    const rates = couriers.flatMap((code) => {
       const baseCost = this.getBaseCost(code);
       return [
         {
@@ -114,7 +123,9 @@ export class ShippingService {
       ];
     });
 
-    return { rates: mockRates };
+    const result = { rates };
+    this.rateCache.set(cacheKey, { data: result, expiry: Date.now() + this.CACHE_TTL_MS });
+    return result;
   }
 
   private getBaseCost(code: string): number {
