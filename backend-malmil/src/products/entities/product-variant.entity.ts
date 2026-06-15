@@ -15,6 +15,7 @@ export class ProductVariant {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
+  @Index()
   @ManyToOne(() => Product, (product) => product.variants, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'product_id' })
   product: Product;
@@ -32,12 +33,14 @@ export class ProductVariant {
   @Column({ default: 0 })
   weight_grams: number;
 
+  @Index()
   @Column({ default: 0 })
   stock_qty: number;
 
   @Column({ default: 5 })
   low_stock_threshold: number;
 
+  @Index()
   @Column({ default: true })
   is_active: boolean;
 

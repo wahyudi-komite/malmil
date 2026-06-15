@@ -3,6 +3,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  Index,
   JoinColumn,
   ManyToOne,
   OneToMany,
@@ -35,6 +36,7 @@ export class User {
   @Column({ type: 'timestamp', nullable: true })
   email_verified_at: Date;
 
+  @Index()
   @ManyToOne(() => Role)
   @JoinColumn({ name: 'role_id' })
   role: Role;

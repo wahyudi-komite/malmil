@@ -38,9 +38,11 @@ export class Product {
   @Column({ default: 0 })
   weight_grams: number;
 
+  @Index()
   @Column({ default: true })
   is_active: boolean;
 
+  @Index()
   @Column({ default: false })
   is_featured: boolean;
 
@@ -59,6 +61,7 @@ export class Product {
   @OneToMany(() => ProductVariant, (variant) => variant.product, { cascade: true })
   variants: ProductVariant[];
 
+  @Index()
   @CreateDateColumn()
   created_at: Date;
 

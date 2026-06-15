@@ -45,6 +45,7 @@ export class Coupon {
   @Column({ type: 'timestamp', nullable: true })
   expires_at: Date;
 
+  @Index()
   @Column({ default: true })
   is_active: boolean;
 

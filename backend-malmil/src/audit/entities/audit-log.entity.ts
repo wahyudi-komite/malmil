@@ -1,16 +1,18 @@
-import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, CreateDateColumn, Entity, Index, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity('audit_logs')
 export class AuditLog {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
+  @Index()
   @Column()
   userId: string;
 
   @Column({ nullable: true })
   userEmail: string;
 
+  @Index()
   @Column()
   action: string;
 
@@ -26,6 +28,7 @@ export class AuditLog {
   @Column({ nullable: true })
   ip: string;
 
+  @Index()
   @CreateDateColumn()
   createdAt: Date;
 }

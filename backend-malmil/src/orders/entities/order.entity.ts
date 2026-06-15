@@ -34,6 +34,7 @@ export class Order {
   @Column({ length: 30 })
   order_number: string;
 
+  @Index()
   @ManyToOne(() => User, { nullable: true })
   @JoinColumn({ name: 'user_id' })
   user: User;
@@ -57,6 +58,7 @@ export class Order {
   @Column({ type: 'decimal', precision: 12, scale: 0, default: 0 })
   total: number;
 
+  @Index()
   @Column({ type: 'enum', enum: OrderStatus, default: OrderStatus.PENDING })
   status: OrderStatus;
 
@@ -95,6 +97,7 @@ export class Order {
   @OneToOne(() => Payment, (payment) => payment.order)
   payment: Payment;
 
+  @Index()
   @CreateDateColumn()
   created_at: Date;
 

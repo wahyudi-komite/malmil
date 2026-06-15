@@ -76,7 +76,7 @@
 - [ ] Webhook signature verification
 - [x] Rate limiting per endpoint (auth: 5/min via @Throttle decorators, API global: 60/min)
 - [x] Swagger/OpenAPI documentation (23 controllers tagged, available at /api/docs)
-- [ ] Database indexes optimization
+- [x] Database indexes optimization (45 @Index() added across 18 entity files)
 - [ ] Angular SSR for SEO pages (landing, catalog, product)
 - [ ] PWA support
 

@@ -2,6 +2,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  Index,
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
@@ -13,6 +14,7 @@ export class Notification {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
+  @Index()
   @ManyToOne(() => User, { nullable: true, onDelete: 'CASCADE' })
   @JoinColumn({ name: 'user_id' })
   user: User;
@@ -29,6 +31,7 @@ export class Notification {
   @Column({ type: 'json', nullable: true })
   data: any;
 
+  @Index()
   @Column({ type: 'timestamp', nullable: true })
   read_at: Date;
 

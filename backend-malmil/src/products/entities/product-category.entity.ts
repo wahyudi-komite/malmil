@@ -27,9 +27,11 @@ export class ProductCategory {
   @Column({ length: 255, nullable: true })
   image_url: string;
 
+  @Index()
   @Column({ default: 0 })
   sort_order: number;
 
+  @Index()
   @Column({ default: true })
   is_active: boolean;
 

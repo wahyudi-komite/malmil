@@ -1,4 +1,4 @@
-import { Column, Entity, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { Column, Entity, Index, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn } from 'typeorm';
 
 /**
  * Stores a hashed version of a refresh token.
@@ -11,10 +11,12 @@ export class RefreshToken {
   id: string;
 
   /** SHA‑256 hash of the raw refresh token */
+  @Index()
   @Column({ length: 64 })
   tokenHash: string;
 
   /** Foreign key to user */
+  @Index()
   @Column({ name: 'user_id' })
   userId: string;
 
@@ -27,6 +29,7 @@ export class RefreshToken {
   isRevoked: boolean;
 
   /** Token family ID for reuse detection */
+  @Index()
   @Column({ nullable: true })
   familyId: string;
 

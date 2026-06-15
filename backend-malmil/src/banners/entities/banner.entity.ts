@@ -2,6 +2,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  Index,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -23,18 +24,22 @@ export class Banner {
   @Column({ length: 500, nullable: true })
   link_url: string;
 
+  @Index()
   @Column({ length: 30, default: 'hero' })
   position: string; // 'hero', 'promo_bar', 'sidebar'
 
   @Column({ default: 0 })
   sort_order: number;
 
+  @Index()
   @Column({ default: true })
   is_active: boolean;
 
+  @Index()
   @Column({ type: 'timestamp', nullable: true })
   starts_at: Date;
 
+  @Index()
   @Column({ type: 'timestamp', nullable: true })
   expires_at: Date;
 
