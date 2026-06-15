@@ -67,6 +67,10 @@ export const appRoutes: Route[] = [
         children: [
             { path: 'dashboard', loadChildren: () => import('app/modules/admin/example/example.routes') },
             { path: 'audit-log', loadChildren: () => import('app/modules/admin/audit-log/audit-log.routes') },
+            { path: 'products', loadChildren: () => import('app/modules/admin/products/products.routes') },
+            { path: 'orders', loadChildren: () => import('app/modules/admin/orders/orders.routes') },
+            { path: 'coupons', loadChildren: () => import('app/modules/admin/coupons/coupons.routes') },
+            { path: 'banners', loadChildren: () => import('app/modules/admin/banners/banners.routes') },
         ],
     },
 ];

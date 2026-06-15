@@ -1,0 +1,150 @@
+<div class="flex flex-col flex-auto min-w-0">
+    <div class="flex-auto p-6 sm:p-10">
+        <div class="max-w-7xl mx-auto">
+            <h1 class="text-3xl font-bold text-gray-900 mb-8">Pesanan</h1>
+
+            <!-- Filters -->
+            <div class="flex gap-4 mb-6">
+                <mat-form-field class="w-64" subscriptSizing="dynamic">
+                    <input matInput [(ngModel)]="keyword" (keyup.enter)="search()" placeholder="Cari nomor pesanan..." />
+                </mat-form-field>
+                <mat-form-field class="w-48" subscriptSizing="dynamic">
+                    <mat-select [(ngModel)]="statusFilter" (selectionChange)="search()">
+                        <mat-option *ngFor="let s of statuses" [value]="s.value">{{ s.label }}</mat-option>
+                    </mat-select>
+                </mat-form-field>
+                <button mat-stroked-button (click)="search()">Cari</button>
+            </div>
+
+            <!-- Table -->
+            <div class="bg-white rounded-xl border border-gray-100 overflow-hidden">
+                <table mat-table [dataSource]="data" class="w-full">
+                    <ng-container matColumnDef="order_number">
+                        <th mat-header-cell *matHeaderCellDef>Pesanan</th>
+                        <td mat-cell *matCellDef="let v" class="font-medium">#{{ v.order_number }}</td>
+                    </ng-container>
+                    <ng-container matColumnDef="customer">
+                        <th mat-header-cell *matHeaderCellDef>Pelanggan</th>
+                        <td mat-cell *matCellDef="let v" class="text-sm">{{ getCustomerName(v) }}</td>
+                    </ng-container>
+                    <ng-container matColumnDef="total">
+                        <th mat-header-cell *matHeaderCellDef>Total</th>
+                        <td mat-cell *matCellDef="let v" class="font-medium">{{ v.total | number:'':'id' }}</td>
+                    </ng-container>
+                    <ng-container matColumnDef="status">
+                        <th mat-header-cell *matHeaderCellDef>Status</th>
+                        <td mat-cell *matCellDef="let v">
+                            <span class="px-2 py-0.5 rounded-full text-xs font-medium" [class]="statusClass(v.status)">
+                                {{ statusLabel(v.status) }}
+                            </span>
+                        </td>
+                    </ng-container>
+                    <ng-container matColumnDef="date">
+                        <th mat-header-cell *matHeaderCellDef>Tanggal</th>
+                        <td mat-cell *matCellDef="let v" class="text-sm text-gray-500">{{ v.created_at | date:'dd MMM yyyy HH:mm' }}</td>
+                    </ng-container>
+                    <ng-container matColumnDef="actions">
+                        <th mat-header-cell *matHeaderCellDef></th>
+                        <td mat-cell *matCellDef="let v" class="text-right">
+                            <button mat-icon-button [matMenuTriggerFor]="menu"><mat-icon svgIcon="heroicons_outline:dots-vertical"></mat-icon></button>
+                            <mat-menu #menu="matMenu">
+                                <button mat-menu-item (click)="openDetail(v)"><mat-icon svgIcon="heroicons_outline:eye"></mat-icon> Detail</button>
+                                <mat-menu #statusMenu="matMenu">
+                                    <button mat-menu-item *ngFor="let s of statuses" (click)="updateStatus(v.id, s.value)"
+                                            [disabled]="!s.value || s.value === v.status">{{ s.label }}</button>
+                                </mat-menu>
+                                <button mat-menu-item [matMenuTriggerFor]="statusMenu"><mat-icon svgIcon="heroicons_outline:arrow-path"></mat-icon> Ubah Status</button>
+                            </mat-menu>
+                        </td>
+                    </ng-container>
+                    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                    <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="hover:bg-gray-50 cursor-pointer" (click)="openDetail(row)"></tr>
+                </table>
+                <mat-paginator [length]="total" [pageSize]="pageSize" [pageIndex]="page-1"
+                               [pageSizeOptions]="[10,25,50]" (page)="onPage($event)" class="border-t border-gray-100">
+                </mat-paginator>
+            </div>
+        </div>
+
+        <!-- Detail Drawer -->
+        <div *ngIf="selectedOrder" class="fixed inset-0 z-50 flex justify-end">
+            <div class="absolute inset-0 bg-black/30" (click)="closeDetail()"></div>
+            <div class="relative w-full max-w-lg bg-white shadow-xl overflow-y-auto">
+                <div class="p-6">
+                    <div class="flex items-center justify-between mb-6">
+                        <h2 class="text-xl font-bold">#{{ selectedOrder.order_number }}</h2>
+                        <button mat-icon-button (click)="closeDetail()"><mat-icon svgIcon="heroicons_outline:x-mark"></mat-icon></button>
+                    </div>
+
+                    <!-- Status badge -->
+                    <span class="px-3 py-1 rounded-full text-sm font-medium" [class]="statusClass(selectedOrder.status)">{{ statusLabel(selectedOrder.status) }}</span>
+
+                    <!-- Customer -->
+                    <div class="mt-6">
+                        <h3 class="text-sm font-semibold text-gray-500 uppercase mb-2">Pelanggan</h3>
+                        <p class="font-medium">{{ getCustomerName(selectedOrder) }}</p>
+                        <p *ngIf="selectedOrder.guest_phone" class="text-sm text-gray-500">{{ selectedOrder.guest_phone }}</p>
+                        <p *ngIf="selectedOrder.guest_email" class="text-sm text-gray-500">{{ selectedOrder.guest_email }}</p>
+                    </div>
+
+                    <!-- Address -->
+                    <div *ngIf="selectedOrder.address" class="mt-4">
+                        <h3 class="text-sm font-semibold text-gray-500 uppercase mb-2">Alamat</h3>
+                        <p class="text-sm">{{ selectedOrder.address.full_address }}, {{ selectedOrder.address.city }}, {{ selectedOrder.address.province }}</p>
+                    </div>
+
+                    <!-- Items -->
+                    <div class="mt-6">
+                        <h3 class="text-sm font-semibold text-gray-500 uppercase mb-2">Item</h3>
+                        <div *ngFor="let item of selectedOrder.items" class="flex justify-between text-sm py-2 border-b border-gray-100">
+                            <span>{{ item.product_name }} — {{ item.variant_name }} × {{ item.quantity }}</span>
+                            <span class="font-medium">{{ item.price * item.quantity | number:'':'id' }}</span>
+                        </div>
+                    </div>
+
+                    <!-- Totals -->
+                    <div class="mt-4 space-y-1 text-sm">
+                        <div class="flex justify-between"><span class="text-gray-500">Subtotal</span><span>{{ selectedOrder.subtotal | number:'':'id' }}</span></div>
+                        <div class="flex justify-between"><span class="text-gray-500">Ongkos Kirim</span><span>{{ selectedOrder.shipping_cost | number:'':'id' }}</span></div>
+                        <div *ngIf="selectedOrder.discount_amount > 0" class="flex justify-between text-green-600">
+                            <span>Diskon</span><span>-{{ selectedOrder.discount_amount | number:'':'id' }}</span>
+                        </div>
+                        <div class="flex justify-between font-bold text-lg pt-2 border-t border-gray-200"><span>Total</span><span>{{ selectedOrder.total | number:'':'id' }}</span></div>
+                    </div>
+
+                    <!-- Payment -->
+                    <div *ngIf="selectedOrder.payment" class="mt-6 p-4 bg-gray-50 rounded-lg">
+                        <h3 class="text-sm font-semibold text-gray-500 uppercase mb-2">Pembayaran</h3>
+                        <p class="text-sm">Metode: {{ selectedOrder.payment.method || '-' }}</p>
+                        <p class="text-sm">Status: {{ selectedOrder.payment.status }}</p>
+                        <p *ngIf="selectedOrder.payment.paid_at" class="text-sm">Dibayar: {{ selectedOrder.payment.paid_at | date:'dd MMM yyyy HH:mm' }}</p>
+                    </div>
+
+                    <!-- Shipping info -->
+                    <div *ngIf="selectedOrder.tracking_number" class="mt-4 p-4 bg-blue-50 rounded-lg">
+                        <h3 class="text-sm font-semibold text-gray-500 uppercase mb-2">Pengiriman</h3>
+                        <p class="text-sm">Kurir: {{ selectedOrder.courier_code }} - {{ selectedOrder.courier_service }}</p>
+                        <p class="text-sm">Resi: {{ selectedOrder.tracking_number }}</p>
+                    </div>
+
+                    <!-- Status update -->
+                    <div class="mt-6 pt-6 border-t border-gray-200">
+                        <h3 class="text-sm font-semibold text-gray-500 uppercase mb-3">Ubah Status</h3>
+                        <div class="flex flex-wrap gap-2">
+                            <button *ngFor="let s of statuses" (click)="updateStatus(selectedOrder.id, s.value)"
+                                    [disabled]="!s.value || s.value === selectedOrder.status"
+                                    class="px-3 py-1.5 text-xs rounded-lg border transition-colors"
+                                    [class.bg-gray-900]="s.value === selectedOrder.status"
+                                    [class.text-white]="s.value === selectedOrder.status"
+                                    [class.border-gray-300]="s.value !== selectedOrder.status"
+                                    [class.hover:bg-gray-100]="s.value && s.value !== selectedOrder.status"
+                                    [class.opacity-50]="!s.value || s.value === selectedOrder.status">
+                                {{ s.label }}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
