@@ -36,7 +36,7 @@ import { TrackingModule } from './tracking/tracking.module';
       useClass: TypeOrmConfigService,
       imports: undefined,
     }),
-    ThrottlerModule.forRoot([{ ttl: 60000, limit: 10 }]),
+    ThrottlerModule.forRoot([{ ttl: 60000, limit: 60 }]),
     ScheduleModule.forRoot(),
     ServeStaticModule.forRoot({
       rootPath: join(process.cwd(), 'uploads'),
