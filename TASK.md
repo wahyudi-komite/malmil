@@ -77,7 +77,7 @@
 - [x] Rate limiting per endpoint (auth: 5/min via @Throttle decorators, API global: 60/min)
 - [x] Swagger/OpenAPI documentation (23 controllers tagged, available at /api/docs)
 - [x] Database indexes optimization (45 @Index() added across 18 entity files)
-- [ ] Angular SSR for SEO pages (landing, catalog, product)
+- [x] Angular SSR for SEO pages (server.ts, app.config.server, build successful)
 - [ ] PWA support
 
 ## ⬜ Future
