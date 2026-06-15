@@ -12,7 +12,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { RouterLink } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { fuseAnimations } from '@fuse/animations';
 import { FuseAlertComponent, FuseAlertType } from '@fuse/components/alert';
 import { FuseValidators } from '@fuse/validators';
@@ -50,9 +50,12 @@ export class AuthResetPasswordComponent implements OnInit {
     /**
      * Constructor
      */
+    private _token: string = '';
+
     constructor(
         private _authService: AuthService,
-        private _formBuilder: UntypedFormBuilder
+        private _formBuilder: UntypedFormBuilder,
+        private _route: ActivatedRoute
     ) {}
 
     // -----------------------------------------------------------------------------------------------------
@@ -63,7 +66,7 @@ export class AuthResetPasswordComponent implements OnInit {
      * On init
      */
     ngOnInit(): void {
-        // Create the form
+        this._token = this._route.snapshot.queryParams['token'] || '';
         this.resetPasswordForm = this._formBuilder.group(
             {
                 password: ['', Validators.required],
@@ -99,7 +102,7 @@ export class AuthResetPasswordComponent implements OnInit {
 
         // Send the request to the server
         this._authService
-            .resetPassword(this.resetPasswordForm.get('password').value)
+            .resetPassword(this.resetPasswordForm.get('password').value, this._token)
             .pipe(
                 finalize(() => {
                     // Re-enable the form

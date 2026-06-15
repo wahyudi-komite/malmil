@@ -9,10 +9,13 @@ import {
   UseGuards,
   UnauthorizedException,
   ConflictException,
+  BadRequestException,
   Req,
 } from '@nestjs/common';
 import { Throttle } from '@nestjs/throttler';
 import { AuthService } from './auth.service';
+import { PasswordResetService } from './password-reset.service';
+import { MailService } from '../mail/mail.service';
 import { UsersService } from '../users/users.service';
 import { RolesService } from '../roles/roles.service';
 import * as bcrypt from 'bcrypt';
@@ -21,6 +24,7 @@ import { Request, Response } from 'express';
 import { CsrfGuard } from './guards/csrf.guard';
 import { AuditService } from '../audit/audit.service';
 import { SignUpDto } from './dto/sign-up.dto';
+import { ForgotPasswordDto, ResetPasswordDto } from './dto/password-reset.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -33,6 +37,8 @@ export class AuthController {
     private readonly rolesService: RolesService,
     private jwtService: JwtService,
     private readonly auditService: AuditService,
+    private readonly passwordResetService: PasswordResetService,
+    private readonly mailService: MailService,
   ) {}
 
   private setAccessTokenCookie(response: Response, accessToken: string): void {
@@ -125,6 +131,9 @@ export class AuthController {
     });
 
     this.auditService.log(user.id, user.email, 'REGISTER', 'auth', user.id, 'User registered', req.ip);
+
+    // Send verification email (fire-and-forget)
+    this.sendVerificationEmail(user.id, user.email);
 
     // Auto-login after registration
     const accessJwt = await this.authService.issueAccessToken(user.id);
@@ -261,5 +270,75 @@ export class AuthController {
     }
     this.clearAuthCookies(response);
     return { message: 'Success' };
+  }
+
+  private async sendVerificationEmail(userId: string, email: string) {
+    try {
+      const token = this.jwtService.sign(
+        { id: userId, purpose: 'email-verification' },
+        { expiresIn: '24h' },
+      );
+      await this.mailService.sendEmailVerification(email, token);
+    } catch (e) {
+      this.auditService.log(userId, email, 'VERIFICATION_EMAIL_FAILED', 'auth', userId, 'Failed to send verification email', 'system');
+    }
+  }
+
+  @Throttle({ default: { limit: 3, ttl: 60000 } })
+  @Post('forgot-password')
+  async forgotPassword(@Body() dto: ForgotPasswordDto, @Req() req: Request) {
+    const user = await this.userService.findOne({ email: dto.email });
+    if (user) {
+      await this.passwordResetService.sendResetLink(dto.email);
+      this.auditService.log(user.id, dto.email, 'FORGOT_PASSWORD', 'auth', user.id, 'Password reset requested', req.ip);
+    }
+    return { message: 'Jika email terdaftar, link reset password telah dikirim' };
+  }
+
+  @Throttle({ default: { limit: 5, ttl: 60000 } })
+  @Post('reset-password')
+  async resetPassword(@Body() dto: ResetPasswordDto, @Req() req: Request) {
+    const record = await this.passwordResetService.validateToken(dto.token);
+    if (!record) {
+      throw new BadRequestException('Token tidak valid atau sudah kadaluarsa');
+    }
+    const user = await this.userService.findOne({ email: record.email });
+    if (!user) {
+      throw new BadRequestException('User tidak ditemukan');
+    }
+    const hashed = await bcrypt.hash(dto.password, 12);
+    await this.userService.update(user.id, { password: hashed });
+    await this.passwordResetService.markUsed(record.id);
+    await this.authService.revokeAllUserRefreshTokens(user.id);
+
+    this.auditService.log(user.id, record.email, 'RESET_PASSWORD', 'auth', user.id, 'Password reset successful', req.ip);
+    return { message: 'Password berhasil direset. Silakan login dengan password baru.' };
+  }
+
+  @Throttle({ default: { limit: 3, ttl: 60000 } })
+  @Post('verify-email')
+  async verifyEmail(@Body('token') token: string, @Req() req: Request) {
+    try {
+      const payload = await this.jwtService.verifyAsync(token);
+      if (payload.purpose !== 'email-verification') {
+        throw new BadRequestException('Token tidak valid');
+      }
+      await this.userService.update(payload.id, { email_verified_at: new Date() });
+      this.auditService.log(payload.id, 'unknown', 'VERIFY_EMAIL', 'auth', payload.id, 'Email verified', req.ip);
+      return { message: 'Email berhasil diverifikasi' };
+    } catch {
+      throw new BadRequestException('Token verifikasi tidak valid atau sudah kadaluarsa');
+    }
+  }
+
+  @Throttle({ default: { limit: 3, ttl: 60000 } })
+  @Post('send-verification')
+  async sendVerification(@Body('userId') userId: string, @Req() req: Request) {
+    const user = await this.userService.findById(userId);
+    if (!user) throw new BadRequestException('User tidak ditemukan');
+    if (user.email_verified_at) return { message: 'Email sudah diverifikasi' };
+    await this.sendVerificationEmail(userId, user.email);
+    this.auditService.log(userId, user.email, 'RESEND_VERIFICATION', 'auth', userId, 'Verification email resent', req.ip);
+    return { message: 'Email verifikasi telah dikirim' };
   }
 }
