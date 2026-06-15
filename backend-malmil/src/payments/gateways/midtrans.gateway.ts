@@ -1,5 +1,6 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, UnprocessableEntityException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import * as crypto from 'crypto';
 import { PaymentGatewayInterface } from './payment-gateway.interface';
 
 @Injectable()
@@ -56,8 +57,40 @@ export class MidtransGateway implements PaymentGatewayInterface {
     }
   }
 
+  private verifySignature(payload: any): void {
+    const orderId = payload.order_id;
+    const statusCode = payload.status_code;
+    const grossAmount = payload.gross_amount;
+    const signatureKey = payload.signature_key;
+    const serverKey = this.config.get<string>('MIDTRANS_SERVER_KEY');
+
+    if (!orderId || !statusCode || !grossAmount || !signatureKey || !serverKey) {
+      this.logger.warn('Missing fields for signature verification', {
+        hasOrderId: !!orderId,
+        hasStatusCode: !!statusCode,
+        hasGrossAmount: !!grossAmount,
+        hasSignatureKey: !!signatureKey,
+        hasServerKey: !!serverKey,
+      });
+      throw new UnprocessableEntityException('Missing webhook verification fields');
+    }
+
+    const input = orderId + statusCode + grossAmount + serverKey;
+    const computed = crypto.createHash('sha512').update(input).digest('hex');
+
+    if (computed !== signatureKey) {
+      this.logger.error(
+        `Midtrans signature mismatch. orderId=${orderId} expected=${computed} received=${signatureKey}`,
+      );
+      throw new UnprocessableEntityException('Invalid webhook signature');
+    }
+
+    this.logger.log('Midtrans signature verified successfully');
+  }
+
   async handleWebhook(payload: any, _signatureKey: string) {
-    this.logger.log('Midtrans webhook received', payload);
+    this.logger.log('Midtrans webhook received');
+    this.verifySignature(payload);
 
     const orderId = payload.order_id;
     const transactionStatus = payload.transaction_status;
