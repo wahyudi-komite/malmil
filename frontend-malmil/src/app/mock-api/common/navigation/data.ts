@@ -41,6 +41,13 @@ export const defaultNavigation: FuseNavigationItem[] = [
                 icon: 'heroicons_outline:photograph',
                 link: '/banners',
             },
+            {
+                id: 'users',
+                title: 'Pengguna',
+                type: 'basic',
+                icon: 'heroicons_outline:users',
+                link: '/users',
+            },
         ],
     },
     {

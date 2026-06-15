@@ -70,6 +70,7 @@ export const appRoutes: Route[] = [
             { path: 'products', loadChildren: () => import('app/modules/admin/products/products.routes') },
             { path: 'orders', loadChildren: () => import('app/modules/admin/orders/orders.routes') },
             { path: 'coupons', loadChildren: () => import('app/modules/admin/coupons/coupons.routes') },
+            { path: 'users', loadChildren: () => import('app/modules/admin/users/users.routes') },
             { path: 'banners', loadChildren: () => import('app/modules/admin/banners/banners.routes') },
             { path: 'settings', loadChildren: () => import('app/modules/admin/settings/settings.routes') },
         ],
