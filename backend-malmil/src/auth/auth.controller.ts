@@ -13,6 +13,7 @@ import {
   Req,
 } from '@nestjs/common';
 import { Throttle } from '@nestjs/throttler';
+import { ApiTags, ApiOperation, ApiResponse, ApiQuery } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
 import { AuthService } from './auth.service';
 import { PasswordResetService } from './password-reset.service';
@@ -27,6 +28,7 @@ import { AuditService } from '../audit/audit.service';
 import { SignUpDto } from './dto/sign-up.dto';
 import { ForgotPasswordDto, ResetPasswordDto } from './dto/password-reset.dto';
 
+@ApiTags('Autentikasi')
 @Controller('auth')
 export class AuthController {
   private readonly accessTokenMaxAge = 15 * 60 * 1000;
@@ -87,6 +89,7 @@ export class AuthController {
     });
   }
 
+  @ApiOperation({ summary: 'Cek status autentikasi' })
   @Get('check-auth')
   async checkAuth(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
     const token = req.cookies['accessToken'];
@@ -106,6 +109,8 @@ export class AuthController {
     }
   }
 
+  @ApiOperation({ summary: 'Mendaftarkan akun baru' })
+  @ApiResponse({ status: 409, description: 'Email sudah terdaftar' })
   @UseInterceptors(ClassSerializerInterceptor)
   @Throttle({ default: { limit: 3, ttl: 60000 } })
   @Post('sign-up')
@@ -150,6 +155,8 @@ export class AuthController {
   }
 
   // Sign-in endpoint – generate access and refresh tokens, store refresh token hash
+  @ApiOperation({ summary: 'Masuk ke akun' })
+  @ApiResponse({ status: 401, description: 'Kredensial tidak valid' })
   @UseInterceptors(ClassSerializerInterceptor)
   @Throttle({ default: { limit: 5, ttl: 60000 } })
   @Post('sign-in')
@@ -181,6 +188,8 @@ export class AuthController {
     return { user };
   }
 
+  @ApiOperation({ summary: 'Masuk menggunakan token' })
+  @ApiResponse({ status: 401, description: 'Token tidak valid atau tidak disediakan' })
   @UseInterceptors(ClassSerializerInterceptor)
   @UseGuards(CsrfGuard)
   @Post('sign-in-with-token')
@@ -211,6 +220,8 @@ export class AuthController {
   // Note: CsrfGuard intentionally omitted here because the auth interceptor
   // cannot reliably send a valid XSRF-TOKEN on refresh (the CSRF cookie expires
   // at the same time as the access token). Refresh tokens are httpOnly + rotated.
+  @ApiOperation({ summary: 'Memperbarui token akses' })
+  @ApiResponse({ status: 401, description: 'Refresh token tidak valid atau kadaluarsa' })
   @Throttle({ default: { limit: 20, ttl: 60000 } })
   @Post('refresh')
   async refresh(@Req() req: Request, @Res() res: Response) {
@@ -259,6 +270,7 @@ export class AuthController {
     return res.json({ success: true });
   }
 
+  @ApiOperation({ summary: 'Keluar dari akun' })
   @Post('logout')
   @UseGuards(CsrfGuard)
   async logout(@Req() req: Request, @Res({ passthrough: true }) response: Response) {
@@ -285,6 +297,7 @@ export class AuthController {
     }
   }
 
+  @ApiOperation({ summary: 'Lupa kata sandi' })
   @Throttle({ default: { limit: 3, ttl: 60000 } })
   @Post('forgot-password')
   async forgotPassword(@Body() dto: ForgotPasswordDto, @Req() req: Request) {
@@ -296,6 +309,8 @@ export class AuthController {
     return { message: 'Jika email terdaftar, link reset password telah dikirim' };
   }
 
+  @ApiOperation({ summary: 'Mengatur ulang kata sandi' })
+  @ApiResponse({ status: 400, description: 'Token tidak valid atau sudah kadaluarsa' })
   @Throttle({ default: { limit: 5, ttl: 60000 } })
   @Post('reset-password')
   async resetPassword(@Body() dto: ResetPasswordDto, @Req() req: Request) {
@@ -316,6 +331,8 @@ export class AuthController {
     return { message: 'Password berhasil direset. Silakan login dengan password baru.' };
   }
 
+  @ApiOperation({ summary: 'Verifikasi alamat email' })
+  @ApiResponse({ status: 400, description: 'Token verifikasi tidak valid atau sudah kadaluarsa' })
   @Throttle({ default: { limit: 3, ttl: 60000 } })
   @Post('verify-email')
   async verifyEmail(@Body('token') token: string, @Req() req: Request) {
@@ -332,6 +349,8 @@ export class AuthController {
     }
   }
 
+  @ApiOperation({ summary: 'Kirim ulang email verifikasi' })
+  @ApiResponse({ status: 400, description: 'User tidak ditemukan' })
   @Throttle({ default: { limit: 3, ttl: 60000 } })
   @Post('send-verification')
   async sendVerification(@Body('userId') userId: string, @Req() req: Request) {
@@ -343,10 +362,12 @@ export class AuthController {
     return { message: 'Email verifikasi telah dikirim' };
   }
 
+  @ApiOperation({ summary: 'Login dengan Google' })
   @Get('google')
   @UseGuards(AuthGuard('google'))
   async googleAuth() {}
 
+  @ApiOperation({ summary: 'Callback login Google' })
   @Get('google/callback')
   @UseGuards(AuthGuard('google'))
   async googleAuthCallback(@Req() req: Request, @Res() res: Response) {

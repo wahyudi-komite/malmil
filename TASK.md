@@ -75,7 +75,7 @@
 - [x] Rate caching for shipping rates (15 min TTL via in-memory cache)
 - [ ] Webhook signature verification
 - [x] Rate limiting per endpoint (auth: 5/min via @Throttle decorators, API global: 60/min)
-- [ ] Swagger/OpenAPI documentation
+- [x] Swagger/OpenAPI documentation (23 controllers tagged, available at /api/docs)
 - [ ] Database indexes optimization
 - [ ] Angular SSR for SEO pages (landing, catalog, product)
 - [ ] PWA support

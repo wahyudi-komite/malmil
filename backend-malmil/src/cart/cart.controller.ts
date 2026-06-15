@@ -5,10 +5,12 @@ import {
 import { CartService } from './cart.service';
 import { AddToCartDto } from './dto/add-to-cart.dto';
 import { UpdateCartItemDto } from './dto/update-cart-item.dto';
+import { ApiTags, ApiOperation, ApiResponse, ApiParam } from '@nestjs/swagger';
 import { AuthGuard } from '../auth/auth.guard';
 import { CurrentUser } from '../common/decorators/current-user.decorator';
 import { Public } from '../common/decorators/public.decorator';
 
+@ApiTags('Keranjang')
 @Controller('cart')
 export class CartController {
   constructor(private readonly cartService: CartService) {}
@@ -20,6 +22,7 @@ export class CartController {
     };
   }
 
+  @ApiOperation({ summary: 'Mendapatkan isi keranjang' })
   @Public()
   @Get()
   async getCart(
@@ -30,6 +33,7 @@ export class CartController {
     return this.cartService.getCart(userId, sid);
   }
 
+  @ApiOperation({ summary: 'Menambahkan item ke keranjang' })
   @Public()
   @Post('items')
   async addItem(
@@ -41,6 +45,8 @@ export class CartController {
     return this.cartService.addItem(userId, sid, dto);
   }
 
+  @ApiOperation({ summary: 'Memperbarui item di keranjang' })
+  @ApiParam({ name: 'id', description: 'ID item keranjang' })
   @Public()
   @Patch('items/:id')
   async updateItem(
@@ -53,6 +59,8 @@ export class CartController {
     return this.cartService.updateItem(id, dto, userId, sid);
   }
 
+  @ApiOperation({ summary: 'Menghapus item dari keranjang' })
+  @ApiParam({ name: 'id', description: 'ID item keranjang' })
   @Public()
   @Delete('items/:id')
   async removeItem(
@@ -64,6 +72,7 @@ export class CartController {
     return this.cartService.removeItem(id, userId, sid);
   }
 
+  @ApiOperation({ summary: 'Mengosongkan keranjang' })
   @Public()
   @Delete()
   async clearCart(
@@ -74,6 +83,7 @@ export class CartController {
     return this.cartService.clearCart(userId, sid);
   }
 
+  @ApiOperation({ summary: 'Menerapkan kupon' })
   @Public()
   @Post('apply-coupon')
   async applyCoupon(
@@ -85,6 +95,7 @@ export class CartController {
     return this.cartService.applyCoupon(userId, sid, code);
   }
 
+  @ApiOperation({ summary: 'Menghapus kupon dari keranjang' })
   @Public()
   @Delete('coupon')
   async removeCoupon(
@@ -95,6 +106,8 @@ export class CartController {
     return this.cartService.removeCoupon(userId, sid);
   }
 
+  @ApiOperation({ summary: 'Menggabungkan keranjang tamu' })
+  @ApiResponse({ status: 401, description: 'Tidak terautentikasi' })
   @UseGuards(AuthGuard)
   @Post('merge')
   async mergeCart(

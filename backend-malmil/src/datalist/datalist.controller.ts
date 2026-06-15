@@ -1,10 +1,12 @@
 import { Controller, Get, Request, Res } from '@nestjs/common';
+import { ApiTags, ApiOperation, ApiQuery } from '@nestjs/swagger';
 import { Response } from 'express';
 import { DatalistService } from './datalist.service';
 import { formatDate } from '../utils/date.utils';
 
 const tables = 'm_data15m';
 
+@ApiTags('Data List')
 @Controller('datalist')
 export class DatalistController {
   constructor(private readonly _service: DatalistService) {}
@@ -74,6 +76,18 @@ export class DatalistController {
   /**
    * Endpoint untuk mendapatkan data dengan pagination
    */
+  @ApiOperation({ summary: 'Mendapatkan data list' })
+  @ApiQuery({ name: 'start', required: false, description: 'Tanggal mulai' })
+  @ApiQuery({ name: 'end', required: false, description: 'Tanggal akhir' })
+  @ApiQuery({ name: 'rw', required: false, description: 'Filter RW' })
+  @ApiQuery({ name: 'yw', required: false, description: 'Filter YW' })
+  @ApiQuery({ name: 'timeJobFrom', required: false, description: 'Waktu job dari' })
+  @ApiQuery({ name: 'timeJobTo', required: false, description: 'Waktu job ke' })
+  @ApiQuery({ name: 'page', required: false, description: 'Halaman' })
+  @ApiQuery({ name: 'limit', required: false, description: 'Jumlah per halaman' })
+  @ApiQuery({ name: 'sort', required: false, description: 'Urutkan' })
+  @ApiQuery({ name: 'direction', required: false, description: 'Arah urutan' })
+  @ApiQuery({ name: 'keyword', required: false, description: 'Kata kunci pencarian' })
   @Get()
   async findAll(@Request() request) {
     return await this.getData(request);
@@ -82,6 +96,13 @@ export class DatalistController {
   /**
    * Endpoint untuk export data ke Excel
    */
+  @ApiOperation({ summary: 'Ekspor data ke Excel' })
+  @ApiQuery({ name: 'start', required: false, description: 'Tanggal mulai' })
+  @ApiQuery({ name: 'end', required: false, description: 'Tanggal akhir' })
+  @ApiQuery({ name: 'rw', required: false, description: 'Filter RW' })
+  @ApiQuery({ name: 'yw', required: false, description: 'Filter YW' })
+  @ApiQuery({ name: 'timeJobFrom', required: false, description: 'Waktu job dari' })
+  @ApiQuery({ name: 'timeJobTo', required: false, description: 'Waktu job ke' })
   @Get('excel')
   async exportExcel(@Res() res: Response, @Request() request) {
     const returnData = await this.getData(request, true);

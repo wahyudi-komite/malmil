@@ -8,12 +8,17 @@ import { UpdateCouponDto } from './dto/update-coupon.dto';
 import { AuthGuard } from '../auth/auth.guard';
 import { PermissionsGuard } from '../permissions/permissions.guard';
 import { HasPermission } from '../permissions/has-permission.decorator';
+import { ApiTags, ApiOperation, ApiResponse, ApiParam } from '@nestjs/swagger';
 import { Public } from '../common/decorators/public.decorator';
 
+@ApiTags('Kupon')
 @Controller()
 export class CouponsController {
   constructor(private readonly couponsService: CouponsService) {}
 
+  @ApiOperation({ summary: 'Mendapatkan daftar kupon (admin)' })
+  @ApiResponse({ status: 401, description: 'Tidak terautentikasi' })
+  @ApiResponse({ status: 403, description: 'Tidak memiliki izin' })
   @UseGuards(AuthGuard, PermissionsGuard)
   @HasPermission('coupons_view')
   @Get('admin/coupons')
@@ -21,6 +26,11 @@ export class CouponsController {
     return this.couponsService.findAll(query);
   }
 
+  @ApiOperation({ summary: 'Mendapatkan detail kupon (admin)' })
+  @ApiParam({ name: 'id', description: 'ID kupon' })
+  @ApiResponse({ status: 401, description: 'Tidak terautentikasi' })
+  @ApiResponse({ status: 403, description: 'Tidak memiliki izin' })
+  @ApiResponse({ status: 404, description: 'Kupon tidak ditemukan' })
   @UseGuards(AuthGuard, PermissionsGuard)
   @HasPermission('coupons_view')
   @Get('admin/coupons/:id')
@@ -28,6 +38,9 @@ export class CouponsController {
     return this.couponsService.findById(id);
   }
 
+  @ApiOperation({ summary: 'Membuat kupon baru' })
+  @ApiResponse({ status: 401, description: 'Tidak terautentikasi' })
+  @ApiResponse({ status: 403, description: 'Tidak memiliki izin' })
   @UseGuards(AuthGuard, PermissionsGuard)
   @HasPermission('coupons_create')
   @Post('admin/coupons')
@@ -35,6 +48,11 @@ export class CouponsController {
     return this.couponsService.create(dto);
   }
 
+  @ApiOperation({ summary: 'Memperbarui kupon' })
+  @ApiParam({ name: 'id', description: 'ID kupon' })
+  @ApiResponse({ status: 401, description: 'Tidak terautentikasi' })
+  @ApiResponse({ status: 403, description: 'Tidak memiliki izin' })
+  @ApiResponse({ status: 404, description: 'Kupon tidak ditemukan' })
   @UseGuards(AuthGuard, PermissionsGuard)
   @HasPermission('coupons_edit')
   @Put('admin/coupons/:id')
@@ -42,6 +60,11 @@ export class CouponsController {
     return this.couponsService.update(id, dto);
   }
 
+  @ApiOperation({ summary: 'Menghapus kupon' })
+  @ApiParam({ name: 'id', description: 'ID kupon' })
+  @ApiResponse({ status: 401, description: 'Tidak terautentikasi' })
+  @ApiResponse({ status: 403, description: 'Tidak memiliki izin' })
+  @ApiResponse({ status: 404, description: 'Kupon tidak ditemukan' })
   @UseGuards(AuthGuard, PermissionsGuard)
   @HasPermission('coupons_delete')
   @Delete('admin/coupons/:id')
@@ -49,6 +72,7 @@ export class CouponsController {
     return this.couponsService.remove(id);
   }
 
+  @ApiOperation({ summary: 'Validasi kupon' })
   @Public()
   @Post('coupons/validate')
   async validate(

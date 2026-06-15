@@ -13,12 +13,15 @@ import {
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import * as bcrypt from 'bcrypt';
+import { ApiTags, ApiOperation, ApiBearerAuth, ApiResponse, ApiParam, ApiBody } from '@nestjs/swagger';
 import { AuthGuard } from '../auth/auth.guard';
 import { PermissionsGuard } from '../permissions/permissions.guard';
 import { HasPermission } from '../permissions/has-permission.decorator';
 import { AuthService } from '../auth/auth.service';
 import { AuditService } from '../audit/audit.service';
 
+@ApiTags('Pengguna')
+@ApiBearerAuth()
 @UseInterceptors(ClassSerializerInterceptor)
 @UseGuards(AuthGuard, PermissionsGuard)
 @Controller('users')
@@ -29,6 +32,9 @@ export class UsersController {
     private readonly auditService: AuditService,
   ) {}
 
+  @ApiOperation({ summary: 'Membuat pengguna baru' })
+  @ApiResponse({ status: 401, description: 'Tidak terautentikasi' })
+  @ApiResponse({ status: 403, description: 'Tidak memiliki izin' })
   @Post()
   @HasPermission('users')
   async create(@Body() createUserDto: CreateUserDto, @Request() req) {
@@ -52,6 +58,9 @@ export class UsersController {
     return user;
   }
 
+  @ApiOperation({ summary: 'Mendapatkan daftar pengguna' })
+  @ApiResponse({ status: 401, description: 'Tidak terautentikasi' })
+  @ApiResponse({ status: 403, description: 'Tidak memiliki izin' })
   @Get()
   @HasPermission('users')
   async findAll(@Request() request) {
@@ -65,6 +74,11 @@ export class UsersController {
     });
   }
 
+  @ApiOperation({ summary: 'Mengubah kata sandi pengguna' })
+  @ApiParam({ name: 'id', description: 'ID pengguna' })
+  @ApiResponse({ status: 401, description: 'Tidak terautentikasi' })
+  @ApiResponse({ status: 403, description: 'Tidak memiliki izin' })
+  @ApiResponse({ status: 404, description: 'Pengguna tidak ditemukan' })
   @Patch(':id/password')
   @HasPermission('users')
   async changePassword(

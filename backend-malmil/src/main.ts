@@ -1,6 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
+import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import * as cookieParser from 'cookie-parser';
 import helmet from 'helmet';
 
@@ -39,7 +40,30 @@ async function bootstrap() {
     }),
   );
 
+  // Swagger / OpenAPI documentation
+  const config = new DocumentBuilder()
+    .setTitle('Malmil API')
+    .setDescription('D2C E-Commerce API for Malmil Premium Popcorn')
+    .setVersion('1.0')
+    .addServer(
+      process.env.APP_URL || `http://localhost:${port}`,
+      'Server',
+    )
+    .addCookieAuth('accessToken')
+    .addBearerAuth()
+    .build();
+
+  const document = SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('api/docs', app, document, {
+    swaggerOptions: {
+      persistAuthorization: true,
+      tagsSorter: 'alpha',
+      operationsSorter: 'alpha',
+    },
+  });
+
   await app.listen(port);
   console.log(`🍿 Malmil API running on port ${port}`);
+  console.log(`📖 Swagger docs at http://localhost:${port}/api/docs`);
 }
 bootstrap();

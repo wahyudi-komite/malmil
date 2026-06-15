@@ -8,16 +8,28 @@ import {
   Delete,
   Request,
 } from '@nestjs/common';
+import { ApiTags, ApiOperation, ApiQuery } from '@nestjs/swagger';
 import { DatarealService } from './datareal.service';
 import { CreateDatarealDto } from './dto/create-datareal.dto';
 import { UpdateDatarealDto } from './dto/update-datareal.dto';
 
 const tables = 'm_update5s';
 
+@ApiTags('Data Real')
 @Controller('datareal')
 export class DatarealController {
   constructor(private readonly _service: DatarealService) {}
 
+  @ApiQuery({ name: 'start', required: false, description: 'Tanggal mulai' })
+  @ApiQuery({ name: 'end', required: false, description: 'Tanggal akhir' })
+  @ApiQuery({ name: 'noeg', required: false, description: 'Filter no EG' })
+  @ApiQuery({ name: 'type', required: false, description: 'Filter tipe' })
+  @ApiQuery({ name: 'page', required: false, description: 'Halaman' })
+  @ApiQuery({ name: 'limit', required: false, description: 'Jumlah per halaman' })
+  @ApiQuery({ name: 'sort', required: false, description: 'Urutkan' })
+  @ApiQuery({ name: 'direction', required: false, description: 'Arah urutan' })
+  @ApiQuery({ name: 'keyword', required: false, description: 'Kata kunci pencarian' })
+  @ApiOperation({ summary: 'Mendapatkan data real' })
   @Get()
   async findAll(@Request() request) {
     return this._service.paginate(tables, [], {

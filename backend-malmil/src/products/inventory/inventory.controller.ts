@@ -7,6 +7,7 @@ import {
   UseInterceptors,
   ClassSerializerInterceptor,
 } from '@nestjs/common';
+import { ApiTags, ApiOperation, ApiBearerAuth, ApiResponse, ApiParam, ApiQuery } from '@nestjs/swagger';
 import { AuthGuard } from '../../auth/auth.guard';
 import { PermissionsGuard } from '../../permissions/permissions.guard';
 import { HasPermission } from '../../permissions/has-permission.decorator';
@@ -16,6 +17,8 @@ import { Repository } from 'typeorm';
 import { ProductVariant } from '../entities/product-variant.entity';
 import { Product } from '../entities/product.entity';
 
+@ApiTags('Inventaris')
+@ApiBearerAuth()
 @UseGuards(AuthGuard, PermissionsGuard)
 @UseInterceptors(ClassSerializerInterceptor)
 @Controller('admin/inventory')
@@ -28,18 +31,28 @@ export class InventoryController {
     private readonly productRepo: Repository<Product>,
   ) {}
 
+  @ApiOperation({ summary: 'Ringkasan stok inventaris' })
+  @ApiResponse({ status: 401, description: 'Tidak terautentikasi' })
+  @ApiResponse({ status: 403, description: 'Tidak memiliki izin' })
   @Get('summary')
   @HasPermission('inventory')
   async summary() {
     return this.inventoryService.getStockSummary();
   }
 
+  @ApiOperation({ summary: 'Item stok rendah' })
+  @ApiQuery({ name: 'threshold', required: false, description: 'Batas stok' })
+  @ApiResponse({ status: 401, description: 'Tidak terautentikasi' })
+  @ApiResponse({ status: 403, description: 'Tidak memiliki izin' })
   @Get('low-stock')
   @HasPermission('inventory')
   async lowStock(@Query('threshold') threshold?: number) {
     return this.inventoryService.getLowStockItems(threshold ? +threshold : 5);
   }
 
+  @ApiOperation({ summary: 'Daftar varian inventaris' })
+  @ApiResponse({ status: 401, description: 'Tidak terautentikasi' })
+  @ApiResponse({ status: 403, description: 'Tidak memiliki izin' })
   @Get('variants')
   @HasPermission('inventory')
   async variants(@Query() query: any) {
@@ -74,6 +87,11 @@ export class InventoryController {
     };
   }
 
+  @ApiOperation({ summary: 'Riwayat stok varian' })
+  @ApiParam({ name: 'variantId', description: 'ID varian' })
+  @ApiResponse({ status: 401, description: 'Tidak terautentikasi' })
+  @ApiResponse({ status: 403, description: 'Tidak memiliki izin' })
+  @ApiResponse({ status: 404, description: 'Varian tidak ditemukan' })
   @Get('history/:variantId')
   @HasPermission('inventory')
   async history(@Param('variantId') variantId: string) {
