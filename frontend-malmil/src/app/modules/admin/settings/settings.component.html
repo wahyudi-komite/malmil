@@ -1,0 +1,37 @@
+<div class="flex flex-col flex-auto min-w-0">
+    <div class="flex-auto p-6 sm:p-10">
+        <div class="max-w-3xl mx-auto">
+            <h1 class="text-3xl font-bold text-gray-900 mb-8">Pengaturan</h1>
+
+            <div *ngIf="loading" class="text-center py-20 text-gray-500">Memuat...</div>
+
+            <div *ngIf="!loading" class="bg-white p-6 rounded-xl border border-gray-100">
+                <div class="space-y-5">
+                    <mat-form-field class="w-full" subscriptSizing="dynamic">
+                        <mat-label>Nama Toko</mat-label>
+                        <input matInput [(ngModel)]="settings['site_name']" />
+                    </mat-form-field>
+                    <mat-form-field class="w-full" subscriptSizing="dynamic">
+                        <mat-label>Deskripsi Toko</mat-label>
+                        <textarea matInput rows="3" [(ngModel)]="settings['site_description']"></textarea>
+                    </mat-form-field>
+                    <mat-form-field class="w-full" subscriptSizing="dynamic">
+                        <mat-label>Nomor WhatsApp (angka saja, tanpa +)</mat-label>
+                        <input matInput [(ngModel)]="settings['wa_number']" placeholder="6281234567890" />
+                    </mat-form-field>
+                    <mat-form-field class="w-full" subscriptSizing="dynamic">
+                        <mat-label>URL Instagram</mat-label>
+                        <input matInput [(ngModel)]="settings['instagram_url']" placeholder="https://instagram.com/malmil.id" />
+                    </mat-form-field>
+                </div>
+                <div class="mt-6 flex items-center gap-4">
+                    <button (click)="save()" [disabled]="saving"
+                            class="px-6 py-2 rounded-lg bg-gray-900 text-white text-sm font-medium">
+                        {{ saving ? 'Menyimpan...' : 'Simpan' }}
+                    </button>
+                    <span *ngIf="saved" class="text-sm text-green-600">✓ Tersimpan</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
