@@ -48,6 +48,13 @@ export const defaultNavigation: FuseNavigationItem[] = [
                 icon: 'heroicons_outline:users',
                 link: '/users',
             },
+            {
+                id: 'inventory',
+                title: 'Inventory',
+                type: 'basic',
+                icon: 'heroicons_outline:archive',
+                link: '/inventory',
+            },
         ],
     },
     {

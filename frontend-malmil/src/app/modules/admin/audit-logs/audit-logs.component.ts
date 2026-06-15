@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
-import { DatePipe, NgForOf, NgIf } from '@angular/common';
+import { DatePipe, NgForOf } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
@@ -16,7 +16,7 @@ import { AuditLogsService } from './audit-logs.service';
     templateUrl: './audit-logs.component.html',
     encapsulation: ViewEncapsulation.None,
     imports: [
-        FormsModule, DatePipe, NgForOf, NgIf,
+        FormsModule, DatePipe, NgForOf,
         MatButtonModule, MatIconModule, MatInputModule, MatFormFieldModule,
         MatTableModule, MatPaginatorModule, MatSelectModule,
     ],

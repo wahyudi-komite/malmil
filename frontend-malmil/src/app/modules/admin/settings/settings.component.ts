@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { NgForOf, NgIf } from '@angular/common';
+import { NgIf } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
@@ -12,7 +12,7 @@ import { AdminSettingsService } from './settings.service';
     standalone: true,
     templateUrl: './settings.component.html',
     encapsulation: ViewEncapsulation.None,
-    imports: [FormsModule, NgForOf, NgIf, MatButtonModule, MatIconModule, MatInputModule, MatFormFieldModule],
+    imports: [FormsModule, NgIf, MatButtonModule, MatIconModule, MatInputModule, MatFormFieldModule],
 })
 export class SettingsComponent implements OnInit {
     settings: Record<string, string> = {};

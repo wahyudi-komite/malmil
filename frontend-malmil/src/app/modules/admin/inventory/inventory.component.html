@@ -1,0 +1,108 @@
+<div class="flex flex-col flex-auto min-w-0">
+    <div class="flex-auto p-6 sm:p-10">
+        <div class="max-w-7xl mx-auto">
+            <h1 class="text-3xl font-bold text-gray-900 mb-8">Inventory</h1>
+
+            <!-- Summary Cards -->
+            <div class="grid grid-cols-3 gap-6 mb-8">
+                <div class="bg-white rounded-xl border border-gray-100 p-6">
+                    <p class="text-sm text-gray-500 mb-1">Total Varian</p>
+                    <p class="text-3xl font-bold">{{ summary.total_variants }}</p>
+                </div>
+                <div class="bg-white rounded-xl border border-gray-100 p-6">
+                    <p class="text-sm text-gray-500 mb-1">Total Stok</p>
+                    <p class="text-3xl font-bold">{{ summary.total_stock }}</p>
+                </div>
+                <div class="bg-white rounded-xl border border-gray-100 p-6">
+                    <p class="text-sm text-gray-500 mb-1">Stok Menipis</p>
+                    <p class="text-3xl font-bold" [class.text-red-600]="summary.low_stock_count > 0">{{ summary.low_stock_count }}</p>
+                </div>
+            </div>
+
+            <!-- Low Stock Alert -->
+            <div *ngIf="lowStock.length" class="mb-8 p-4 rounded-lg bg-red-50 border border-red-200">
+                <h3 class="font-semibold text-red-800 mb-2">Stok Menipis (threshold {{ lowStock[0]?.low_stock_threshold || 5 }})</h3>
+                <div class="flex flex-wrap gap-2">
+                    <span *ngFor="let item of lowStock"
+                          class="px-2 py-1 bg-white rounded text-xs text-red-700 border border-red-200">
+                        {{ item.product_name }} - {{ item.name }} ({{ item.stock_qty }})
+                    </span>
+                </div>
+            </div>
+
+            <!-- Variants Table -->
+            <div class="flex gap-4 mb-6">
+                <mat-form-field class="w-64" subscriptSizing="dynamic">
+                    <input matInput [(ngModel)]="keyword" (keyup.enter)="search()" placeholder="Cari produk/sku..." />
+                </mat-form-field>
+                <button mat-stroked-button (click)="search()">Cari</button>
+            </div>
+
+            <div class="bg-white rounded-xl border border-gray-100 overflow-hidden">
+                <table mat-table [dataSource]="variants" class="w-full">
+                    <ng-container matColumnDef="product">
+                        <th mat-header-cell *matHeaderCellDef>Produk</th>
+                        <td mat-cell *matCellDef="let v" class="text-sm font-medium">{{ v.product_name }}</td>
+                    </ng-container>
+                    <ng-container matColumnDef="sku">
+                        <th mat-header-cell *matHeaderCellDef>SKU</th>
+                        <td mat-cell *matCellDef="let v" class="text-sm font-mono">{{ v.sku }}</td>
+                    </ng-container>
+                    <ng-container matColumnDef="variant">
+                        <th mat-header-cell *matHeaderCellDef>Varian</th>
+                        <td mat-cell *matCellDef="let v" class="text-sm">{{ v.name }}</td>
+                    </ng-container>
+                    <ng-container matColumnDef="stock">
+                        <th mat-header-cell *matHeaderCellDef>Stok</th>
+                        <td mat-cell *matCellDef="let v"
+                            class="text-sm font-semibold"
+                            [class.text-red-600]="isLowStock(v.stock_qty, v.low_stock_threshold)"
+                            [class.text-green-600]="!isLowStock(v.stock_qty, v.low_stock_threshold)">
+                            {{ v.stock_qty }}
+                        </td>
+                    </ng-container>
+                    <ng-container matColumnDef="threshold">
+                        <th mat-header-cell *matHeaderCellDef>Threshold</th>
+                        <td mat-cell *matCellDef="let v" class="text-sm text-gray-500">{{ v.low_stock_threshold }}</td>
+                    </ng-container>
+                    <ng-container matColumnDef="status">
+                        <th mat-header-cell *matHeaderCellDef></th>
+                        <td mat-cell *matCellDef="let v" class="text-right">
+                            <button mat-icon-button (click)="openHistory(v)" title="Riwayat Stok">
+                                <mat-icon svgIcon="heroicons_outline:clock"></mat-icon>
+                            </button>
+                        </td>
+                    </ng-container>
+                    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                    <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="hover:bg-gray-50"></tr>
+                </table>
+                <mat-paginator [length]="total" [pageSize]="pageSize" [pageIndex]="page-1"
+                               [pageSizeOptions]="[10,25,50]" (page)="onPage($event)" class="border-t border-gray-100">
+                </mat-paginator>
+            </div>
+        </div>
+
+        <!-- Stock History Modal -->
+        <div *ngIf="showHistory" class="fixed inset-0 z-50 flex items-center justify-center">
+            <div class="absolute inset-0 bg-black/30" (click)="closeHistory()"></div>
+            <div class="relative w-full max-w-2xl bg-white rounded-xl shadow-xl p-6 mx-4 max-h-[80vh] overflow-y-auto">
+                <h2 class="text-xl font-bold mb-1">Riwayat Stok</h2>
+                <p class="text-sm text-gray-500 mb-6">{{ historyVariant }}</p>
+                <div *ngIf="!history.length" class="text-center text-gray-400 py-8">Belum ada riwayat</div>
+                <div *ngFor="let item of history" class="flex items-center justify-between py-3 border-b border-gray-50 last:border-0">
+                    <div>
+                        <span class="font-semibold text-sm"
+                              [class.text-green-600]="item.change_qty > 0"
+                              [class.text-red-600]="item.change_qty < 0">
+                            {{ item.change_qty > 0 ? '+' : '' }}{{ item.change_qty }}
+                        </span>
+                        <span class="text-sm text-gray-600 ml-2">{{ item.reason }}</span>
+                        <span *ngIf="item.reference_type" class="text-xs text-gray-400 ml-2">({{ item.reference_type }})</span>
+                    </div>
+                    <span class="text-xs text-gray-400">{{ item.created_at | date:'dd MMM HH:mm' }}</span>
+                </div>
+                <button (click)="closeHistory()" class="mt-6 px-6 py-2 rounded-lg border border-gray-300 text-sm">Tutup</button>
+            </div>
+        </div>
+    </div>
+</div>
