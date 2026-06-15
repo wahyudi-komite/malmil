@@ -19,7 +19,7 @@
             }
 
             <form class="mt-6" [formGroup]="signInForm" #signInNgForm="ngForm" novalidate>
-                <mat-form-field class="w-full" subscriptSizing="dynamic">
+                <mat-form-field class="w-full mb-6" subscriptSizing="dynamic">
                     <mat-label>Email</mat-label>
                     <input id="email" matInput placeholder="nama@email.com" [formControlName]="'email'" />
                     @if (signInForm.get('email').hasError('required')) {

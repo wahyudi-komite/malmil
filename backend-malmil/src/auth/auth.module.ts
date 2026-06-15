@@ -1,5 +1,6 @@
 import { forwardRef, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { PassportModule } from '@nestjs/passport';
 import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
 import { PasswordResetService } from './password-reset.service';
@@ -10,16 +11,18 @@ import { MailModule } from '../mail/mail.module';
 import { CsrfGuard } from './guards/csrf.guard';
 import { RefreshToken } from './entities/refresh-token.entity';
 import { PasswordReset } from './entities/password-reset.entity';
+import { GoogleStrategy } from './google.strategy';
 @Module({
   imports: [
     forwardRef(() => UsersModule),
     RolesModule,
     CommonModule,
     MailModule,
+    PassportModule.register({ session: false }),
     TypeOrmModule.forFeature([RefreshToken, PasswordReset]),
   ],
   controllers: [AuthController],
-  providers: [AuthService, PasswordResetService, CsrfGuard],
+  providers: [AuthService, PasswordResetService, CsrfGuard, GoogleStrategy],
   exports: [AuthService],
 })
 export class AuthModule {}

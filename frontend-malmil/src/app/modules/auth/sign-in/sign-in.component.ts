@@ -17,6 +17,7 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { fuseAnimations } from '@fuse/animations';
 import { FuseAlertComponent, FuseAlertType } from '@fuse/components/alert';
 import { AuthService } from 'app/core/auth/auth.service';
+import { environment } from 'environments/environment';
 
 
 @Component({
@@ -79,7 +80,8 @@ export class AuthSignInComponent implements OnInit {
     }
 
     signInWithGoogle(): void {
-        window.location.href = `${window.location.origin}/auth/google`;
+        const baseUrl = environment.apiUrl.replace('/api/v1', '');
+        window.location.href = `${baseUrl}/auth/google`;
     }
 
     // -----------------------------------------------------------------------------------------------------

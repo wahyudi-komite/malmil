@@ -13,6 +13,7 @@ import {
   Req,
 } from '@nestjs/common';
 import { Throttle } from '@nestjs/throttler';
+import { AuthGuard } from '@nestjs/passport';
 import { AuthService } from './auth.service';
 import { PasswordResetService } from './password-reset.service';
 import { MailService } from '../mail/mail.service';
@@ -340,5 +341,49 @@ export class AuthController {
     await this.sendVerificationEmail(userId, user.email);
     this.auditService.log(userId, user.email, 'RESEND_VERIFICATION', 'auth', userId, 'Verification email resent', req.ip);
     return { message: 'Email verifikasi telah dikirim' };
+  }
+
+  @Get('google')
+  @UseGuards(AuthGuard('google'))
+  async googleAuth() {}
+
+  @Get('google/callback')
+  @UseGuards(AuthGuard('google'))
+  async googleAuthCallback(@Req() req: Request, @Res() res: Response) {
+    const profile = req.user as any;
+    const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:4200';
+
+    if (!profile?.email) {
+      return res.redirect(`${frontendUrl}/sign-in?error=google_no_email`);
+    }
+
+    let user = await this.userService.findOne({ email: profile.email });
+
+    if (!user) {
+      const customerRole = await this.rolesService.findOne({ name: 'customer' });
+      user = await this.userService.create({
+        name: profile.name,
+        email: profile.email,
+        password: null,
+        phone: null,
+        is_active: true,
+        avatar: profile.avatar,
+        email_verified_at: new Date(),
+        role: customerRole ? { id: customerRole.id } : undefined,
+      });
+    }
+
+    this.auditService.log(user.id, user.email, 'LOGIN', 'auth', null, 'Google OAuth login', req.ip);
+
+    const accessJwt = await this.authService.issueAccessToken(user.id);
+    this.setAccessTokenCookie(res, accessJwt);
+
+    const rawRefresh = await this.authService.generateRefreshToken(user.id);
+    this.setRefreshTokenCookie(res, rawRefresh);
+
+    const csrfToken = this.authService.generateCsrfToken();
+    this.setCsrfCookie(res, csrfToken);
+
+    return res.redirect(`${frontendUrl}/signed-in-redirect`);
   }
 }
