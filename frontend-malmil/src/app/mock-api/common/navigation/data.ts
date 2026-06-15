@@ -65,11 +65,11 @@ export const defaultNavigation: FuseNavigationItem[] = [
         link: '/settings',
     },
     {
-        id: 'audit-log',
+        id: 'audit-logs',
         title: 'Audit Log',
         type: 'basic',
         icon: 'heroicons_outline:document-text',
-        link: '/audit-log',
+        link: '/audit-logs',
     },
 ];
 

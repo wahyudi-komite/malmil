@@ -34,6 +34,10 @@ export class AuditService {
       );
     }
 
+    if (query.action) {
+      qb.andWhere('audit.action = :action', { action: query.action });
+    }
+
     const [data, total] = await qb.getManyAndCount();
 
     return {
