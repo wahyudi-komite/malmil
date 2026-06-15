@@ -1,0 +1,77 @@
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Header -->
+    <div class="mb-8">
+        <h1 class="text-3xl font-bold text-gray-900">Katalog Produk</h1>
+        <p class="mt-1 text-gray-500">Temukan varian popcorn favorit Anda</p>
+    </div>
+
+    <!-- Filters -->
+    <div class="flex flex-col sm:flex-row gap-4 mb-8">
+        <div class="flex-1">
+            <div class="relative">
+                <input type="text"
+                       [(ngModel)]="keyword"
+                       (keyup.enter)="search()"
+                       placeholder="Cari produk..."
+                       class="w-full pl-10 pr-4 py-2.5 rounded-lg border border-gray-300 focus:ring-2 focus:ring-amber-500 focus:border-transparent" />
+                <svg class="absolute left-3 top-3 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                </svg>
+            </div>
+        </div>
+        <select [(ngModel)]="sort" (change)="changeSort(sort)"
+                class="px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-2 focus:ring-amber-500">
+            <option value="newest">Terbaru</option>
+            <option value="price_asc">Harga Terendah</option>
+            <option value="price_desc">Harga Tertinggi</option>
+            <option value="name_asc">Nama A-Z</option>
+        </select>
+    </div>
+
+    <!-- Categories -->
+    <div class="flex flex-wrap gap-2 mb-8">
+        <button (click)="filterByCategory('')"
+                class="px-4 py-2 rounded-full text-sm font-medium transition-colors"
+                [class.bg-amber-600]="!selectedCategory"
+                [class.text-white]="!selectedCategory"
+                [class.bg-gray-100]="selectedCategory"
+                [class.text-gray-700]="selectedCategory">
+            Semua
+        </button>
+        <button *ngFor="let cat of categories"
+                (click)="filterByCategory(cat.slug)"
+                class="px-4 py-2 rounded-full text-sm font-medium transition-colors"
+                [class.bg-amber-600]="selectedCategory === cat.slug"
+                [class.text-white]="selectedCategory === cat.slug"
+                [class.bg-gray-100]="selectedCategory !== cat.slug"
+                [class.text-gray-700]="selectedCategory !== cat.slug">
+            {{ cat.name }}
+        </button>
+    </div>
+
+    <!-- Products -->
+    <div *ngIf="products.length > 0; else empty" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        <app-product-card *ngFor="let p of products" [product]="p"></app-product-card>
+    </div>
+    <ng-template #empty>
+        <div class="text-center py-20 text-gray-500">
+            <svg class="w-16 h-16 mx-auto mb-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"/>
+            </svg>
+            <p>Produk tidak ditemukan</p>
+        </div>
+    </ng-template>
+
+    <!-- Pagination -->
+    <div *ngIf="pages.length > 1" class="flex justify-center mt-12 gap-2">
+        <button *ngFor="let p of pages"
+                (click)="goToPage(p)"
+                class="w-10 h-10 rounded-full text-sm font-medium transition-colors"
+                [class.bg-amber-600]="page === p"
+                [class.text-white]="page === p"
+                [class.bg-gray-100]="page !== p"
+                [class.text-gray-700]="page !== p">
+            {{ p }}
+        </button>
+    </div>
+</div>

@@ -1,0 +1,83 @@
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8" *ngIf="product">
+    <!-- Breadcrumb -->
+    <nav class="flex mb-8 text-sm text-gray-500">
+        <a routerLink="/" class="hover:text-amber-600">Beranda</a>
+        <span class="mx-2">/</span>
+        <a routerLink="/catalog" class="hover:text-amber-600">Katalog</a>
+        <span class="mx-2">/</span>
+        <span class="text-gray-900">{{ product.name }}</span>
+    </nav>
+
+    <div class="grid md:grid-cols-2 gap-12">
+        <!-- Image -->
+        <div>
+            <div class="aspect-square bg-gray-50 rounded-2xl overflow-hidden mb-4">
+                <img *ngIf="selectedImage; else noImage"
+                     [src]="selectedImage"
+                     [alt]="product.name"
+                     class="w-full h-full object-cover" />
+                <ng-template #noImage>
+                    <div class="w-full h-full flex items-center justify-center text-6xl">🍿</div>
+                </ng-template>
+            </div>
+            <div class="flex gap-2 overflow-x-auto" *ngIf="product.images?.length > 1">
+                <img *ngFor="let img of product.images"
+                     [src]="img.url"
+                     (click)="selectedImage = img.url"
+                     class="w-20 h-20 object-cover rounded-lg cursor-pointer border-2 transition-colors"
+                     [class.border-amber-500]="selectedImage === img.url"
+                     [class.border-transparent]="selectedImage !== img.url" />
+            </div>
+        </div>
+
+        <!-- Info -->
+        <div>
+            <h1 class="text-3xl font-bold text-gray-900">{{ product.name }}</h1>
+            <p class="mt-4 text-3xl font-bold text-amber-700">{{ price | currencyIdr }}</p>
+
+            <p class="mt-6 text-gray-600 leading-relaxed">{{ product.description }}</p>
+
+            <!-- Variants -->
+            <div class="mt-8" *ngIf="product.variants?.length">
+                <h3 class="text-sm font-medium text-gray-900 mb-3">Varian</h3>
+                <div class="flex flex-wrap gap-3">
+                    <button *ngFor="let v of product.variants"
+                            (click)="selectVariant(v)"
+                            class="px-5 py-2.5 rounded-lg border text-sm font-medium transition-all"
+                            [class.bg-amber-600]="selectedVariant?.id === v.id"
+                            [class.text-white]="selectedVariant?.id === v.id"
+                            [class.border-amber-600]="selectedVariant?.id === v.id"
+                            [class.border-gray-200]="selectedVariant?.id !== v.id"
+                            [class.text-gray-700]="selectedVariant?.id !== v.id"
+                            [class.hover:border-amber-300]="selectedVariant?.id !== v.id"
+                            [disabled]="!v.is_active">
+                        {{ v.name }}
+                        <span *ngIf="v.stock_qty <= 0 && v.is_active" class="ml-1 text-xs text-red-500">(Habis)</span>
+                        <span *ngIf="!v.is_active" class="ml-1 text-xs text-gray-400">(Nonaktif)</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Quantity -->
+            <div class="mt-8 flex items-center gap-4">
+                <div class="flex items-center border border-gray-300 rounded-lg">
+                    <button (click)="quantity = Math.max(1, quantity - 1)"
+                            class="px-3 py-2 text-gray-600 hover:text-amber-600">−</button>
+                    <span class="px-4 py-2 font-medium min-w-[3rem] text-center">{{ quantity }}</span>
+                    <button (click)="quantity = Math.min(selectedVariant?.stock_qty || 99, quantity + 1)"
+                            class="px-3 py-2 text-gray-600 hover:text-amber-600">+</button>
+                </div>
+                <button (click)="addToCart()"
+                        [disabled]="!selectedVariant || selectedVariant?.stock_qty <= 0"
+                        class="flex-1 px-8 py-3 rounded-full bg-amber-600 text-white font-medium hover:bg-amber-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                    {{ added ? '✓ Ditambahkan' : 'Tambah ke Keranjang' }}
+                </button>
+            </div>
+
+            <!-- Stock info -->
+            <p *ngIf="selectedVariant" class="mt-4 text-sm text-gray-500">
+                Stok: {{ selectedVariant.stock_qty }} | SKU: {{ selectedVariant.sku }}
+            </p>
+        </div>
+    </div>
+</div>

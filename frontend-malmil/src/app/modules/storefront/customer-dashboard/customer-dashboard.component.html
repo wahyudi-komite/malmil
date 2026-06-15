@@ -1,0 +1,100 @@
+<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <h1 class="text-3xl font-bold text-gray-900 mb-8">Akun Saya</h1>
+
+    <!-- Tabs -->
+    <div class="flex border-b border-gray-200 mb-8">
+        <button (click)="activeTab = 'orders'" class="px-6 py-3 text-sm font-medium border-b-2 transition-colors"
+                [class.border-amber-600]="activeTab === 'orders'" [class.text-amber-700]="activeTab === 'orders'"
+                [class.border-transparent]="activeTab !== 'orders'" [class.text-gray-500]="activeTab !== 'orders'">
+            Pesanan
+        </button>
+        <button (click)="activeTab = 'addresses'" class="px-6 py-3 text-sm font-medium border-b-2 transition-colors"
+                [class.border-amber-600]="activeTab === 'addresses'" [class.text-amber-700]="activeTab === 'addresses'"
+                [class.border-transparent]="activeTab !== 'addresses'" [class.text-gray-500]="activeTab !== 'addresses'">
+            Alamat
+        </button>
+        <button (click)="activeTab = 'wishlist'" class="px-6 py-3 text-sm font-medium border-b-2 transition-colors"
+                [class.border-amber-600]="activeTab === 'wishlist'" [class.text-amber-700]="activeTab === 'wishlist'"
+                [class.border-transparent]="activeTab !== 'wishlist'" [class.text-gray-500]="activeTab !== 'wishlist'">
+            Wishlist
+        </button>
+    </div>
+
+    <!-- Orders Tab -->
+    <div *ngIf="activeTab === 'orders'">
+        <div *ngIf="orders.length > 0; else noOrders" class="space-y-4">
+            <div *ngFor="let order of orders" class="bg-white p-4 rounded-xl border border-gray-100">
+                <div class="flex justify-between items-start mb-2">
+                    <div>
+                        <p class="font-medium text-gray-900">#{{ order.order_number }}</p>
+                        <p class="text-sm text-gray-500">{{ order.created_at | date:'dd MMM yyyy, HH:mm' }}</p>
+                    </div>
+                    <span class="px-3 py-1 rounded-full text-xs font-medium"
+                          [class.bg-amber-100]="order.status === 'pending'"
+                          [class.text-amber-800]="order.status === 'pending'"
+                          [class.bg-green-100]="order.status === 'paid'"
+                          [class.text-green-800]="order.status === 'paid'"
+                          [class.bg-blue-100]="order.status === 'shipped'"
+                          [class.text-blue-800]="order.status === 'shipped'">
+                        {{ order.status }}
+                    </span>
+                </div>
+                <p class="text-lg font-semibold text-amber-700">{{ order.total | currencyIdr }}</p>
+                <a [routerLink]="['/order', order.order_number]" class="text-sm text-amber-600 hover:underline mt-2 inline-block">Lacak</a>
+            </div>
+        </div>
+        <ng-template #noOrders>
+            <p class="text-gray-500 text-center py-10">Belum ada pesanan</p>
+        </ng-template>
+    </div>
+
+    <!-- Addresses Tab -->
+    <div *ngIf="activeTab === 'addresses'">
+        <button (click)="showAddressForm = !showAddressForm"
+                class="mb-4 px-4 py-2 rounded-lg bg-amber-600 text-white text-sm font-medium hover:bg-amber-700">
+            {{ showAddressForm ? 'Batal' : '+ Alamat Baru' }}
+        </button>
+
+        <div *ngIf="showAddressForm" class="bg-white p-4 rounded-xl border border-gray-100 mb-6 space-y-3">
+            <input type="text" [(ngModel)]="addressForm.recipient_name" placeholder="Nama penerima"
+                   class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300" />
+            <input type="text" [(ngModel)]="addressForm.phone" placeholder="No. WhatsApp"
+                   class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300" />
+            <input type="text" [(ngModel)]="addressForm.full_address" placeholder="Alamat lengkap"
+                   class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300" />
+            <input type="text" [(ngModel)]="addressForm.postal_code" placeholder="Kode pos"
+                   class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300" />
+            <button (click)="saveAddress()" class="px-4 py-2 rounded-lg bg-gray-900 text-white text-sm font-medium">Simpan</button>
+        </div>
+
+        <div *ngIf="addresses.length > 0; else noAddresses" class="space-y-3">
+            <div *ngFor="let addr of addresses" class="bg-white p-4 rounded-xl border border-gray-100">
+                <p class="font-medium text-gray-900">{{ addr.recipient_name }}</p>
+                <p class="text-sm text-gray-500">{{ addr.full_address }}, {{ addr.city }}, {{ addr.province }}</p>
+                <button (click)="deleteAddress(addr.id)" class="text-sm text-red-500 hover:underline mt-2">Hapus</button>
+            </div>
+        </div>
+        <ng-template #noAddresses>
+            <p class="text-gray-500 text-center py-10">Belum ada alamat</p>
+        </ng-template>
+    </div>
+
+    <!-- Wishlist Tab -->
+    <div *ngIf="activeTab === 'wishlist'">
+        <div *ngIf="wishlist.length > 0; else noWishlist" class="grid grid-cols-2 md:grid-cols-3 gap-4">
+            <div *ngFor="let item of wishlist" class="bg-white p-4 rounded-xl border border-gray-100">
+                <a [routerLink]="['/product', item.product?.slug]" class="block">
+                    <img *ngIf="item.product?.images?.[0]?.url; else noImg"
+                         [src]="item.product.images[0].url" class="w-full aspect-square object-cover rounded-lg mb-2" />
+                    <ng-template #noImg><div class="w-full aspect-square bg-gray-50 rounded-lg mb-2 flex items-center justify-center text-3xl">🍿</div></ng-template>
+                    <p class="font-medium text-sm text-gray-900">{{ item.product?.name }}</p>
+                    <p class="text-amber-700 font-semibold text-sm">{{ item.product?.base_price | currencyIdr }}</p>
+                </a>
+                <button (click)="removeWishlist(item.product?.id)" class="text-xs text-red-500 hover:underline mt-1">Hapus</button>
+            </div>
+        </div>
+        <ng-template #noWishlist>
+            <p class="text-gray-500 text-center py-10">Wishlist masih kosong</p>
+        </ng-template>
+    </div>
+</div>

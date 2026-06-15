@@ -5,60 +5,40 @@ import { NoAuthGuard } from 'app/core/auth/guards/noAuth.guard';
 import { RoleGuard } from 'app/core/auth/guards/role.guard';
 import { LayoutComponent } from 'app/layout/layout.component';
 
-// @formatter:off
-/* eslint-disable max-len */
-/* eslint-disable @typescript-eslint/explicit-function-return-type */
 export const appRoutes: Route[] = [
-    // Redirect empty path to '/example'
-    { path: '', pathMatch: 'full', redirectTo: 'dashboard' },
-
-    // Redirect signed-in user to the '/example'
-    //
-    // After the user signs in, the sign-in page will redirect the user to the 'signed-in-redirect'
-    // path. Below is another redirection for that path to redirect the user to the desired
-    // location. This is a small convenience to keep all main routes together here on this file.
-    { path: 'signed-in-redirect', pathMatch: 'full', redirectTo: 'dashboard' },
+    // Storefront — public
+    {
+        path: '',
+        component: LayoutComponent,
+        data: { layout: 'storefront' },
+        children: [
+            { path: '', loadChildren: () => import('app/modules/storefront/landing/landing.routes') },
+            { path: 'catalog', loadChildren: () => import('app/modules/storefront/catalog/catalog.routes') },
+            { path: 'product/:slug', loadChildren: () => import('app/modules/storefront/product-detail/product-detail.routes') },
+            { path: 'cart', loadChildren: () => import('app/modules/storefront/cart-page/cart-page.routes') },
+            { path: 'checkout', loadChildren: () => import('app/modules/storefront/checkout/checkout.routes') },
+            { path: 'payment-status/:orderNumber', loadChildren: () => import('app/modules/storefront/payment-status/payment-status.routes') },
+            { path: 'order/:orderNumber', loadChildren: () => import('app/modules/storefront/order-tracking/order-tracking.routes') },
+            {
+                path: 'account',
+                canActivate: [AuthGuard],
+                loadChildren: () => import('app/modules/storefront/customer-dashboard/customer-dashboard.routes'),
+            },
+        ],
+    },
 
     // Auth routes for guests
     {
         path: '',
         canActivate: [NoAuthGuard],
         component: LayoutComponent,
-        data: {
-            layout: 'empty',
-        },
+        data: { layout: 'empty' },
         children: [
-            {
-                path: 'confirmation-required',
-                loadChildren: () =>
-                    import(
-                        'app/modules/auth/confirmation-required/confirmation-required.routes'
-                    ),
-            },
-            {
-                path: 'forgot-password',
-                loadChildren: () =>
-                    import(
-                        'app/modules/auth/forgot-password/forgot-password.routes'
-                    ),
-            },
-            {
-                path: 'reset-password',
-                loadChildren: () =>
-                    import(
-                        'app/modules/auth/reset-password/reset-password.routes'
-                    ),
-            },
-            {
-                path: 'sign-in',
-                loadChildren: () =>
-                    import('app/modules/auth/sign-in/sign-in.routes'),
-            },
-            {
-                path: 'sign-up',
-                loadChildren: () =>
-                    import('app/modules/auth/sign-up/sign-up.routes'),
-            },
+            { path: 'confirmation-required', loadChildren: () => import('app/modules/auth/confirmation-required/confirmation-required.routes') },
+            { path: 'forgot-password', loadChildren: () => import('app/modules/auth/forgot-password/forgot-password.routes') },
+            { path: 'reset-password', loadChildren: () => import('app/modules/auth/reset-password/reset-password.routes') },
+            { path: 'sign-in', loadChildren: () => import('app/modules/auth/sign-in/sign-in.routes') },
+            { path: 'sign-up', loadChildren: () => import('app/modules/auth/sign-up/sign-up.routes') },
         ],
     },
 
@@ -67,38 +47,10 @@ export const appRoutes: Route[] = [
         path: '',
         canActivate: [AuthGuard],
         component: LayoutComponent,
-        data: {
-            layout: 'empty',
-        },
+        data: { layout: 'empty' },
         children: [
-            {
-                path: 'sign-out',
-                loadChildren: () =>
-                    import('app/modules/auth/sign-out/sign-out.routes'),
-            },
-            {
-                path: 'unlock-session',
-                loadChildren: () =>
-                    import(
-                        'app/modules/auth/unlock-session/unlock-session.routes'
-                    ),
-            },
-        ],
-    },
-
-    // Landing routes
-    {
-        path: '',
-        component: LayoutComponent,
-        data: {
-            layout: 'empty',
-        },
-        children: [
-            {
-                path: 'home',
-                loadChildren: () =>
-                    import('app/modules/landing/home/home.routes'),
-            },
+            { path: 'sign-out', loadChildren: () => import('app/modules/auth/sign-out/sign-out.routes') },
+            { path: 'unlock-session', loadChildren: () => import('app/modules/auth/unlock-session/unlock-session.routes') },
         ],
     },
 
@@ -111,20 +63,10 @@ export const appRoutes: Route[] = [
             layout: 'classy',
             roles: ['super_admin', 'admin', 'operator'],
         },
-        resolve: {
-            initialData: initialDataResolver,
-        },
+        resolve: { initialData: initialDataResolver },
         children: [
-            {
-                path: '',
-                loadChildren: () =>
-                    import('app/modules/admin/example/example.routes'),
-            },
-            {
-                path: '',
-                loadChildren: () =>
-                    import('app/modules/admin/audit-log/audit-log.routes'),
-            },
+            { path: 'dashboard', loadChildren: () => import('app/modules/admin/example/example.routes') },
+            { path: 'audit-log', loadChildren: () => import('app/modules/admin/audit-log/audit-log.routes') },
         ],
     },
 ];

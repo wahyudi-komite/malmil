@@ -1,4 +1,3 @@
-/* eslint-disable */
 import { FuseNavigationItem } from '@fuse/components/navigation';
 
 export const defaultNavigation: FuseNavigationItem[] = [
@@ -10,11 +9,46 @@ export const defaultNavigation: FuseNavigationItem[] = [
         link: '/dashboard',
     },
     {
-        id: 'query',
-        title: 'Query',
+        id: 'ecommerce',
+        title: 'E-Commerce',
+        type: 'group',
+        children: [
+            {
+                id: 'products',
+                title: 'Produk',
+                type: 'basic',
+                icon: 'heroicons_outline:shopping-bag',
+                link: '/products',
+            },
+            {
+                id: 'orders',
+                title: 'Pesanan',
+                type: 'basic',
+                icon: 'heroicons_outline:truck',
+                link: '/orders',
+            },
+            {
+                id: 'coupons',
+                title: 'Kupon',
+                type: 'basic',
+                icon: 'heroicons_outline:ticket',
+                link: '/coupons',
+            },
+            {
+                id: 'banners',
+                title: 'Banner',
+                type: 'basic',
+                icon: 'heroicons_outline:photograph',
+                link: '/banners',
+            },
+        ],
+    },
+    {
+        id: 'settings',
+        title: 'Pengaturan',
         type: 'basic',
-        icon: 'heroicons_outline:chart-pie',
-        link: '/query',
+        icon: 'heroicons_outline:cog',
+        link: '/settings',
     },
     {
         id: 'audit-log',
@@ -23,8 +57,8 @@ export const defaultNavigation: FuseNavigationItem[] = [
         icon: 'heroicons_outline:document-text',
         link: '/audit-log',
     },
-
 ];
+
 export const compactNavigation: FuseNavigationItem[] = [];
 export const futuristicNavigation: FuseNavigationItem[] = [];
 export const horizontalNavigation: FuseNavigationItem[] = [];

@@ -1,0 +1,38 @@
+<div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-16 text-center" *ngIf="!loading && order">
+    <!-- Icon -->
+    <div class="text-6xl mb-6">
+        <span *ngIf="isPaid">✅</span>
+        <span *ngIf="isPending">⏳</span>
+        <span *ngIf="order.status === 'cancelled'">❌</span>
+    </div>
+
+    <h1 class="text-3xl font-bold text-gray-900 mb-2">{{ statusLabel }}</h1>
+    <p class="text-gray-500 mb-8">Pesanan #{{ order.order_number }}</p>
+
+    <!-- Order Details -->
+    <div class="bg-white p-6 rounded-xl border border-gray-100 text-left">
+        <div class="space-y-3 text-sm">
+            <div class="flex justify-between">
+                <span class="text-gray-600">Status</span>
+                <span class="font-medium" [class.text-green-600]="isPaid" [class.text-amber-600]="isPending">{{ statusLabel }}</span>
+            </div>
+            <div class="flex justify-between">
+                <span class="text-gray-600">Total</span>
+                <span class="font-semibold">{{ order.total | currencyIdr }}</span>
+            </div>
+            <div *ngIf="payment?.snap_url" class="pt-4">
+                <a [href]="payment.snap_url" target="_blank"
+                   class="block w-full text-center px-6 py-3 rounded-full bg-amber-600 text-white font-medium hover:bg-amber-700 transition-colors">
+                    Lanjutkan Pembayaran
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-8 flex justify-center gap-4">
+        <a routerLink="/catalog" class="text-amber-600 hover:underline">Belanja Lagi</a>
+        <a [routerLink]="['/order', order.order_number]" class="text-amber-600 hover:underline">Lacak Pesanan</a>
+    </div>
+</div>
+
+<div *ngIf="loading" class="text-center py-20 text-gray-500">Memuat...</div>

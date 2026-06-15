@@ -1,0 +1,94 @@
+<!-- Hero -->
+<section class="relative bg-gradient-to-br from-amber-50 via-white to-amber-50 overflow-hidden">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-32">
+        <div class="grid md:grid-cols-2 gap-12 items-center">
+            <div class="text-center md:text-left">
+                <h1 class="text-4xl md:text-6xl font-bold tracking-tight text-gray-900 leading-tight">
+                    Premium Popcorn,
+                    <span class="text-amber-600">Crafted for You</span>
+                </h1>
+                <p class="mt-4 text-lg text-gray-600 leading-relaxed max-w-lg">
+                    Nikmati popcorn premium dengan bahan-bahan terbaik. Renyah, lezat, dan dikemas dengan penuh cinta untuk momen spesial Anda.
+                </p>
+                <div class="mt-8 flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
+                    <a routerLink="/catalog"
+                       class="inline-flex items-center justify-center px-8 py-3 rounded-full bg-amber-600 text-white font-medium hover:bg-amber-700 transition-colors shadow-lg shadow-amber-200">
+                        Belanja Sekarang
+                    </a>
+                    <a routerLink="/catalog"
+                       class="inline-flex items-center justify-center px-8 py-3 rounded-full border border-gray-300 text-gray-700 font-medium hover:border-amber-300 hover:text-amber-600 transition-colors">
+                        Lihat Katalog
+                    </a>
+                </div>
+                <p class="mt-6 text-sm text-gray-500">Mulai dari <span class="font-semibold text-gray-900">Rp35.000</span> / kemasan</p>
+            </div>
+            <div class="hidden md:flex justify-center">
+                <div class="relative">
+                    <div class="w-80 h-80 bg-amber-100 rounded-full opacity-50 absolute -top-10 -left-10 blur-3xl"></div>
+                    <div class="text-8xl">🍿</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Best Sellers -->
+<section class="py-16 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-12">
+            <h2 class="text-3xl font-bold text-gray-900">Best Sellers</h2>
+            <p class="mt-2 text-gray-500">Paling populer dan jadi favorit pelanggan</p>
+        </div>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+            <app-product-card *ngFor="let p of featuredProducts" [product]="p"></app-product-card>
+        </div>
+        <div class="text-center mt-10">
+            <a routerLink="/catalog" class="inline-flex items-center text-amber-600 font-medium hover:text-amber-700">
+                Lihat Semua Produk
+                <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- Testimonials -->
+<section class="py-16 bg-amber-50/50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-12">
+            <h2 class="text-3xl font-bold text-gray-900">Apa Kata Mereka</h2>
+            <p class="mt-2 text-gray-500">Testimoni dari pelanggan setia Malmil</p>
+        </div>
+        <div class="grid md:grid-cols-3 gap-8">
+            <div *ngFor="let t of testimonials" class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                <div class="flex text-amber-400 mb-3">
+                    <span *ngFor="let _ of [].constructor(t.rating)">★</span>
+                </div>
+                <p class="text-gray-600 italic">"{{ t.text }}"</p>
+                <div class="mt-4 pt-4 border-t border-gray-100">
+                    <p class="font-medium text-gray-900">{{ t.name }}</p>
+                    <p class="text-sm text-gray-500">{{ t.city }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Newsletter -->
+<section class="py-16 bg-gradient-to-r from-amber-600 to-amber-700">
+    <div class="max-w-xl mx-auto px-4 text-center">
+        <h2 class="text-3xl font-bold text-white">Dapatkan Promo Terbaru</h2>
+        <p class="mt-2 text-amber-100">Berlangganan newsletter dan dapatkan diskon khusus untuk pembelian pertama!</p>
+        <div class="mt-8 flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
+            <input type="email"
+                   [(ngModel)]="newsletterEmail"
+                   placeholder="Masukkan email Anda"
+                   class="flex-1 px-4 py-3 rounded-full border-0 focus:ring-2 focus:ring-white text-gray-900 placeholder-gray-400"
+                   [ngModelOptions]="{standalone: true}" />
+            <button (click)="subscribeNewsletter()"
+                    class="px-6 py-3 rounded-full bg-white text-amber-700 font-medium hover:bg-amber-50 transition-colors whitespace-nowrap">
+                    {{ subscribed ? 'Terdaftar!' : 'Langganan' }}
+            </button>
+        </div>
+        <p *ngIf="subscriberror" class="mt-2 text-sm text-red-200">{{ subscriberror }}</p>
+    </div>
+</section>
