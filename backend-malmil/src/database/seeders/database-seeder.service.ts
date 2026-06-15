@@ -37,6 +37,12 @@ export class DatabaseSeeder implements OnApplicationBootstrap {
 
   private async seedPermissions(): Promise<Permission[]> {
     const permissionNames = [
+      // System
+      'dashboard_view',
+      'settings_view',
+      'audit_view',
+
+      // Users & Roles
       'users_view',
       'users_create',
       'users_edit',
@@ -44,11 +50,38 @@ export class DatabaseSeeder implements OnApplicationBootstrap {
       'roles_view',
       'roles_assign',
       'permissions_view',
-      'dashboard_view',
-      'datareal_view',
-      'datalist_view',
-      'settings_view',
-      'audit_view',
+
+      // Products
+      'products_view',
+      'products_create',
+      'products_edit',
+      'products_delete',
+
+      // Categories
+      'categories_view',
+      'categories_create',
+      'categories_edit',
+      'categories_delete',
+
+      // Orders
+      'orders_view',
+      'orders_edit',
+
+      // Coupons
+      'coupons_view',
+      'coupons_create',
+      'coupons_edit',
+      'coupons_delete',
+
+      // Banners
+      'banners_view',
+      'banners_create',
+      'banners_edit',
+      'banners_delete',
+
+      // Customers
+      'customers_view',
+      'customers_edit',
     ];
 
     const permissions: Permission[] = [];
@@ -76,13 +109,26 @@ export class DatabaseSeeder implements OnApplicationBootstrap {
       },
       {
         name: 'admin',
-        permissions: permissions.filter((p) => !p.name.startsWith('roles_')),
+        permissions: permissions.filter(
+          (p) => !p.name.startsWith('roles_') && !p.name.startsWith('permissions_'),
+        ),
       },
       {
         name: 'operator',
         permissions: permissions.filter((p) =>
-          ['dashboard_view', 'datareal_view', 'datalist_view'].includes(p.name),
+          [
+            'dashboard_view',
+            'products_view',
+            'categories_view',
+            'orders_view',
+            'orders_edit',
+            'customers_view',
+          ].includes(p.name),
         ),
+      },
+      {
+        name: 'customer',
+        permissions: [],
       },
     ];
 

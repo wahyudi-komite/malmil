@@ -5,11 +5,11 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 import { Role } from '../../roles/entities/role.entity';
-
 
 @Entity('users')
 export class User {
@@ -26,16 +26,21 @@ export class User {
   @Exclude()
   password: string;
 
+  @Column({ length: 20, nullable: true })
+  phone: string;
 
+  @Column({ default: true })
+  is_active: boolean;
+
+  @Column({ type: 'timestamp', nullable: true })
+  email_verified_at: Date;
 
   @ManyToOne(() => Role)
   @JoinColumn({ name: 'role_id' })
   role: Role;
 
-  @Column({ length: 50 })
+  @Column({ length: 50, default: '' })
   avatar: string;
-
-
 
   @CreateDateColumn()
   @Exclude()
