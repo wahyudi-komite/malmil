@@ -17,6 +17,7 @@ import { Router, RouterLink } from '@angular/router';
 import { fuseAnimations } from '@fuse/animations';
 import { FuseAlertComponent, FuseAlertType } from '@fuse/components/alert';
 import { AuthService } from 'app/core/auth/auth.service';
+import { environment } from 'environments/environment';
 
 @Component({
     selector: 'auth-sign-up',
@@ -79,8 +80,12 @@ export class AuthSignUpComponent implements OnInit {
     /**
      * Sign up
      */
+    signInWithGoogle(): void {
+        const baseUrl = environment.apiUrl.replace('/api/v1', '');
+        window.location.href = `${baseUrl}/auth/google`;
+    }
+
     signUp(): void {
-        // Do nothing if the form is invalid
         if (this.signUpForm.invalid) {
             return;
         }
