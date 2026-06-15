@@ -78,6 +78,12 @@ export class LayoutComponent implements OnInit, OnDestroy {
      * On init
      */
     ngOnInit(): void {
+        // Restore saved scheme from localStorage
+        const saved = localStorage.getItem('malmil-scheme');
+        if (saved === 'dark' || saved === 'light') {
+            this._fuseConfigService.config = { scheme: saved };
+        }
+
         // Set the theme and scheme based on the configuration
         combineLatest([
             this._fuseConfigService.config$,
@@ -225,11 +231,9 @@ export class LayoutComponent implements OnInit, OnDestroy {
      * @private
      */
     private _updateScheme(): void {
-        // Remove class names for all schemes
         this._document.body.classList.remove('light', 'dark');
-
-        // Add class name for the currently selected scheme
         this._document.body.classList.add(this.scheme);
+        localStorage.setItem('malmil-scheme', this.scheme);
     }
 
     /**

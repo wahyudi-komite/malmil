@@ -78,6 +78,10 @@ export class AuthSignInComponent implements OnInit {
         this.signIn();
     }
 
+    signInWithGoogle(): void {
+        window.location.href = `${window.location.origin}/auth/google`;
+    }
+
     // -----------------------------------------------------------------------------------------------------
     // @ Public methods
     // -----------------------------------------------------------------------------------------------------

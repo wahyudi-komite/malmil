@@ -4,6 +4,7 @@ import { NgIf } from '@angular/common';
 import { CartService } from '../../../../services/cart.service';
 import { AuthService } from '../../../../core/auth/auth.service';
 import { UserService } from '../../../../core/user/user.service';
+import { FuseConfigService } from '../../../../../@fuse/services/config/config.service';
 
 @Component({
     selector: 'app-header',
@@ -14,12 +15,14 @@ import { UserService } from '../../../../core/user/user.service';
 export class HeaderComponent implements OnInit {
     private authService = inject(AuthService);
     private userService = inject(UserService);
+    private fuseConfig = inject(FuseConfigService);
 
     cartCount = 0;
     menuOpen = false;
     userMenuOpen = false;
     isAuthenticated = false;
     user: any = null;
+    darkMode = localStorage.getItem('malmil-scheme') === 'dark';
 
     constructor(private cartService: CartService) {}
 
@@ -40,6 +43,11 @@ export class HeaderComponent implements OnInit {
 
     toggleUserMenu() {
         this.userMenuOpen = !this.userMenuOpen;
+    }
+
+    toggleTheme() {
+        this.darkMode = !this.darkMode;
+        this.fuseConfig.config = { scheme: this.darkMode ? 'dark' : 'light' };
     }
 
     logout() {
