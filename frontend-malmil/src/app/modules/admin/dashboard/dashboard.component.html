@@ -1,0 +1,90 @@
+<div class="flex flex-col flex-auto min-w-0">
+    <div class="flex-auto p-6 sm:p-10">
+        <div class="max-w-7xl mx-auto">
+
+            <h1 class="text-3xl font-bold text-gray-900 mb-8">Dashboard</h1>
+
+            <div *ngIf="loading" class="text-center py-20 text-gray-500">Memuat...</div>
+
+            <ng-container *ngIf="data">
+                <!-- Stat Cards -->
+                <div class="grid grid-cols-1 md:grid-cols-5 gap-4 mb-8">
+                    <div class="bg-white p-5 rounded-xl border border-gray-100">
+                        <p class="text-sm text-gray-500 mb-1">Total Pendapatan</p>
+                        <p class="text-2xl font-bold text-gray-900">{{ data.total_revenue | number:'':'id' }}</p>
+                    </div>
+                    <div class="bg-white p-5 rounded-xl border border-gray-100">
+                        <p class="text-sm text-gray-500 mb-1">Total Pesanan</p>
+                        <p class="text-2xl font-bold text-gray-900">{{ data.total_orders }}</p>
+                    </div>
+                    <div class="bg-white p-5 rounded-xl border border-gray-100">
+                        <p class="text-sm text-gray-500 mb-1">Rata-rata Pesanan</p>
+                        <p class="text-2xl font-bold text-gray-900">{{ data.average_order_value | number:'':'id' }}</p>
+                    </div>
+                    <div class="bg-white p-5 rounded-xl border border-gray-100">
+                        <p class="text-sm text-gray-500 mb-1">Produk</p>
+                        <p class="text-2xl font-bold text-gray-900">{{ data.total_products }}</p>
+                    </div>
+                    <div class="bg-white p-5 rounded-xl border border-gray-100">
+                        <p class="text-sm text-gray-500 mb-1">Hari Ini</p>
+                        <p class="text-2xl font-bold text-amber-600">{{ data.today_orders }} pesanan</p>
+                        <p class="text-sm text-gray-500">{{ data.today_revenue | number:'':'id' }}</p>
+                    </div>
+                </div>
+
+                <!-- Revenue Chart (simple bar) -->
+                <div class="bg-white p-6 rounded-xl border border-gray-100 mb-8">
+                    <div class="flex items-center justify-between mb-4">
+                        <h2 class="text-lg font-semibold">Revenue ({{ days }} hari)</h2>
+                        <div class="flex gap-2">
+                            <button *ngFor="let d of [7, 14, 30]" (click)="days = d; loadChart()"
+                                    class="px-3 py-1 text-xs rounded-full border transition-colors"
+                                    [class.bg-gray-900]="days === d" [class.text-white]="days === d"
+                                    [class.border-gray-300]="days !== d">{{ d }} hari</button>
+                        </div>
+                    </div>
+                    <div *ngIf="revenueData.length > 0; else noChart" class="flex items-end gap-1 h-48">
+                        <div *ngFor="let point of revenueData" class="flex-1 flex flex-col items-center"
+                             [style.height.%]="100">
+                            <div class="w-full bg-amber-500 rounded-t transition-all hover:bg-amber-600"
+                                 [style.height.%]="(point.revenue / maxRevenue) * 80"
+                                 [title]="point.date + ': ' + point.revenue"></div>
+                            <span class="text-[10px] text-gray-400 mt-1 rotate-45 origin-left whitespace-nowrap">
+                                {{ point.date | date:'dd/MM' }}
+                            </span>
+                        </div>
+                    </div>
+                    <ng-template #noChart>
+                        <p class="text-gray-500 text-center py-10">Belum ada data revenue</p>
+                    </ng-template>
+                </div>
+
+                <!-- Recent Orders -->
+                <div class="bg-white rounded-xl border border-gray-100">
+                    <div class="p-4 border-b border-gray-100 flex items-center justify-between">
+                        <h2 class="text-lg font-semibold">Pesanan Terbaru</h2>
+                        <a routerLink="/orders" class="text-sm text-amber-600 hover:underline">Lihat Semua</a>
+                    </div>
+                    <div class="divide-y divide-gray-100">
+                        <div *ngFor="let order of data.recent_orders" class="p-4 flex items-center justify-between hover:bg-gray-50">
+                            <div>
+                                <p class="font-medium text-sm">#{{ order.order_number }}</p>
+                                <p class="text-xs text-gray-500">{{ order.customer_name }}</p>
+                            </div>
+                            <div class="text-right">
+                                <p class="font-medium text-sm">{{ order.total | number:'':'id' }}</p>
+                                <span class="px-2 py-0.5 rounded-full text-xs font-medium"
+                                      [class]="statusClass[order.status] || 'bg-gray-100'">
+                                    {{ order.status }}
+                                </span>
+                            </div>
+                        </div>
+                        <div *ngIf="data.recent_orders.length === 0" class="p-6 text-center text-gray-500">
+                            Belum ada pesanan
+                        </div>
+                    </div>
+                </div>
+            </ng-container>
+        </div>
+    </div>
+</div>
