@@ -28,8 +28,8 @@
             <div>
                 <h3 class="text-sm font-semibold text-white uppercase tracking-wider">Kontak</h3>
                 <ul class="mt-4 space-y-2">
-                    <li><a href="https://wa.me/6281234567890" target="_blank" class="text-sm hover:text-amber-400 transition-colors">WhatsApp</a></li>
-                    <li><a href="https://instagram.com/malmil.id" target="_blank" class="text-sm hover:text-amber-400 transition-colors">Instagram</a></li>
+                    <li><a [href]="'https://wa.me/' + config.waNumber" target="_blank" class="text-sm hover:text-amber-400 transition-colors">WhatsApp</a></li>
+                    <li><a [href]="config.instagramUrl" target="_blank" class="text-sm hover:text-amber-400 transition-colors">Instagram</a></li>
                     <li><a href="mailto:hello@malmil.id" class="text-sm hover:text-amber-400 transition-colors">Email</a></li>
                 </ul>
             </div>
