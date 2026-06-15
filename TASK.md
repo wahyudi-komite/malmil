@@ -72,7 +72,7 @@
 ---
 
 ## ⬜ Current Sprint — Phase 8: Security & Performance
-- [ ] Rate caching for shipping rates (15 min TTL via in-memory cache)
+- [x] Rate caching for shipping rates (15 min TTL via in-memory cache)
 - [ ] Webhook signature verification
 - [ ] Rate limiting per endpoint (auth: 5/min, API: 60/min)
 - [ ] Swagger/OpenAPI documentation
