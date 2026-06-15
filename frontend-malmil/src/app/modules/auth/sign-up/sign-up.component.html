@@ -19,7 +19,7 @@
             }
 
             <form class="mt-6" [formGroup]="signUpForm" #signUpNgForm="ngForm">
-                <mat-form-field class="w-full" subscriptSizing="dynamic">
+                <mat-form-field class="w-full mb-6" subscriptSizing="dynamic">
                     <mat-label>Nama Lengkap</mat-label>
                     <input id="name" matInput placeholder="Nama Anda" [formControlName]="'name'" />
                     @if (signUpForm.get('name').hasError('required')) {
@@ -27,7 +27,7 @@
                     }
                 </mat-form-field>
 
-                <mat-form-field class="w-full" subscriptSizing="dynamic">
+                <mat-form-field class="w-full mb-6" subscriptSizing="dynamic">
                     <mat-label>Email</mat-label>
                     <input id="email" matInput placeholder="nama@email.com" [formControlName]="'email'" />
                     @if (signUpForm.get('email').hasError('required')) {
