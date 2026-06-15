@@ -1,47 +1,76 @@
 <header class="sticky top-0 z-40 w-full bg-white/95 backdrop-blur-sm border-b border-gray-100">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex items-center justify-between h-16">
+    <div class="flex items-center justify-between h-16 px-6 sm:px-10 lg:px-16 xl:px-24">
+        <!-- Logo -->
+        <a routerLink="/" class="flex items-center space-x-3">
+            <img class="w-10 h-10 object-contain" src="images/logo/logo.png" alt="MALMIL Logo" />
+            <span class="text-2xl font-bold tracking-tight" style="color: #C8956C;">MALMIL</span>
+        </a>
 
-            <!-- Logo -->
-            <a routerLink="/" class="flex items-center space-x-3">
-                <img class="w-10 h-10 object-contain" src="images/logo/logo.png" alt="MALMIL Logo" />
-                <span class="text-2xl font-bold tracking-tight" style="color: #C8956C;">MALMIL</span>
+        <!-- Desktop Nav -->
+        <nav class="hidden md:flex items-center space-x-8">
+            <a routerLink="/" class="text-sm font-medium text-gray-700 hover:text-amber-600 transition-colors">Beranda</a>
+            <a routerLink="/catalog" class="text-sm font-medium text-gray-700 hover:text-amber-600 transition-colors">Katalog</a>
+        </nav>
+
+        <!-- Right Section -->
+        <div class="flex items-center space-x-4">
+            <!-- Auth -->
+            <ng-container *ngIf="isAuthenticated; else loginBtn">
+                <div class="relative">
+                    <button (click)="toggleUserMenu()" class="flex items-center gap-2 p-1.5 rounded-lg hover:bg-gray-100 transition-colors">
+                        <div class="w-8 h-8 rounded-full bg-gradient-to-br from-amber-300 to-orange-400 flex items-center justify-center text-white font-bold text-sm">
+                            {{ user?.name?.[0] || 'U' }}
+                        </div>
+                        <span class="hidden sm:inline text-sm font-medium text-gray-700">{{ user?.name || 'User' }}</span>
+                        <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                    </button>
+                    <div *ngIf="userMenuOpen" class="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-lg border border-gray-100 py-2 z-50">
+                        <a routerLink="/account" (click)="userMenuOpen = false" class="block px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50">Akun Saya</a>
+                        <a routerLink="/account" (click)="userMenuOpen = false" class="block px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50">Pesanan</a>
+                        <hr class="my-1 border-gray-100">
+                        <button (click)="logout()" class="w-full text-left px-4 py-2.5 text-sm text-red-600 hover:bg-red-50">Logout</button>
+                    </div>
+                </div>
+            </ng-container>
+            <ng-template #loginBtn>
+                <a routerLink="/sign-in"
+                   class="hidden sm:inline-flex items-center gap-2 px-5 py-2 rounded-xl bg-gray-900 text-white text-sm font-semibold hover:bg-gray-800 transition-all">
+                    Masuk
+                </a>
+                <a routerLink="/sign-in"
+                   class="sm:hidden p-2 text-gray-700 hover:text-amber-600 transition-colors">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                    </svg>
+                </a>
+            </ng-template>
+
+            <!-- Cart -->
+            <a routerLink="/cart" class="relative p-2 text-gray-700 hover:text-amber-600 transition-colors">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
+                </svg>
+                <span *ngIf="cartCount > 0" class="absolute -top-1 -right-1 flex items-center justify-center w-5 h-5 text-xs font-bold text-white bg-amber-600 rounded-full">
+                    {{ cartCount }}
+                </span>
             </a>
 
-            <!-- Desktop Nav -->
-            <nav class="hidden md:flex items-center space-x-8">
-                <a routerLink="/" class="text-sm font-medium text-gray-700 hover:text-amber-600 transition-colors">Beranda</a>
-                <a routerLink="/catalog" class="text-sm font-medium text-gray-700 hover:text-amber-600 transition-colors">Katalog</a>
-            </nav>
-
-            <!-- Right Section -->
-            <div class="flex items-center space-x-4">
-
-                <!-- Cart -->
-                <a routerLink="/cart" class="relative p-2 text-gray-700 hover:text-amber-600 transition-colors">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
-                    </svg>
-                    <span *ngIf="cartCount > 0" class="absolute -top-1 -right-1 flex items-center justify-center w-5 h-5 text-xs font-bold text-white bg-amber-600 rounded-full">
-                        {{ cartCount }}
-                    </span>
-                </a>
-
-                <!-- Hamburger (mobile) -->
-                <button (click)="toggleMenu()" class="md:hidden p-2 text-gray-700 hover:text-amber-600">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
-                    </svg>
-                </button>
-            </div>
+            <!-- Hamburger (mobile) -->
+            <button (click)="toggleMenu()" class="md:hidden p-2 text-gray-700 hover:text-amber-600">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                </svg>
+            </button>
         </div>
     </div>
 
     <!-- Mobile Menu -->
     <div *ngIf="menuOpen" class="md:hidden border-t border-gray-100 bg-white">
-        <div class="px-4 py-3 space-y-2">
+        <div class="px-6 py-3 space-y-2">
             <a routerLink="/" (click)="menuOpen = false" class="block py-2 text-sm font-medium text-gray-700">Beranda</a>
             <a routerLink="/catalog" (click)="menuOpen = false" class="block py-2 text-sm font-medium text-gray-700">Katalog</a>
+            <a *ngIf="isAuthenticated" routerLink="/account" (click)="menuOpen = false" class="block py-2 text-sm font-medium text-gray-700">Akun Saya</a>
+            <a *ngIf="!isAuthenticated" routerLink="/sign-in" (click)="menuOpen = false" class="block py-2 text-sm font-medium text-amber-600">Masuk</a>
         </div>
     </div>
 </header>
