@@ -110,4 +110,11 @@ export class UserComponent implements OnInit, OnDestroy {
     signOut(): void {
         this._router.navigate(['/sign-out']);
     }
+
+    /**
+     * Go to admin dashboard
+     */
+    goToAdmin(): void {
+        this._router.navigate(['/dashboard']);
+    }
 }
