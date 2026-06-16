@@ -78,7 +78,7 @@
 - [x] Swagger/OpenAPI documentation (23 controllers tagged, available at /api/docs)
 - [x] Database indexes optimization (45 @Index() added across 18 entity files)
 - [x] Angular SSR for SEO pages (server.ts, app.config.server, build successful)
-- [ ] PWA support
+- [x] PWA support
 
 ## ⬜ Future
 - [ ] Client-side Pixel (Facebook Pixel, Google Analytics, TikTok Pixel in index.html)
