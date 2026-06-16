@@ -80,8 +80,7 @@ export class AuthSignInComponent implements OnInit {
     }
 
     signInWithGoogle(): void {
-        const baseUrl = environment.apiUrl.replace('/api/v1', '');
-        window.location.href = `${baseUrl}/auth/google`;
+        window.location.href = `${environment.apiUrl}/auth/google`;
     }
 
     // -----------------------------------------------------------------------------------------------------
