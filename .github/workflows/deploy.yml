@@ -61,7 +61,7 @@ jobs:
             git reset --hard origin/master
 
             cd backend-malmil
-            npm ci --omit=dev
+            npm ci
             npm run build
 
             cd ../deploy/pm2
