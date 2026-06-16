@@ -21,6 +21,7 @@ async function bootstrap() {
     origin: [
       process.env.ENV_CORS || 'http://localhost:4200',
       process.env.FRONTEND_URL || 'http://localhost:4200',
+      'https://malmil.my.id',
     ],
     credentials: true,
   });
