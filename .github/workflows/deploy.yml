@@ -52,6 +52,9 @@ jobs:
         run: |
           ssh -o StrictHostKeyChecking=no ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }} "
             set -e
+            export NVM_DIR=\"\$HOME/.nvm\"
+            source \"\$NVM_DIR/nvm.sh\"
+
             cd ${{ secrets.DEPLOY_PATH }}
 
             git fetch origin master
