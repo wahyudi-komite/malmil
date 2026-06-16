@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { provincesData, citiesData, Region } from './regions.data';
+import { provincesData, citiesData } from './regions.data';
 import { districtsData } from './districts.data';
 
 @Injectable()

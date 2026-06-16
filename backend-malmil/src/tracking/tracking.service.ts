@@ -1,5 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import * as crypto from 'crypto';
 
 interface TrackingEvent {
   eventName: string;
@@ -49,8 +50,7 @@ export class TrackingService {
 
   private async sendToMeta(event: TrackingEvent) {
     try {
-      const { createHash } = require('crypto');
-      const sha256 = (data: string) => createHash('sha256').update(data).digest('hex');
+      const sha256 = (data: string) => crypto.createHash('sha256').update(data).digest('hex');
 
       const payload = {
         data: [

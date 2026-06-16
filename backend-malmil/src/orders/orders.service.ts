@@ -1,10 +1,9 @@
 import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, DataSource, In } from 'typeorm';
+import { Repository, DataSource } from 'typeorm';
 import { Order, OrderStatus } from './entities/order.entity';
 import { OrderItem } from './entities/order-item.entity';
 import { Cart } from '../cart/entities/cart.entity';
-import { CartItem } from '../cart/entities/cart-item.entity';
 import { ProductVariant } from '../products/entities/product-variant.entity';
 import { InventoryLog } from '../products/inventory/entities/inventory-log.entity';
 import { Coupon } from '../coupons/entities/coupon.entity';

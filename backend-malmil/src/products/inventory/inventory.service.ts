@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, LessThan } from 'typeorm';
 import { InventoryLog } from './entities/inventory-log.entity';
@@ -63,7 +63,7 @@ export class InventoryService {
       .where('v.is_active = :active', { active: true })
       .getRawOne();
 
-    const lowStock = await this.variantRepo.count({
+    const _lowStock = await this.variantRepo.count({
       where: { is_active: true },
       relations: ['product'],
     });

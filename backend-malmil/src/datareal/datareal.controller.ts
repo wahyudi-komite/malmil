@@ -1,17 +1,10 @@
 import {
   Controller,
   Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
   Request,
 } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiQuery } from '@nestjs/swagger';
 import { DatarealService } from './datareal.service';
-import { CreateDatarealDto } from './dto/create-datareal.dto';
-import { UpdateDatarealDto } from './dto/update-datareal.dto';
 
 const tables = 'm_update5s';
 

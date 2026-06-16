@@ -88,7 +88,7 @@ export class MidtransGateway implements PaymentGatewayInterface {
     this.logger.log('Midtrans signature verified successfully');
   }
 
-  async handleWebhook(payload: any, _signatureKey: string) {
+  async handleWebhook(payload: any) {
     this.logger.log('Midtrans webhook received');
     this.verifySignature(payload);
 

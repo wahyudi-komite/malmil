@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, LessThan, MoreThan, Brackets } from 'typeorm';
+import { Repository, LessThan, MoreThan } from 'typeorm';
 import { Banner } from './entities/banner.entity';
 
 @Injectable()

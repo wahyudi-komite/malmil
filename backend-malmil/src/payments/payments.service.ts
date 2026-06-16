@@ -59,7 +59,7 @@ export class PaymentsService {
   }
 
   async handleMidtransWebhook(payload: any) {
-    const result = await this.midtransGateway.handleWebhook(payload, '');
+    const result = await this.midtransGateway.handleWebhook(payload);
 
     const payment = await this.paymentRepo.findOne({
       where: { order: { order_number: result.orderId } },

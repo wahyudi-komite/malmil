@@ -1,6 +1,6 @@
 import {
   Controller, Get, Post, Put, Delete,
-  Body, Param, Query, UseGuards,
+  Body, Param, UseGuards,
 } from '@nestjs/common';
 import { ShippingService } from './shipping.service';
 import { CreateAddressDto } from './dto/create-address.dto';
@@ -30,7 +30,7 @@ export class ShippingController {
   @ApiResponse({ status: 404, description: 'Alamat tidak ditemukan' })
   @UseGuards(AuthGuard)
   @Get('addresses/:id')
-  async findAddressById(@Param('id') id: string, @CurrentUser() user: any) {
+  async findAddressById(@Param('id') id: string, @CurrentUser() _user: any) {
     return this.shippingService.findAddressById(id);
   }
 
