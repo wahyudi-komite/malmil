@@ -10,6 +10,7 @@ import { ProductCardComponent } from '../../../shared/components/product-card/pr
     selector: 'app-catalog',
     templateUrl: './catalog.component.html',
     standalone: true,
+    host: { class: 'block w-full' },
     imports: [FormsModule, NgForOf, NgIf, ProductCardComponent],
 })
 export class CatalogComponent implements OnInit {
