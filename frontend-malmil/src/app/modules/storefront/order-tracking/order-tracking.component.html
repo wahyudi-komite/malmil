@@ -1,9 +1,9 @@
-<div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8" *ngIf="!loading && order">
-    <h1 class="text-3xl font-bold text-gray-900 mb-2">Lacak Pesanan</h1>
-    <p class="text-gray-500 mb-8">Pesanan #{{ order.order_number }}</p>
+<div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8 dark:text-gray-100" *ngIf="!loading && order">
+    <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-2">Lacak Pesanan</h1>
+    <p class="text-gray-500 dark:text-gray-400 mb-8">Pesanan #{{ order.order_number }}</p>
 
     <!-- Status Timeline -->
-    <div class="bg-white p-6 rounded-xl border border-gray-100 mb-8">
+    <div class="bg-white dark:bg-gray-800 p-6 rounded-xl border border-gray-100 dark:border-gray-700 mb-8">
         <div class="space-y-0">
             <div *ngFor="let step of statusSteps; let i = index; let last = last"
                  class="flex items-start gap-4 pb-6 relative">
@@ -11,12 +11,14 @@
                 <div *ngIf="!last"
                      class="absolute left-[15px] top-8 w-0.5 h-full"
                      [class.bg-amber-500]="i < currentStepIndex"
-                     [class.bg-gray-200]="i >= currentStepIndex">
+                     [class.bg-gray-200]="i >= currentStepIndex"
+                     [class.dark:bg-gray-600]="i >= currentStepIndex">
                 </div>
                 <!-- Dot -->
                 <div class="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 z-10"
                      [class.bg-amber-500]="i <= currentStepIndex"
-                     [class.bg-gray-200]="i > currentStepIndex">
+                     [class.bg-gray-200]="i > currentStepIndex"
+                     [class.dark:bg-gray-600]="i > currentStepIndex">
                     <span *ngIf="i < currentStepIndex" class="text-white text-sm">✓</span>
                     <span *ngIf="i === currentStepIndex" class="text-white text-sm font-bold">●</span>
                 </div>
@@ -24,7 +26,8 @@
                 <div class="pt-1">
                     <p class="font-medium"
                        [class.text-amber-700]="i <= currentStepIndex"
-                       [class.text-gray-400]="i > currentStepIndex">
+                       [class.text-gray-400]="i > currentStepIndex"
+                       [class.dark:text-gray-500]="i > currentStepIndex">
                         {{ step.label }}
                     </p>
                 </div>
@@ -33,30 +36,30 @@
     </div>
 
     <!-- Order Summary -->
-    <div class="bg-white p-6 rounded-xl border border-gray-100">
-        <h2 class="font-semibold text-gray-900 mb-4">Detail Pesanan</h2>
+    <div class="bg-white dark:bg-gray-800 p-6 rounded-xl border border-gray-100 dark:border-gray-700">
+        <h2 class="font-semibold text-gray-900 dark:text-white mb-4">Detail Pesanan</h2>
         <div class="space-y-3">
             <div *ngFor="let item of order.items" class="flex justify-between text-sm">
-                <span class="text-gray-600">{{ item.product_name }} — {{ item.variant_name }} × {{ item.quantity }}</span>
-                <span class="font-medium">{{ item.price * item.quantity | currencyIdr }}</span>
+                <span class="text-gray-600 dark:text-gray-300">{{ item.product_name }} — {{ item.variant_name }} × {{ item.quantity }}</span>
+                <span class="font-medium dark:text-gray-100">{{ item.price * item.quantity | currencyIdr }}</span>
             </div>
-            <hr />
+            <hr class="dark:border-gray-600" />
             <div class="flex justify-between font-semibold">
-                <span>Total</span>
-                <span class="text-amber-700">{{ order.total | currencyIdr }}</span>
+                <span class="dark:text-white">Total</span>
+                <span class="text-amber-700 dark:text-amber-400">{{ order.total | currencyIdr }}</span>
             </div>
         </div>
 
-        <div *ngIf="order.tracking_number" class="mt-6 p-4 bg-gray-50 rounded-lg">
-            <p class="text-sm text-gray-600">Nomor Resi:</p>
-            <p class="font-medium text-gray-900">{{ order.tracking_number }}</p>
-            <p class="text-sm text-gray-500 mt-1">Kurir: {{ order.courier_code }} — {{ order.courier_service }}</p>
+        <div *ngIf="order.tracking_number" class="mt-6 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+            <p class="text-sm text-gray-600 dark:text-gray-300">Nomor Resi:</p>
+            <p class="font-medium text-gray-900 dark:text-white">{{ order.tracking_number }}</p>
+            <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Kurir: {{ order.courier_code }} — {{ order.courier_service }}</p>
         </div>
     </div>
 
     <div class="mt-8 text-center">
-        <a routerLink="/catalog" class="text-amber-600 hover:underline">Belanja Lagi</a>
+        <a routerLink="/catalog" class="text-amber-600 dark:text-amber-400 hover:underline">Belanja Lagi</a>
     </div>
 </div>
 
-<div *ngIf="loading" class="text-center py-20 text-gray-500">Memuat...</div>
+<div *ngIf="loading" class="text-center py-20 text-gray-500 dark:text-gray-400">Memuat...</div>

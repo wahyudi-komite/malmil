@@ -233,6 +233,10 @@ export class LayoutComponent implements OnInit, OnDestroy {
     private _updateScheme(): void {
         this._document.body.classList.remove('light', 'dark');
         this._document.body.classList.add(this.scheme);
+
+        const isDark = this.scheme === 'dark';
+        this._document.documentElement.classList.toggle('dark', isDark);
+
         localStorage.setItem('malmil-scheme', this.scheme);
     }
 

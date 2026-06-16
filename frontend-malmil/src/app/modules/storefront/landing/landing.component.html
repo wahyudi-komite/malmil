@@ -1,6 +1,6 @@
-<div class="min-h-screen bg-white overflow-x-hidden">
+<div class="min-h-screen bg-white dark:bg-gray-950 overflow-x-hidden">
     <!-- ===== HERO ===== -->
-    <section class="relative overflow-hidden bg-gradient-to-br from-amber-50 via-orange-50 to-white">
+    <section class="relative overflow-hidden bg-gradient-to-br from-amber-50 via-orange-50 to-white dark:from-gray-900 dark:via-gray-800 dark:to-gray-950">
         <div class="absolute inset-0 opacity-[0.03]"
              style="background-image: radial-gradient(circle at 25% 25%, #d97706 0%, transparent 50%),
                              radial-gradient(circle at 75% 75%, #ea580c 0%, transparent 50%);">
@@ -11,34 +11,34 @@
         <div class="relative mx-auto px-6 sm:px-10 lg:px-16 xl:px-24 py-24 md:py-36">
             <div class="grid md:grid-cols-2 gap-16 items-center">
                 <div>
-                    <span class="inline-flex items-center px-3 py-1 rounded-full bg-amber-100 text-amber-700 text-xs font-semibold tracking-wide uppercase mb-6">
+                    <span class="inline-flex items-center px-3 py-1 rounded-full bg-amber-100 dark:bg-amber-900/50 text-amber-700 dark:text-amber-300 text-xs font-semibold tracking-wide uppercase mb-6">
                         Handmade Premium
                     </span>
-                    <h1 class="text-5xl md:text-7xl font-extrabold tracking-tight text-gray-900 leading-[1.1]">
+                    <h1 class="text-5xl md:text-7xl font-extrabold tracking-tight text-gray-900 dark:text-white leading-[1.1]">
                         Popcorn
-                        <span class="text-amber-600 block">Artisanal</span>
+                        <span class="text-amber-600 dark:text-amber-400 block">Artisanal</span>
                     </h1>
-                    <p class="mt-6 text-lg md:text-xl text-gray-600 leading-relaxed max-w-lg">
+                    <p class="mt-6 text-lg md:text-xl text-gray-600 dark:text-gray-300 leading-relaxed max-w-lg">
                         Setiap butir adalah karya. Dibuat dengan butter asli, bahan alami, dan cinta dari dapur kami ke meja Anda.
                     </p>
                     <div class="mt-10 flex flex-col sm:flex-row gap-4">
                         <a routerLink="/catalog"
-                           class="group inline-flex items-center justify-center gap-2 px-8 py-4 rounded-2xl bg-gray-900 text-white font-semibold hover:bg-gray-800 transition-all shadow-xl shadow-gray-900/10 hover:shadow-gray-900/20 hover:-translate-y-0.5">
+                           class="group inline-flex items-center justify-center gap-2 px-8 py-4 rounded-2xl bg-gray-900 dark:bg-gray-700 text-white font-semibold hover:bg-gray-800 dark:hover:bg-gray-600 transition-all shadow-xl shadow-gray-900/10 hover:shadow-gray-900/20 hover:-translate-y-0.5">
                             Jelajahi Produk
                             <svg class="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
                         </a>
                         <a routerLink="/catalog"
-                           class="inline-flex items-center justify-center px-8 py-4 rounded-2xl border-2 border-gray-200 text-gray-700 font-semibold hover:border-amber-300 hover:text-amber-700 transition-all">
+                           class="inline-flex items-center justify-center px-8 py-4 rounded-2xl border-2 border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 font-semibold hover:border-amber-300 hover:text-amber-700 transition-all">
                             Lihat Katalog
                         </a>
                     </div>
-                    <div class="mt-12 flex items-center gap-8 text-sm text-gray-500">
+                    <div class="mt-12 flex items-center gap-8 text-sm text-gray-500 dark:text-gray-300">
                         <div class="flex -space-x-2">
-                            <div class="w-8 h-8 rounded-full bg-amber-200 border-2 border-white flex items-center justify-center text-xs font-bold text-amber-800">R</div>
-                            <div class="w-8 h-8 rounded-full bg-orange-200 border-2 border-white flex items-center justify-center text-xs font-bold text-orange-800">B</div>
-                            <div class="w-8 h-8 rounded-full bg-yellow-200 border-2 border-white flex items-center justify-center text-xs font-bold text-yellow-800">S</div>
+                            <div class="w-8 h-8 rounded-full bg-amber-200 border-2 border-white dark:border-gray-800 flex items-center justify-center text-xs font-bold text-amber-800">R</div>
+                            <div class="w-8 h-8 rounded-full bg-orange-200 border-2 border-white dark:border-gray-800 flex items-center justify-center text-xs font-bold text-orange-800">B</div>
+                            <div class="w-8 h-8 rounded-full bg-yellow-200 border-2 border-white dark:border-gray-800 flex items-center justify-center text-xs font-bold text-yellow-800">S</div>
                         </div>
-                        <span><strong class="text-gray-900">2.000+</strong> pelanggan puas</span>
+                        <span><strong class="text-gray-900 dark:text-white">2.000+</strong> pelanggan puas</span>
                         <span class="hidden sm:inline">⭐ 4.9 rata-rata rating</span>
                     </div>
                 </div>
@@ -46,21 +46,21 @@
                     <div class="relative w-96 h-96">
                         <div class="absolute inset-0 bg-gradient-to-br from-amber-200 to-orange-200 rounded-[40px] rotate-6 opacity-60"></div>
                         <div class="absolute inset-4 bg-gradient-to-br from-amber-100 to-orange-100 rounded-[32px] -rotate-3 opacity-80"></div>
-                        <div class="absolute inset-8 bg-white rounded-[28px] shadow-2xl flex items-center justify-center overflow-hidden">
+                        <div class="absolute inset-8 bg-white dark:bg-gray-800 rounded-[28px] shadow-2xl flex items-center justify-center overflow-hidden">
                             <div class="text-center">
                                 <div class="text-9xl leading-none mb-4">🍿</div>
-                                <p class="text-lg font-bold text-gray-800">Malmil</p>
-                                <p class="text-sm text-gray-500">Premium Popcorn</p>
+                                <p class="text-lg font-bold text-gray-800 dark:text-white">Malmil</p>
+                                <p class="text-sm text-gray-500 dark:text-gray-300">Premium Popcorn</p>
                             </div>
                         </div>
                         <!-- Floating badges -->
-                        <div class="absolute -top-4 -right-4 bg-white rounded-2xl shadow-lg px-4 py-3">
-                            <p class="text-xs text-gray-500">Mulai dari</p>
-                            <p class="text-lg font-bold text-amber-600">Rp35K</p>
+                        <div class="absolute -top-4 -right-4 bg-white dark:bg-gray-800 rounded-2xl shadow-lg px-4 py-3">
+                            <p class="text-xs text-gray-500 dark:text-gray-300">Mulai dari</p>
+                            <p class="text-lg font-bold text-amber-600 dark:text-amber-400">Rp35K</p>
                         </div>
-                        <div class="absolute -bottom-3 -left-6 bg-white rounded-2xl shadow-lg px-4 py-3">
-                            <p class="text-xs text-gray-500">Rasa</p>
-                            <p class="text-lg font-bold">8+ Varian</p>
+                        <div class="absolute -bottom-3 -left-6 bg-white dark:bg-gray-800 rounded-2xl shadow-lg px-4 py-3">
+                            <p class="text-xs text-gray-500 dark:text-gray-300">Rasa</p>
+                            <p class="text-lg font-bold dark:text-white">8+ Varian</p>
                         </div>
                     </div>
                 </div>
@@ -69,49 +69,49 @@
 
         <!-- Wave divider -->
         <div class="relative">
-            <svg class="w-full h-16 md:h-24 text-white" viewBox="0 0 1440 100" preserveAspectRatio="none">
+            <svg class="w-full h-16 md:h-24 text-white dark:text-gray-950" viewBox="0 0 1440 100" preserveAspectRatio="none">
                 <path fill="currentColor" d="M0,40 C360,100 1080,0 1440,60 L1440,100 L0,100 Z"/>
             </svg>
         </div>
     </section>
 
     <!-- ===== WHY MALMIL ===== -->
-    <section class="py-20 bg-white">
+    <section class="py-20 bg-white dark:bg-gray-950">
         <div class="px-6 sm:px-10 lg:px-16 xl:px-24">
             <div class="text-center max-w-2xl mx-auto mb-16">
-                <span class="text-amber-600 font-semibold text-sm tracking-widest uppercase">Kenapa Malmil</span>
-                <h2 class="text-4xl font-bold text-gray-900 mt-2">Lebih dari Sekadar Popcorn</h2>
-                <p class="text-gray-500 mt-3">Kami menghadirkan pengalaman cemilan premium yang berbeda dari yang lain.</p>
+                <span class="text-amber-600 dark:text-amber-400 font-semibold text-sm tracking-widest uppercase">Kenapa Malmil</span>
+                <h2 class="text-4xl font-bold text-gray-900 dark:text-white mt-2">Lebih dari Sekadar Popcorn</h2>
+                <p class="text-gray-500 dark:text-gray-300 mt-3">Kami menghadirkan pengalaman cemilan premium yang berbeda dari yang lain.</p>
             </div>
             <div class="grid md:grid-cols-3 gap-8">
-                <div class="group p-8 rounded-2xl bg-gradient-to-br from-amber-50 to-white border border-amber-100 hover:shadow-xl hover:-translate-y-1 transition-all">
-                    <div class="w-14 h-14 rounded-xl bg-amber-100 flex items-center justify-center text-2xl mb-5 group-hover:scale-110 transition-transform">🌾</div>
-                    <h3 class="text-lg font-bold text-gray-900 mb-2">Bahan Alami</h3>
-                    <p class="text-gray-500 text-sm leading-relaxed">Jagung pilihan, butter asli, tanpa pengawet. Hanya bahan terbaik untuk setiap kemasan.</p>
+                <div class="group p-8 rounded-2xl bg-gradient-to-br from-amber-50 to-white dark:from-gray-800 dark:to-gray-900 border border-amber-100 dark:border-gray-700 hover:shadow-xl hover:-translate-y-1 transition-all">
+                    <div class="w-14 h-14 rounded-xl bg-amber-100 dark:bg-amber-900/50 flex items-center justify-center text-2xl mb-5 group-hover:scale-110 transition-transform">🌾</div>
+                    <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-2">Bahan Alami</h3>
+                    <p class="text-gray-500 dark:text-gray-300 text-sm leading-relaxed">Jagung pilihan, butter asli, tanpa pengawet. Hanya bahan terbaik untuk setiap kemasan.</p>
                 </div>
-                <div class="group p-8 rounded-2xl bg-gradient-to-br from-amber-50 to-white border border-amber-100 hover:shadow-xl hover:-translate-y-1 transition-all">
-                    <div class="w-14 h-14 rounded-xl bg-amber-100 flex items-center justify-center text-2xl mb-5 group-hover:scale-110 transition-transform">👩‍🍳</div>
-                    <h3 class="text-lg font-bold text-gray-900 mb-2">Bikin Fresh</h3>
-                    <p class="text-gray-500 text-sm leading-relaxed">Diproduksi setiap hari. Dikirim langsung dalam 24 jam setelah masak. Dijamin renyah.</p>
+                <div class="group p-8 rounded-2xl bg-gradient-to-br from-amber-50 to-white dark:from-gray-800 dark:to-gray-900 border border-amber-100 dark:border-gray-700 hover:shadow-xl hover:-translate-y-1 transition-all">
+                    <div class="w-14 h-14 rounded-xl bg-amber-100 dark:bg-amber-900/50 flex items-center justify-center text-2xl mb-5 group-hover:scale-110 transition-transform">👩‍🍳</div>
+                    <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-2">Bikin Fresh</h3>
+                    <p class="text-gray-500 dark:text-gray-300 text-sm leading-relaxed">Diproduksi setiap hari. Dikirim langsung dalam 24 jam setelah masak. Dijamin renyah.</p>
                 </div>
-                <div class="group p-8 rounded-2xl bg-gradient-to-br from-amber-50 to-white border border-amber-100 hover:shadow-xl hover:-translate-y-1 transition-all">
-                    <div class="w-14 h-14 rounded-xl bg-amber-100 flex items-center justify-center text-2xl mb-5 group-hover:scale-110 transition-transform">🎁</div>
-                    <h3 class="text-lg font-bold text-gray-900 mb-2">Kemasan Premium</h3>
-                    <p class="text-gray-500 text-sm leading-relaxed">Desain eksklusif, seal kedap udara. Cocok untuk hadiah, hampers, atau koleksi pribadi.</p>
+                <div class="group p-8 rounded-2xl bg-gradient-to-br from-amber-50 to-white dark:from-gray-800 dark:to-gray-900 border border-amber-100 dark:border-gray-700 hover:shadow-xl hover:-translate-y-1 transition-all">
+                    <div class="w-14 h-14 rounded-xl bg-amber-100 dark:bg-amber-900/50 flex items-center justify-center text-2xl mb-5 group-hover:scale-110 transition-transform">🎁</div>
+                    <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-2">Kemasan Premium</h3>
+                    <p class="text-gray-500 dark:text-gray-300 text-sm leading-relaxed">Desain eksklusif, seal kedap udara. Cocok untuk hadiah, hampers, atau koleksi pribadi.</p>
                 </div>
             </div>
         </div>
     </section>
 
     <!-- ===== BEST SELLERS ===== -->
-    <section class="py-20 bg-gray-50/80">
+    <section class="py-20 bg-gray-50/80 dark:bg-gray-900/80">
         <div class="px-6 sm:px-10 lg:px-16 xl:px-24">
             <div class="flex items-end justify-between mb-12">
                 <div>
-                    <span class="text-amber-600 font-semibold text-sm tracking-widest uppercase">Best Seller</span>
-                    <h2 class="text-4xl font-bold text-gray-900 mt-2">Paling Laris</h2>
+                    <span class="text-amber-600 dark:text-amber-400 font-semibold text-sm tracking-widest uppercase">Best Seller</span>
+                    <h2 class="text-4xl font-bold text-gray-900 dark:text-white mt-2">Paling Laris</h2>
                 </div>
-                <a routerLink="/catalog" class="hidden sm:inline-flex items-center gap-1 text-amber-600 font-medium hover:text-amber-700 transition-colors">
+                <a routerLink="/catalog" class="hidden sm:inline-flex items-center gap-1 text-amber-600 dark:text-amber-400 font-medium hover:text-amber-700 dark:hover:text-amber-300 transition-colors">
                     Lihat Semua
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
                 </a>
@@ -120,35 +120,35 @@
                 <app-product-card *ngFor="let p of featuredProducts" [product]="p"></app-product-card>
             </div>
             <div class="text-center mt-10 sm:hidden">
-                <a routerLink="/catalog" class="inline-flex items-center gap-1 text-amber-600 font-medium">Lihat Semua →</a>
+                <a routerLink="/catalog" class="inline-flex items-center gap-1 text-amber-600 dark:text-amber-400 font-medium">Lihat Semua →</a>
             </div>
         </div>
     </section>
 
     <!-- ===== TESTIMONIALS ===== -->
-    <section class="py-20 bg-white">
+    <section class="py-20 bg-white dark:bg-gray-950">
         <div class="px-6 sm:px-10 lg:px-16 xl:px-24">
             <div class="text-center max-w-2xl mx-auto mb-16">
-                <span class="text-amber-600 font-semibold text-sm tracking-widest uppercase">Testimoni</span>
-                <h2 class="text-4xl font-bold text-gray-900 mt-2">Apa Kata Mereka</h2>
-                <p class="text-gray-500 mt-3">Lebih dari 2.000 pelanggan sudah merasakan kenikmatan Malmil.</p>
+                <span class="text-amber-600 dark:text-amber-400 font-semibold text-sm tracking-widest uppercase">Testimoni</span>
+                <h2 class="text-4xl font-bold text-gray-900 dark:text-white mt-2">Apa Kata Mereka</h2>
+                <p class="text-gray-500 dark:text-gray-300 mt-3">Lebih dari 2.000 pelanggan sudah merasakan kenikmatan Malmil.</p>
             </div>
             <div class="grid md:grid-cols-3 gap-8">
                 <div *ngFor="let t of testimonials; let i = index"
-                     class="relative p-8 rounded-2xl border border-gray-100 bg-white shadow-sm hover:shadow-lg transition-shadow"
+                     class="relative p-8 rounded-2xl border border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm hover:shadow-lg transition-shadow"
                      [class.md:translate-y-4]="i === 1">
                     <span class="absolute -top-3 left-8 text-6xl text-amber-200/50 leading-none">&ldquo;</span>
                     <div class="flex gap-1 mb-4">
                         <span *ngFor="let _ of [].constructor(5)" class="text-lg" [class.text-amber-400]="true">★</span>
                     </div>
-                    <p class="text-gray-600 leading-relaxed relative z-10">&ldquo;{{ t.text }}&rdquo;</p>
-                    <div class="mt-6 pt-6 border-t border-gray-100 flex items-center gap-3">
+                    <p class="text-gray-600 dark:text-gray-300 leading-relaxed relative z-10">&ldquo;{{ t.text }}&rdquo;</p>
+                    <div class="mt-6 pt-6 border-t border-gray-100 dark:border-gray-800 flex items-center gap-3">
                         <div class="w-10 h-10 rounded-full bg-gradient-to-br from-amber-300 to-orange-400 flex items-center justify-center text-white font-bold text-sm">
                             {{ t.name[0] }}
                         </div>
                         <div>
-                            <p class="font-semibold text-gray-900 text-sm">{{ t.name }}</p>
-                            <p class="text-xs text-gray-500">{{ t.city }}</p>
+                            <p class="font-semibold text-gray-900 dark:text-white text-sm">{{ t.name }}</p>
+                            <p class="text-xs text-gray-500 dark:text-gray-300">{{ t.city }}</p>
                         </div>
                     </div>
                 </div>
@@ -176,7 +176,7 @@
                 <input type="email"
                        [(ngModel)]="newsletterEmail"
                        placeholder="Masukkan email"
-                       class="flex-1 px-5 py-4 rounded-xl border-0 text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-white text-sm shadow-lg"
+                       class="flex-1 px-5 py-4 rounded-xl border-0 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:ring-2 focus:ring-white text-sm shadow-lg dark:bg-gray-800"
                        [ngModelOptions]="{standalone: true}" />
                 <button (click)="subscribeNewsletter()"
                         class="px-8 py-4 rounded-xl bg-white text-amber-700 font-bold hover:bg-amber-50 transition-colors whitespace-nowrap shadow-lg text-sm">

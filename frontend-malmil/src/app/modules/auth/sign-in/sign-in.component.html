@@ -1,15 +1,15 @@
-<div class="flex flex-col items-center flex-auto min-w-0 sm:justify-center bg-gradient-to-br from-amber-50 via-white to-orange-50">
-    <div class="w-full px-6 py-8 sm:bg-white sm:w-auto sm:rounded-2xl sm:p-12 sm:shadow-xl sm:border sm:border-gray-100">
+<div class="flex flex-col items-center flex-auto min-w-0 sm:justify-center bg-gradient-to-br from-amber-50 via-white to-orange-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-950">
+    <div class="w-full px-6 py-8 sm:bg-white sm:w-auto sm:rounded-2xl sm:p-12 sm:shadow-xl sm:border sm:border-gray-100 dark:sm:bg-gray-800 dark:sm:border-gray-700">
         <div class="w-full mx-auto max-w-80 sm:mx-0 sm:w-80">
             <div class="flex flex-col items-center">
-                <a class="self-start text-sm text-gray-400 hover:text-amber-600 mb-4 transition-colors" [routerLink]="['/']">← Kembali ke halaman utama</a>
+                <a class="self-start text-sm text-gray-400 dark:text-gray-500 hover:text-amber-600 dark:hover:text-amber-400 mb-4 transition-colors" [routerLink]="['/']">← Kembali ke halaman utama</a>
                 <img src="images/logo/logo.png" class="w-16 h-16 object-contain" />
                 <span class="mt-3 text-2xl font-bold tracking-tight" style="color: #C8956C;">MALMIL</span>
             </div>
 
             <div class="mt-6 text-center">
-                <h1 class="text-2xl font-bold text-gray-900">Masuk</h1>
-                <p class="mt-1 text-sm text-gray-500">Masuk ke akun Malmil Anda</p>
+                <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Masuk</h1>
+                <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Masuk ke akun Malmil Anda</p>
             </div>
 
             @if (showAlert) {
@@ -50,11 +50,11 @@
                 </mat-form-field>
 
                 <div class="flex justify-end mt-1">
-                    <a class="text-sm font-medium text-amber-600 hover:text-amber-700 hover:underline"
+                    <a class="text-sm font-medium text-amber-600 dark:text-amber-400 hover:text-amber-700 dark:hover:text-amber-300 hover:underline"
                         [routerLink]="['/forgot-password']">Lupa password?</a>
                 </div>
 
-                <button class="w-full mt-6 py-3 rounded-xl bg-gray-900 text-white font-semibold hover:bg-gray-800 transition-all flex items-center justify-center"
+                <button class="w-full mt-6 py-3 rounded-xl bg-gray-900 dark:bg-gray-700 text-white font-semibold hover:bg-gray-800 dark:hover:bg-gray-600 transition-all flex items-center justify-center"
                     [disabled]="signInForm.disabled" (click)="signIn()">
                     @if (!signInForm.disabled) {
                     <span>Masuk</span>
@@ -65,11 +65,11 @@
                 </button>
 
                 <div class="relative my-5">
-                    <div class="absolute inset-0 flex items-center"><div class="w-full border-t border-gray-200"></div></div>
-                    <div class="relative flex justify-center text-sm"><span class="bg-white px-3 text-gray-400">atau</span></div>
+                    <div class="absolute inset-0 flex items-center"><div class="w-full border-t border-gray-200 dark:border-gray-700"></div></div>
+                    <div class="relative flex justify-center text-sm"><span class="bg-white dark:bg-gray-800 px-3 text-gray-400 dark:text-gray-500">atau</span></div>
                 </div>
 
-                <button class="w-full py-3 rounded-xl border border-gray-200 text-gray-700 font-medium hover:border-gray-300 hover:bg-gray-50 transition-all flex items-center justify-center gap-3"
+                <button class="w-full py-3 rounded-xl border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 font-medium hover:border-gray-300 dark:hover:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 transition-all flex items-center justify-center gap-3"
                     type="button" (click)="signInWithGoogle()" [disabled]="signInForm.disabled">
                     <svg class="w-5 h-5" viewBox="0 0 24 24">
                         <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/>
@@ -82,20 +82,20 @@
 
                 <!-- Quick login -->
                 <div class="flex flex-col mt-6 space-y-2">
-                    <p class="text-xs text-gray-400 text-center">Login Cepat (Development)</p>
-                    <button class="w-full py-2.5 rounded-xl border border-gray-200 text-sm font-medium text-gray-700 hover:border-amber-300 hover:text-amber-700 transition-all"
+                    <p class="text-xs text-gray-400 dark:text-gray-500 text-center">Login Cepat (Development)</p>
+                    <button class="w-full py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 text-sm font-medium text-gray-700 dark:text-gray-300 hover:border-amber-300 dark:hover:border-amber-500 hover:text-amber-700 dark:hover:text-amber-400 transition-all"
                         type="button" (click)="loginAs('adhye.yudhie@gmail.com', 'Astra123#')">
                         Admin
                     </button>
-                    <button class="w-full py-2.5 rounded-xl border border-gray-200 text-sm font-medium text-gray-700 hover:border-amber-300 hover:text-amber-700 transition-all"
+                    <button class="w-full py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 text-sm font-medium text-gray-700 dark:text-gray-300 hover:border-amber-300 dark:hover:border-amber-500 hover:text-amber-700 dark:hover:text-amber-400 transition-all"
                         type="button" (click)="loginAs('operator@example.com', 'Astra123#')">
                         Operator
                     </button>
                 </div>
 
-                <div class="mt-8 text-center text-sm text-gray-500">
+                <div class="mt-8 text-center text-sm text-gray-500 dark:text-gray-400">
                     Belum punya akun?
-                    <a class="font-medium text-amber-600 hover:text-amber-700 hover:underline" [routerLink]="['/sign-up']">Daftar</a>
+                    <a class="font-medium text-amber-600 dark:text-amber-400 hover:text-amber-700 dark:hover:text-amber-300 hover:underline" [routerLink]="['/sign-up']">Daftar</a>
                 </div>
             </form>
         </div>

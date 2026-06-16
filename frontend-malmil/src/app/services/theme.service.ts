@@ -1,25 +1,18 @@
-import { Injectable, signal, effect } from '@angular/core';
+import { Injectable } from '@angular/core';
+import { FuseConfigService } from '@fuse/services/config';
 
 @Injectable({ providedIn: 'root' })
 export class ThemeService {
-    private readonly STORAGE_KEY = 'malmil-theme-preference';
-    theme = signal<'light' | 'dark'>(this.loadPreference());
-
-    constructor() {
-        effect(() => {
-            const t = this.theme();
-            document.documentElement.classList.toggle('dark', t === 'dark');
-            localStorage.setItem(this.STORAGE_KEY, t);
-        });
-    }
-
-    private loadPreference(): 'light' | 'dark' {
-        const stored = localStorage.getItem(this.STORAGE_KEY);
-        if (stored === 'dark' || stored === 'light') return stored;
-        return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    constructor(private _fuseConfig: FuseConfigService) {
+        const stored = localStorage.getItem('malmil-scheme');
+        if (stored === 'dark' || stored === 'light') {
+            this._fuseConfig.config = { scheme: stored };
+        }
     }
 
     toggle() {
-        this.theme.update((t) => (t === 'light' ? 'dark' : 'light'));
+        const current = localStorage.getItem('malmil-scheme');
+        const next = current === 'dark' ? 'light' : 'dark';
+        this._fuseConfig.config = { scheme: next };
     }
 }
