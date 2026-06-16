@@ -19,29 +19,19 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
-          cache-dependency-path: |
-            backend-malmil/package-lock.json
-            frontend-malmil/package-lock.json
+          cache-dependency-path: backend-malmil/package-lock.json
 
-      - name: Install backend dependencies
+      - name: Install dependencies
         run: npm ci
         working-directory: backend-malmil
 
-      - name: Lint backend
+      - name: Lint
         run: npm run lint
         working-directory: backend-malmil
 
-      - name: Build backend
+      - name: Build
         run: npm run build
         working-directory: backend-malmil
-
-      - name: Install frontend dependencies
-        run: npm ci
-        working-directory: frontend-malmil
-
-      - name: Build frontend
-        run: npm run build
-        working-directory: frontend-malmil
 
   deploy:
     name: Deploy
@@ -58,31 +48,22 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           known_hosts: ${{ secrets.KNOWN_HOSTS }}
 
-      - name: Build & deploy via remote script
+      - name: Deploy backend
         run: |
           ssh -o StrictHostKeyChecking=no ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }} "
             set -e
             cd ${{ secrets.DEPLOY_PATH }}
 
-            # Pull latest
             git fetch origin master
             git reset --hard origin/master
 
-            # Build backend
             cd backend-malmil
             npm ci --omit=dev
             npm run build
 
-            # Build frontend
-            cd ../frontend-malmil
-            npm ci --omit=dev
-            npm run build
-
-            # Restart apps
             cd ../deploy/pm2
             pm2 startOrReload ecosystem.config.js --env production
 
-            # Reload nginx
             sudo nginx -t && sudo systemctl reload nginx
 
             echo 'Deploy complete'
