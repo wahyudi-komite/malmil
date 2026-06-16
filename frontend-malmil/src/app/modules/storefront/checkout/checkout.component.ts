@@ -162,8 +162,8 @@ export class CheckoutComponent implements OnInit {
             this.error = 'Lengkapi informasi penerima';
             return;
         }
-        if (this.useNewAddress && (!this.full_address || !this.selectedCity)) {
-            this.error = 'Lengkapi alamat pengiriman';
+        if (this.useNewAddress && (!this.full_address || !this.selectedCity || !this.selectedProvince)) {
+            this.error = 'Lengkapi alamat pengiriman (provinsi, kota, dan alamat lengkap)';
             return;
         }
         if (!this.selectedRate) {

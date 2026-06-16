@@ -1,3 +1,4 @@
+import { NgIf } from '@angular/common';
 import { Component, Input } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { CurrencyIdrPipe } from '../../pipes/currency-idr.pipe';
@@ -14,7 +15,7 @@ export interface ProductCardItem {
     selector: 'app-product-card',
     templateUrl: './product-card.component.html',
     standalone: true,
-    imports: [RouterLink, CurrencyIdrPipe],
+    imports: [NgIf, RouterLink, CurrencyIdrPipe],
 })
 export class ProductCardComponent {
     @Input() product!: ProductCardItem;

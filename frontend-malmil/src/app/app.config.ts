@@ -22,6 +22,7 @@ import { provideServiceWorker } from '@angular/service-worker';
 import { provideFuse } from '@fuse';
 import { TranslocoService, provideTransloco } from '@jsverse/transloco';
 import { appRoutes } from 'app/app.routes';
+import { environment } from '../environments/environment';
 import { provideAuth } from 'app/core/auth/auth.provider';
 import { provideIcons } from 'app/core/icons/icons.provider';
 import { mockApiServices } from 'app/mock-api';
@@ -103,11 +104,13 @@ export const appConfig: ApplicationConfig = {
             multi: true,
         },
 
-        // Service Worker (PWA)
-        provideServiceWorker('ngsw-worker.js', {
-            enabled: true,
-            registrationStrategy: 'registerWhenStable:5000',
-        }),
+        // Service Worker (PWA) — only in production builds
+        ...(environment.production
+            ? [provideServiceWorker('ngsw-worker.js', {
+                enabled: true,
+                registrationStrategy: 'registerWhenStable:5000',
+            })]
+            : []),
 
         // Fuse
         provideAuth(),

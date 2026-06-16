@@ -109,13 +109,19 @@ export class CustomerDashboardComponent implements OnInit {
     }
 
     saveAddress() {
-        this.shippingService.createAddress(this.addressForm).subscribe(() => {
-            this.loadAddresses();
-            this.showAddressForm = false;
-            this.addressForm = {
-                label: '', recipient_name: '', phone: '', province: '', city: '',
-                district: '', subdistrict: '', postal_code: '', full_address: '', is_default: false,
-            };
+        if (!this.addressForm.province || !this.addressForm.city || !this.addressForm.district ||
+            !this.addressForm.recipient_name || !this.addressForm.phone || !this.addressForm.full_address || !this.addressForm.postal_code) {
+            return;
+        }
+        this.shippingService.createAddress(this.addressForm).subscribe({
+            next: () => {
+                this.loadAddresses();
+                this.showAddressForm = false;
+                this.addressForm = {
+                    label: '', recipient_name: '', phone: '', province: '', city: '',
+                    district: '', subdistrict: '', postal_code: '', full_address: '', is_default: false,
+                };
+            },
         });
     }
 
