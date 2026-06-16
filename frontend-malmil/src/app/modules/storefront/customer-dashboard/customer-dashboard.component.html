@@ -53,20 +53,42 @@
 
     <!-- Addresses Tab -->
     <div *ngIf="activeTab === 'addresses'">
-        <button (click)="showAddressForm = !showAddressForm"
+        <button (click)="toggleAddressForm()"
                 class="mb-4 px-4 py-2 rounded-lg bg-amber-600 text-white text-sm font-medium hover:bg-amber-700">
             {{ showAddressForm ? 'Batal' : '+ Alamat Baru' }}
         </button>
 
         <div *ngIf="showAddressForm" class="bg-white dark:bg-gray-800 p-4 rounded-xl border border-gray-100 dark:border-gray-700 mb-6 space-y-3">
+            <input type="text" [(ngModel)]="addressForm.label" placeholder="Label (Rumah / Kantor)"
+                   class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100" />
             <input type="text" [(ngModel)]="addressForm.recipient_name" placeholder="Nama penerima"
                    class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100" />
             <input type="text" [(ngModel)]="addressForm.phone" placeholder="No. WhatsApp"
                    class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100" />
-            <input type="text" [(ngModel)]="addressForm.full_address" placeholder="Alamat lengkap"
+
+            <select (change)="onProvinceChange($event)" class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100">
+                <option value="" disabled selected>Pilih provinsi</option>
+                <option *ngFor="let p of provinces" [value]="p.id">{{ p.name }}</option>
+            </select>
+            <select *ngIf="cities.length > 0" (change)="onCityChange($event)" class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100">
+                <option value="" disabled selected>Pilih kota / kabupaten</option>
+                <option *ngFor="let c of cities" [value]="c.id">{{ c.name }}</option>
+            </select>
+            <select *ngIf="districts.length > 0" (change)="onDistrictChange($event)" class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100">
+                <option value="" disabled selected>Pilih kecamatan</option>
+                <option *ngFor="let d of districts" [value]="d.id">{{ d.name }}</option>
+            </select>
+            <input type="text" [(ngModel)]="addressForm.subdistrict" placeholder="Kelurahan / Desa"
                    class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100" />
+
             <input type="text" [(ngModel)]="addressForm.postal_code" placeholder="Kode pos"
                    class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100" />
+            <input type="text" [(ngModel)]="addressForm.full_address" placeholder="Alamat lengkap"
+                   class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100" />
+            <label class="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
+                <input type="checkbox" [(ngModel)]="addressForm.is_default" />
+                Jadikan alamat utama
+            </label>
             <button (click)="saveAddress()" class="px-4 py-2 rounded-lg bg-gray-900 dark:bg-gray-700 text-white text-sm font-medium">Simpan</button>
         </div>
 

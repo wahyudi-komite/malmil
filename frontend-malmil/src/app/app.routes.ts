@@ -6,6 +6,16 @@ import { RoleGuard } from 'app/core/auth/guards/role.guard';
 import { LayoutComponent } from 'app/layout/layout.component';
 
 export const appRoutes: Route[] = [
+    // Post-Google-OAuth redirect (no guard — auth cookies already set by backend)
+    {
+        path: 'signed-in-redirect',
+        component: LayoutComponent,
+        data: { layout: 'empty' },
+        children: [
+            { path: '', loadChildren: () => import('app/modules/auth/signed-in-redirect/signed-in-redirect.routes') },
+        ],
+    },
+
     // Storefront — public
     {
         path: '',

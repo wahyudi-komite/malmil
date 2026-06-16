@@ -5,6 +5,7 @@ import { ShippingAddress } from './entities/shipping-address.entity';
 import { Courier } from './entities/courier.entity';
 import { CreateAddressDto } from './dto/create-address.dto';
 import { UpdateAddressDto } from './dto/update-address.dto';
+import { RajaOngkirService } from './rajaongkir.service';
 
 @Injectable()
 export class ShippingService {
@@ -16,6 +17,7 @@ export class ShippingService {
     private readonly addressRepo: Repository<ShippingAddress>,
     @InjectRepository(Courier)
     private readonly courierRepo: Repository<Courier>,
+    private readonly rajaOngkir: RajaOngkirService,
   ) {}
 
   // ─── Addresses ──────────────────────────────────────
@@ -101,6 +103,37 @@ export class ShippingService {
     const cached = this.rateCache.get(cacheKey);
     if (cached && Date.now() < cached.expiry) {
       return cached.data;
+    }
+
+    const origin = process.env.RAJAONGKIR_ORIGIN_CITY_ID;
+    const apiKey = process.env.RAJAONGKIR_API_KEY;
+
+    if (origin && apiKey) {
+      try {
+        const results = await Promise.all(
+          couriers.map((code) =>
+            this.rajaOngkir.getCost(origin, dto.destination, dto.weight, code).catch(() => null),
+          ),
+        );
+
+        const rates = results
+          .filter(Boolean)
+          .flatMap((result: any) =>
+            result.costs.map((cost: any) => ({
+              courier_code: result.code,
+              courier_name: result.name,
+              service_type: cost.service,
+              cost: cost.cost[0].value,
+              etd: cost.cost[0].etd?.replace(/hari/i, '').trim() + ' hari' || '-',
+            })),
+          );
+
+        const result = { rates };
+        this.rateCache.set(cacheKey, { data: result, expiry: Date.now() + this.CACHE_TTL_MS });
+        return result;
+      } catch {
+        // fallback to flat rate
+      }
     }
 
     const rates = couriers.flatMap((code) => {

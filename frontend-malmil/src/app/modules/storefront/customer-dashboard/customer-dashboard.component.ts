@@ -28,6 +28,13 @@ export class CustomerDashboardComponent implements OnInit {
         district: '', subdistrict: '', postal_code: '', full_address: '', is_default: false,
     };
 
+    // Region cascading
+    provinces: any[] = [];
+    cities: any[] = [];
+    districts: any[] = [];
+    selectedProvinceId: string = '';
+    selectedCityId: string = '';
+
     constructor(
         private orderService: OrderService,
         private shippingService: ShippingService,
@@ -39,6 +46,51 @@ export class CustomerDashboardComponent implements OnInit {
         this.loadOrders();
         this.loadAddresses();
         this.loadWishlist();
+    }
+
+    toggleAddressForm() {
+        this.showAddressForm = !this.showAddressForm;
+        if (this.showAddressForm) {
+            this.loadProvinces();
+        }
+    }
+
+    loadProvinces() {
+        this.shippingService.getProvinces().subscribe((data) => (this.provinces = data));
+    }
+
+    onProvinceChange(event: any) {
+        const id = event.target.value;
+        const province = this.provinces.find((p) => p.id === id);
+        if (!province) return;
+        this.selectedProvinceId = province.id;
+        this.addressForm.province = province.name;
+        this.addressForm.city = '';
+        this.addressForm.district = '';
+        this.addressForm.subdistrict = '';
+        this.cities = [];
+        this.districts = [];
+        this.selectedCityId = '';
+        this.shippingService.getCities(province.id).subscribe((data) => (this.cities = data));
+    }
+
+    onCityChange(event: any) {
+        const id = event.target.value;
+        const city = this.cities.find((c) => c.id === id);
+        if (!city) return;
+        this.selectedCityId = city.id;
+        this.addressForm.city = city.name;
+        this.addressForm.district = '';
+        this.addressForm.subdistrict = '';
+        this.districts = [];
+        this.shippingService.getDistricts(city.id).subscribe((data) => (this.districts = data));
+    }
+
+    onDistrictChange(event: any) {
+        const id = event.target.value;
+        const district = this.districts.find((d) => d.id === id);
+        if (!district) return;
+        this.addressForm.district = district.name;
     }
 
     loadOrders() {

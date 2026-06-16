@@ -111,10 +111,10 @@ export class CheckoutComponent implements OnInit {
         if (!this.cart || !this.cart.total_weight) return;
 
         this.calculating = true;
-        const destination = this.selectedCity || 'jakarta';
+        if (!this.selectedCity) return;
 
         this.shippingService.calculateRates({
-            destination,
+            destination: this.selectedCity,
             weight: this.cart.total_weight,
         }).subscribe({
             next: (res) => {
