@@ -22,7 +22,7 @@ export class HeaderComponent implements OnInit {
     userMenuOpen = false;
     isAuthenticated = false;
     user: any = null;
-    darkMode = localStorage.getItem('malmil-scheme') === 'dark';
+    darkMode = false;
 
     constructor(private cartService: CartService) {}
 
@@ -34,6 +34,12 @@ export class HeaderComponent implements OnInit {
         this.userService.user$.subscribe((u) => {
             this.user = u;
             this.isAuthenticated = !!u;
+        });
+
+        this.authService.check().subscribe();
+
+        this.fuseConfig.config$.subscribe((config) => {
+            this.darkMode = config.scheme === 'dark';
         });
     }
 
