@@ -22,7 +22,7 @@ export class AuthService {
         return this._httpClient.post(`${environment.apiUrl}/auth/refresh`, {});
     }
 
-    private checkAuthStatus(): Observable<boolean> {
+    checkAuthStatus(): Observable<boolean> {
         return this._httpClient
             .get<{
                 isAuthenticated: boolean;
