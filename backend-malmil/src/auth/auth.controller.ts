@@ -388,6 +388,7 @@ export class AuthController {
       user = await this.userService.create({
         name: profile.name,
         email: profile.email,
+        google_id: profile.googleId,
         password: null,
         phone: null,
         is_active: true,

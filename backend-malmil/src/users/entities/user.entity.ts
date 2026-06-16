@@ -22,9 +22,12 @@ export class User {
   @Column({ unique: true })
   email: string;
 
-  @Column({ length: 191 })
+  @Column({ length: 191, nullable: true })
   @Exclude()
   password: string;
+
+  @Column({ length: 100, nullable: true, unique: true })
+  google_id: string;
 
   @Column({ length: 20, nullable: true })
   phone: string;
@@ -40,7 +43,7 @@ export class User {
   @JoinColumn({ name: 'role_id' })
   role: Role;
 
-  @Column({ length: 50, default: '' })
+  @Column({ type: 'text', nullable: true })
   avatar: string;
 
   @CreateDateColumn()
