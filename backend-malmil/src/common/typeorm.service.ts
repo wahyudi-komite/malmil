@@ -11,7 +11,7 @@ export class TypeOrmConfigService implements TypeOrmOptionsFactory {
     return {
       type: 'mysql',
       host: this.config.get<string>('DATABASE_HOST'),
-      port: 3306,
+      port: parseInt(this.config.get<string>('DATABASE_PORT'), 10) || 3306,
       username: this.config.get<string>('DATABASE_USERNAME'),
       password: this.config.get<string>('DATABASE_PASSWORD'),
       database: this.config.get<string>('DATABASE_NAME'),

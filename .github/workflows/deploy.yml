@@ -1,0 +1,89 @@
+name: Deploy
+
+on:
+  push:
+    branches: [master]
+  workflow_dispatch:
+
+env:
+  NODE_VERSION: 20
+
+jobs:
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: |
+            backend-malmil/package-lock.json
+            frontend-malmil/package-lock.json
+
+      - name: Install backend dependencies
+        run: npm ci
+        working-directory: backend-malmil
+
+      - name: Lint backend
+        run: npm run lint
+        working-directory: backend-malmil
+
+      - name: Build backend
+        run: npm run build
+        working-directory: backend-malmil
+
+      - name: Install frontend dependencies
+        run: npm ci
+        working-directory: frontend-malmil
+
+      - name: Build frontend
+        run: npm run build
+        working-directory: frontend-malmil
+
+  deploy:
+    name: Deploy
+    needs: test
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/master'
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install SSH key
+        uses: shimataro/ssh-key-action@v2
+        with:
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          known_hosts: ${{ secrets.KNOWN_HOSTS }}
+
+      - name: Build & deploy via remote script
+        run: |
+          ssh -o StrictHostKeyChecking=no ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }} "
+            set -e
+            cd ${{ secrets.DEPLOY_PATH }}
+
+            # Pull latest
+            git fetch origin master
+            git reset --hard origin/master
+
+            # Build backend
+            cd backend-malmil
+            npm ci --omit=dev
+            npm run build
+
+            # Build frontend
+            cd ../frontend-malmil
+            npm ci --omit=dev
+            npm run build
+
+            # Restart apps
+            cd ../deploy/pm2
+            pm2 startOrReload ecosystem.config.js --env production
+
+            # Reload nginx
+            sudo nginx -t && sudo systemctl reload nginx
+
+            echo 'Deploy complete'
+          "
