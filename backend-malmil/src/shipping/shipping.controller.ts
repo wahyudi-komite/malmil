@@ -30,7 +30,7 @@ export class ShippingController {
   @ApiResponse({ status: 404, description: 'Alamat tidak ditemukan' })
   @UseGuards(AuthGuard)
   @Get('addresses/:id')
-  async findAddressById(@Param('id') id: string, @CurrentUser() _user: any) {
+  async findAddressById(@Param('id') id: string) {
     return this.shippingService.findAddressById(id);
   }
 

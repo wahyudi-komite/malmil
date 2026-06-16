@@ -63,11 +63,6 @@ export class InventoryService {
       .where('v.is_active = :active', { active: true })
       .getRawOne();
 
-    const _lowStock = await this.variantRepo.count({
-      where: { is_active: true },
-      relations: ['product'],
-    });
-
     const lowStockCount = (await this.getLowStockItems()).length;
 
     return {

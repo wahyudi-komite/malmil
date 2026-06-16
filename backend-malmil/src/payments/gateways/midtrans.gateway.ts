@@ -10,6 +10,7 @@ export class MidtransGateway implements PaymentGatewayInterface {
   private core: any;
 
   constructor(private config: ConfigService) {
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
     const Midtrans = require('midtrans-client');
 
     const isProduction = this.config.get('MIDTRANS_IS_PRODUCTION') === 'true';
