@@ -83,7 +83,7 @@
 ## ⬜ Future
 - [ ] Client-side Pixel (Facebook Pixel, Google Analytics, TikTok Pixel in index.html)
 - [ ] Abandoned cart cron job (email + WhatsApp reminders)
-- [ ] District data (7,277 kecamatan) for cascade address selector
+- [x] District data (7,285 kecamatan) for cascade address selector
 - [ ] Biteship real connector (replace mock shipping rates)
 - [ ] Rate caching 15 min TTL for Biteship (when integrated)
 - [ ] Deployment: Nginx config, PM2 cluster mode, Cloudflare SSL, DB backup cron, CI/CD pipeline

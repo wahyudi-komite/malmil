@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { provincesData, citiesData, Region } from './regions.data';
+import { districtsData } from './districts.data';
 
 @Injectable()
 export class RegionsService {
@@ -12,6 +13,6 @@ export class RegionsService {
   }
 
   findDistrictsByCity(cityId: string) {
-    return [];
+    return districtsData[cityId] || [];
   }
 }
