@@ -4,8 +4,8 @@ module.exports = {
       name: 'malmil-api',
       cwd: '../backend-malmil',
       script: 'dist/main.js',
-      instances: 'max',
-      exec_mode: 'cluster',
+      instances: 1,
+      exec_mode: 'fork',
       env: {
         NODE_ENV: 'production',
         APP_PORT: 3010,
