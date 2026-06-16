@@ -272,13 +272,16 @@ export class AuthController {
 
   @ApiOperation({ summary: 'Keluar dari akun' })
   @Post('logout')
-  @UseGuards(CsrfGuard)
   async logout(@Req() req: Request, @Res({ passthrough: true }) response: Response) {
     const refreshToken = req.cookies['refreshToken'];
     if (refreshToken) {
-      const result = await this.authService.validateRefreshToken(refreshToken);
-      if (result && !result.isReused) {
-        await this.authService.revokeRefreshToken(result.token.id);
+      try {
+        const result = await this.authService.validateRefreshToken(refreshToken);
+        if (result && !result.isReused) {
+          await this.authService.revokeRefreshToken(result.token.id);
+        }
+      } catch {
+        // Revoke best-effort — always clear cookies
       }
     }
     this.clearAuthCookies(response);

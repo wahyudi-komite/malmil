@@ -93,11 +93,18 @@ export class AuthService {
         return this._httpClient
             .post(`${environment.apiUrl}/auth/logout`, {})
             .pipe(
-                tap(() => {
-                    this._authenticated = false;
-                    this._userService.user = null;
+                tap({
+                    next: () => {
+                        this._authenticated = false;
+                        this._userService.user = null;
+                    },
+                    error: () => {
+                        this._authenticated = false;
+                        this._userService.user = null;
+                    },
                 }),
-                switchMap(() => of(true))
+                switchMap(() => of(true)),
+                catchError(() => of(true))
             );
     }
 
