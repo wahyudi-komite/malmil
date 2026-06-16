@@ -8,8 +8,8 @@
 
         <!-- Desktop Nav -->
         <nav class="hidden md:flex items-center space-x-8">
-            <a routerLink="/" class="text-sm font-medium text-gray-700 hover:text-amber-600 transition-colors">Beranda</a>
-            <a routerLink="/catalog" class="text-sm font-medium text-gray-700 hover:text-amber-600 transition-colors">Katalog</a>
+            <a routerLink="/" class="text-base font-medium text-gray-700 hover:text-amber-600 transition-colors">Beranda</a>
+            <a routerLink="/catalog" class="text-base font-medium text-gray-700 hover:text-amber-600 transition-colors">Katalog</a>
         </nav>
 
         <!-- Right Section -->
@@ -78,8 +78,8 @@
     <!-- Mobile Menu -->
     <div *ngIf="menuOpen" class="md:hidden border-t border-gray-100 bg-white">
         <div class="px-6 py-3 space-y-2">
-            <a routerLink="/" (click)="menuOpen = false" class="block py-2 text-sm font-medium text-gray-700">Beranda</a>
-            <a routerLink="/catalog" (click)="menuOpen = false" class="block py-2 text-sm font-medium text-gray-700">Katalog</a>
+            <a routerLink="/" (click)="menuOpen = false" class="block py-2 text-base font-medium text-gray-700">Beranda</a>
+            <a routerLink="/catalog" (click)="menuOpen = false" class="block py-2 text-base font-medium text-gray-700">Katalog</a>
             <a *ngIf="isAuthenticated" routerLink="/account" (click)="menuOpen = false" class="block py-2 text-sm font-medium text-gray-700">Akun Saya</a>
             <a *ngIf="!isAuthenticated" routerLink="/sign-in" (click)="menuOpen = false" class="block py-2 text-sm font-medium text-amber-600">Masuk</a>
         </div>
