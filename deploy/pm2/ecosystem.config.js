@@ -2,14 +2,14 @@ module.exports = {
   apps: [
     {
       name: 'malmil-api',
-      cwd: '../backend-malmil',
+      cwd: '../../backend-malmil',
       script: 'dist/main.js',
       instances: 1,
       exec_mode: 'fork',
       env: {
         NODE_ENV: 'production',
       },
-      env_file: '../.env',
+      env_file: '.env',
       watch: false,
       max_memory_restart: '500M',
       error_file: '../logs/api-error.log',
