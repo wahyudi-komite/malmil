@@ -1,6 +1,6 @@
 export const environment = {
     production: true,
-    apiUrl: 'https://api.malmil.my.id:3007/api/v1',
+    apiUrl: 'https://api.malmil.my.id/api/v1',
     midtransClientKey: 'SB-Mid-client-xxxxx',
     siteName: 'Malmil',
     waNumber: '6281234567890',
