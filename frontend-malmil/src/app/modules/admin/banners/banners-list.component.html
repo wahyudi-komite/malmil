@@ -2,7 +2,7 @@
     <div class="flex-auto p-6 sm:p-10">
         <div class="max-w-7xl mx-auto">
             <div class="flex items-center justify-between mb-8">
-                <h1 class="text-3xl font-bold text-gray-900">Banner</h1>
+                <h1 class="text-3xl font-bold text-gray-900 dark:text-white">Banner</h1>
                 <button (click)="openNew()" class="px-4 py-2 rounded-lg bg-gray-900 text-white text-sm font-medium flex items-center gap-2">
                     <mat-icon class="icon-size-4" svgIcon="heroicons_outline:plus"></mat-icon> Tambah Banner
                 </button>
@@ -15,13 +15,13 @@
                 <button mat-stroked-button (click)="search()">Cari</button>
             </div>
 
-            <div class="bg-white rounded-xl border border-gray-100 overflow-hidden">
+            <div class="bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700 overflow-hidden">
                 <table mat-table [dataSource]="data" class="w-full">
                     <ng-container matColumnDef="image">
                         <th mat-header-cell *matHeaderCellDef class="w-20"></th>
                         <td mat-cell *matCellDef="let v">
                             <img *ngIf="v.image_url; else noImg" [src]="v.image_url" class="w-16 h-10 object-cover rounded" />
-                            <ng-template #noImg><div class="w-16 h-10 bg-gray-50 rounded"></div></ng-template>
+                            <ng-template #noImg><div class="w-16 h-10 bg-gray-50 dark:bg-gray-700 rounded"></div></ng-template>
                         </td>
                     </ng-container>
                     <ng-container matColumnDef="title">
@@ -40,17 +40,17 @@
                         <th mat-header-cell *matHeaderCellDef>Aktif</th>
                         <td mat-cell *matCellDef="let v">
                             <span class="px-2 py-0.5 rounded-full text-xs font-medium"
-                                  [class.bg-green-100]="v.is_active"
-                                  [class.text-green-800]="v.is_active"
-                                  [class.bg-red-100]="!v.is_active"
-                                  [class.text-red-800]="!v.is_active">
+                                  [class.bg-green-100 dark:bg-green-900/30]="v.is_active"
+                                  [class.text-green-800 dark:text-green-300]="v.is_active"
+                                  [class.bg-red-100 dark:bg-red-900/30]="!v.is_active"
+                                  [class.text-red-800 dark:text-red-300]="!v.is_active">
                                 {{ v.is_active ? 'Ya' : 'Tidak' }}
                             </span>
                         </td>
                     </ng-container>
                     <ng-container matColumnDef="expires">
                         <th mat-header-cell *matHeaderCellDef>Berakhir</th>
-                        <td mat-cell *matCellDef="let v" class="text-sm text-gray-500">{{ v.expires_at ? (v.expires_at | date:'dd MMM yyyy') : '-' }}</td>
+                        <td mat-cell *matCellDef="let v" class="text-sm text-gray-500 dark:text-gray-400">{{ v.expires_at ? (v.expires_at | date:'dd MMM yyyy') : '-' }}</td>
                     </ng-container>
                     <ng-container matColumnDef="actions">
                         <th mat-header-cell *matHeaderCellDef></th>
@@ -63,10 +63,10 @@
                         </td>
                     </ng-container>
                     <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-                    <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="hover:bg-gray-50"></tr>
+                    <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="hover:bg-gray-50 dark:bg-gray-700 dark:hover:bg-gray-700"></tr>
                 </table>
                 <mat-paginator [length]="total" [pageSize]="pageSize" [pageIndex]="page-1"
-                               [pageSizeOptions]="[10,25,50]" (page)="onPage($event)" class="border-t border-gray-100">
+                               [pageSizeOptions]="[10,25,50]" (page)="onPage($event)" class="border-t border-gray-100 dark:border-gray-700">
                 </mat-paginator>
             </div>
         </div>
@@ -74,7 +74,7 @@
         <!-- Form Modal -->
         <div *ngIf="showForm" class="fixed inset-0 z-50 flex items-center justify-center">
             <div class="absolute inset-0 bg-black/30" (click)="closeForm()"></div>
-            <div class="relative w-full max-w-lg bg-white rounded-xl shadow-xl p-6 mx-4">
+            <div class="relative w-full max-w-lg bg-white dark:bg-gray-800 rounded-xl shadow-xl dark:shadow-black/20 p-6 mx-4">
                 <h2 class="text-xl font-bold mb-6">{{ isEdit ? 'Edit' : 'Tambah' }} Banner</h2>
                 <div class="space-y-4">
                     <mat-form-field class="w-full" subscriptSizing="dynamic">
@@ -88,7 +88,7 @@
 
                     <!-- Image upload -->
                     <div>
-                        <label class="text-sm font-medium text-gray-700">Gambar</label>
+                        <label class="text-sm font-medium text-gray-700 dark:text-gray-300">Gambar</label>
                         <div class="mt-1 flex gap-4 items-center">
                             <img *ngIf="form.image_url" [src]="form.image_url" class="w-20 h-14 object-cover rounded border" />
                             <input type="file" accept="image/*" (change)="uploadImage($event)" class="text-sm" />
@@ -126,7 +126,7 @@
                         <button (click)="save()" [disabled]="saving" class="px-6 py-2 rounded-lg bg-gray-900 text-white text-sm font-medium">
                             {{ saving ? 'Menyimpan...' : 'Simpan' }}
                         </button>
-                        <button (click)="closeForm()" class="px-6 py-2 rounded-lg border border-gray-300 text-sm">Batal</button>
+                        <button (click)="closeForm()" class="px-6 py-2 rounded-lg border border-gray-300 dark:border-gray-600 text-sm">Batal</button>
                     </div>
                 </div>
             </div>

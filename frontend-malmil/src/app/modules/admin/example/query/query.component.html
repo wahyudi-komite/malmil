@@ -5,7 +5,7 @@
             <!-- CONTENT GOES HERE -->
             <div class="flex w-full items-center justify-between">
                 <div class="overflow-x-auto">
-                    <h2 class="text-3xl font-semibold leading-8 tracking-tight">
+                    <h2 class="text-3xl font-semibold leading-8 tracking-tight dark:text-white">
                         List All Data Device
                     </h2>
                     <div class="text-secondary font-medium tracking-tight">
@@ -48,7 +48,7 @@
                         </div>
                         <div class="group relative">
                             <button data-tooltip-target="tooltip-default" (click)="exportToExcel()"
-                                class="hover:indigo-green-700 relative flex items-center gap-2 rounded-md border-[1.5px] border-indigo-600 px-4 py-2 text-sm font-medium text-indigo-800 shadow-md transition-all duration-300 ease-in-out hover:bg-indigo-100 hover:shadow-lg active:scale-95">
+                                class="hover:indigo-green-700 relative flex items-center gap-2 rounded-md border-[1.5px] border-indigo-600 dark:border-indigo-400 px-4 py-2 text-sm font-medium text-indigo-800 dark:text-indigo-300 shadow-md transition-all duration-300 ease-in-out hover:bg-indigo-100 dark:hover:bg-indigo-900/30 hover:shadow-lg active:scale-95">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                                     stroke-width="1.5" stroke="currentColor" class="h-5 w-5 text-indigo-600">
                                     <path stroke-linecap="round" stroke-linejoin="round"
@@ -56,7 +56,7 @@
                                 </svg>
                             </button>
                             <div
-                                class="pointer-events-none absolute bottom-full mb-2 -translate-x-1/2 whitespace-nowrap break-words rounded-md bg-gray-800 px-3 py-1 text-sm font-semibold text-gray-100 opacity-0 shadow-md transition-opacity duration-300 group-hover:opacity-100">
+                                class="pointer-events-none absolute bottom-full mb-2 -translate-x-1/2 whitespace-nowrap break-words rounded-md bg-gray-800 dark:bg-gray-700 px-3 py-1 text-sm font-semibold text-gray-100 dark:text-gray-200 opacity-0 shadow-md transition-opacity duration-300 group-hover:opacity-100">
                                 Export Excel
                             </div>
                         </div>
@@ -64,8 +64,8 @@
                     <div class="relative overflow-x-auto">
                         <table id="excel-table" matSort (matSortChange)="sortData($event)"
                             matSortActive="{{ tblName }}.create" matSortDirection="desc" matSortDisableClear
-                            class="w-full border-collapse overflow-x-scroll border-2 border-blue-50">
-                            <thead class="with-border bg-blue-900 p-8 text-center text-white">
+                            class="w-full border-collapse overflow-x-scroll border-2 border-blue-50 dark:border-blue-900">
+                            <thead class="with-border bg-blue-900 dark:bg-blue-800 p-8 text-center text-white">
                                 <tr>
                                     @for (
                                     columnTitle of columnTitles;
@@ -94,7 +94,7 @@
 
                             <tbody>
                                 @if (this.total == 0) {
-                                <tr style="
+                                 <tr style="
                                             border-bottom: 2px;
                                             text-align: center;
                                             font-weight: 500;
@@ -102,7 +102,7 @@
                                             line-height: 1.25rem;
                                             padding: 1rem 1.5rem;
                                             color: #be123c;
-                                        ">
+                                        " class="dark:text-red-400">
                                     <td colspan="18" class="h-12">
                                         No Data Avalaible
                                     </td>
@@ -110,7 +110,7 @@
                                 }
 
                                 @for (data of datas; track $index) {
-                                <tr class="odd:bg-gray-50 even:bg-blue-100">
+                                <tr class="odd:bg-gray-50 dark:odd:bg-gray-800 even:bg-blue-100 dark:even:bg-gray-700">
                                     <!-- <td class="">
                             <a
                               href="javascript:void(0)"
