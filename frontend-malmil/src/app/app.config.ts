@@ -1,10 +1,11 @@
-import { DatePipe, registerLocaleData } from '@angular/common';
+import { DatePipe, isPlatformBrowser, registerLocaleData } from '@angular/common';
 import { provideHttpClient } from '@angular/common/http';
 import localeId from '@angular/common/locales/id';
 import {
     APP_INITIALIZER,
     ApplicationConfig,
     LOCALE_ID,
+    PLATFORM_ID,
     inject,
 } from '@angular/core';
 import { LuxonDateAdapter } from '@angular/material-luxon-adapter';
@@ -17,6 +18,7 @@ import {
     withInMemoryScrolling,
     withPreloading,
 } from '@angular/router';
+import { provideServiceWorker } from '@angular/service-worker';
 import { provideFuse } from '@fuse';
 import { TranslocoService, provideTransloco } from '@jsverse/transloco';
 import { appRoutes } from 'app/app.routes';
@@ -100,6 +102,12 @@ export const appConfig: ApplicationConfig = {
             },
             multi: true,
         },
+
+        // Service Worker (PWA)
+        provideServiceWorker('ngsw-worker.js', {
+            enabled: true,
+            registrationStrategy: 'registerWhenStable:5000',
+        }),
 
         // Fuse
         provideAuth(),

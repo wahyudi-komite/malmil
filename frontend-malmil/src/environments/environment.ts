@@ -1,8 +1,8 @@
 export const environment = {
     production: true,
-    apiUrl: 'http://localhost:3007/api/v1',
+    apiUrl: 'https://malmil.my.id:3007/api/v1',
     midtransClientKey: 'SB-Mid-client-xxxxx',
     siteName: 'Malmil',
     waNumber: '6281234567890',
-    instagramUrl: 'https://instagram.com/malmil.id',
+    instagramUrl: 'https://www.instagram.com/malmil.cemilseru/',
 };

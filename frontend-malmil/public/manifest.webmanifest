@@ -1,0 +1,30 @@
+{
+  "name": "Malmil — Premium Popcorn",
+  "short_name": "Malmil",
+  "description": "Malmil - Premium popcorn D2C. Nikmati popcorn berkualitas premium dengan berbagai varian rasa.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#C8956C",
+  "scope": "/",
+  "orientation": "portrait-primary",
+  "categories": ["food", "shopping", "lifestyle"],
+  "lang": "id-ID",
+  "icons": [
+    {
+      "src": "icons/icon-192x192.svg",
+      "type": "image/svg+xml",
+      "sizes": "192x192",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icons/icon-512x512.svg",
+      "type": "image/svg+xml",
+      "sizes": "512x512",
+      "purpose": "any maskable"
+    }
+  ],
+  "screenshots": [],
+  "related_applications": [],
+  "prefer_related_applications": false
+}
