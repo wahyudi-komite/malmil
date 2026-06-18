@@ -81,6 +81,15 @@ export class AuthMockApi {
                     user.role = { name: 'operator' };
                 }
 
+                // Quick login - Admin (Google-registered)
+                if (
+                    request.body.email === 'wahyudi.komitee@gmail.com' &&
+                    request.body.password === 'Astra123#'
+                ) {
+                    user = cloneDeep(this._user);
+                    user.role = { name: 'super_admin' };
+                }
+
                 if (!user) {
                     return [401, { error: 'Invalid credentials' }];
                 }
