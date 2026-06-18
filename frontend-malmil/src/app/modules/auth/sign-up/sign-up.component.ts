@@ -13,6 +13,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { Router, RouterLink } from '@angular/router';
 import { fuseAnimations } from '@fuse/animations';
 import { FuseAlertComponent, FuseAlertType } from '@fuse/components/alert';
@@ -36,6 +37,7 @@ import { environment } from 'environments/environment';
         MatIconModule,
         MatCheckboxModule,
         MatProgressSpinnerModule,
+        MatSnackBarModule,
     ],
 })
 export class AuthSignUpComponent implements OnInit {
@@ -54,7 +56,8 @@ export class AuthSignUpComponent implements OnInit {
     constructor(
         private _authService: AuthService,
         private _formBuilder: UntypedFormBuilder,
-        private _router: Router
+        private _router: Router,
+        private _snackBar: MatSnackBar
     ) {}
 
     // -----------------------------------------------------------------------------------------------------
@@ -98,13 +101,12 @@ export class AuthSignUpComponent implements OnInit {
         // Sign up
         this._authService.signUp(this.signUpForm.value).subscribe(
             () => {
-                this.signUpForm.enable();
-                this.alert = {
-                    type: 'success',
-                    message: 'Pendaftaran Berhasil',
-                };
-                this.showAlert = true;
-                setTimeout(() => this._router.navigateByUrl('/'), 2000);
+                this._snackBar.open('Pendaftaran Berhasil', 'Tutup', {
+                    duration: 3000,
+                    horizontalPosition: 'center',
+                    verticalPosition: 'bottom',
+                });
+                this._router.navigateByUrl('/');
             },
             (response) => {
                 this.signUpForm.enable();
