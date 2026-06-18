@@ -13,6 +13,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { fuseAnimations } from '@fuse/animations';
 import { FuseAlertComponent, FuseAlertType } from '@fuse/components/alert';
@@ -37,6 +38,7 @@ import { environment } from 'environments/environment';
         MatIconModule,
         MatCheckboxModule,
         MatProgressSpinnerModule,
+        MatSnackBarModule,
     ],
 })
 export class AuthSignInComponent implements OnInit {
@@ -56,7 +58,8 @@ export class AuthSignInComponent implements OnInit {
         private _activatedRoute: ActivatedRoute,
         private _authService: AuthService,
         private _formBuilder: UntypedFormBuilder,
-        private _router: Router
+        private _router: Router,
+        private _snackBar: MatSnackBar
     ) {}
 
     // -----------------------------------------------------------------------------------------------------
@@ -80,7 +83,21 @@ export class AuthSignInComponent implements OnInit {
     }
 
     signInWithGoogle(): void {
-        window.location.href = `${environment.apiUrl}/auth/google`;
+        this._authService.signInWithGoogle().subscribe({
+            next: () => {
+                this._snackBar.open('Login Berhasil', 'Tutup', {
+                    duration: 3000,
+                    horizontalPosition: 'center',
+                    verticalPosition: 'bottom',
+                });
+                const redirectURL =
+                    this._activatedRoute.snapshot.queryParamMap.get('redirectURL') || '/';
+                this._router.navigateByUrl(redirectURL);
+            },
+            error: () => {
+                window.location.href = `${environment.apiUrl}/auth/google`;
+            },
+        });
     }
 
     // -----------------------------------------------------------------------------------------------------

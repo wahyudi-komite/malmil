@@ -75,6 +75,19 @@ export class AuthService {
             );
     }
 
+    signInWithGoogle(): Observable<any> {
+        return this._httpClient
+            .post(`${environment.apiUrl}/auth/google`, {})
+            .pipe(
+                tap((response: any) => {
+                    this._authenticated = true;
+                    if (response.user) {
+                        this._userService.user = this._mapUser(response.user);
+                    }
+                })
+            );
+    }
+
     signInUsingToken(): Observable<any> {
         return this._httpClient
             .post(`${environment.apiUrl}/auth/sign-in-with-token`, {})

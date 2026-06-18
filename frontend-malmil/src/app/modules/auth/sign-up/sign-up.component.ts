@@ -84,7 +84,20 @@ export class AuthSignUpComponent implements OnInit {
      * Sign up
      */
     signInWithGoogle(): void {
-        window.location.href = `${environment.apiUrl}/auth/google`;
+        this._authService.signInWithGoogle().subscribe({
+            next: () => {
+                this._snackBar.open('Pendaftaran Berhasil', 'Tutup', {
+                    duration: 3000,
+                    horizontalPosition: 'center',
+                    verticalPosition: 'bottom',
+                });
+                this._router.navigateByUrl('/');
+            },
+            error: () => {
+                // fallback: redirect to backend
+                window.location.href = `${environment.apiUrl}/auth/google`;
+            },
+        });
     }
 
     signUp(): void {

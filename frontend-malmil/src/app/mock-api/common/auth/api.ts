@@ -137,6 +137,27 @@ export class AuthMockApi {
             });
 
         // -----------------------------------------------------------------------------------------------------
+        // @ Google OAuth - POST (mock)
+        // -----------------------------------------------------------------------------------------------------
+        this._fuseMockApiService
+            .onPost('api/v1/auth/google')
+            .reply(() => {
+                const user = cloneDeep(this._user);
+                user.role = { name: 'super_admin' };
+                this._authenticated = true;
+                this._currentUser = cloneDeep(user);
+                return [
+                    200,
+                    {
+                        user,
+                        accessToken: this._generateJWTToken(),
+                        tokenType: 'bearer',
+                        isNewUser: true,
+                    },
+                ];
+            });
+
+        // -----------------------------------------------------------------------------------------------------
         // @ Sign up - POST
         // -----------------------------------------------------------------------------------------------------
         this._fuseMockApiService.onPost('api/v1/auth/sign-up', 1500).reply(() =>
