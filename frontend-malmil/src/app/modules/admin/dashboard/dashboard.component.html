@@ -1,8 +1,15 @@
 <div class="flex flex-col flex-auto min-w-0">
     <div class="flex-auto p-6 sm:p-10">
-        <div class="max-w-7xl mx-auto">
+        <div class="max-w-full">
 
-            <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-8">Dashboard</h1>
+            <div class="flex items-center justify-between mb-8">
+                <h1 class="text-3xl font-bold text-gray-900 dark:text-white">Dashboard</h1>
+                <div *ngIf="data?.alerts?.pending_today > 0"
+                     class="flex items-center gap-2 px-4 py-2 rounded-xl bg-amber-50 dark:bg-amber-900/30 border border-amber-200 dark:border-amber-700 text-amber-700 dark:text-amber-300 text-sm font-medium">
+                    <span class="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span>
+                    {{ data.alerts.pending_today }} pesanan baru perlu diproses
+                </div>
+            </div>
 
             <div *ngIf="loading" class="text-center py-20 text-gray-500 dark:text-gray-400 dark:text-gray-500">Memuat...</div>
 
@@ -59,28 +66,142 @@
                     </ng-template>
                 </div>
 
-                <!-- Recent Orders -->
-                <div class="bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700">
-                    <div class="p-4 border-b border-gray-100 dark:border-gray-700 flex items-center justify-between">
-                        <h2 class="text-lg font-semibold">Pesanan Terbaru</h2>
-                        <a routerLink="/orders" class="text-sm text-amber-600 hover:underline">Lihat Semua</a>
-                    </div>
-                    <div class="divide-y divide-gray-100 dark:divide-gray-700">
-                        <div *ngFor="let order of data.recent_orders" class="p-4 flex items-center justify-between hover:bg-gray-50 dark:hover:bg-gray-700">
-                            <div>
-                                <p class="font-medium text-sm">#{{ order.order_number }}</p>
-                                <p class="text-xs text-gray-500 dark:text-gray-400 dark:text-gray-500">{{ order.customer_name }}</p>
-                            </div>
-                            <div class="text-right">
-                                <p class="font-medium text-sm">{{ order.total | number:'':'id' }}</p>
-                                <span class="px-2 py-0.5 rounded-full text-xs font-medium"
-                                      [class]="statusClass[order.status] || 'bg-gray-100'">
-                                    {{ order.status }}
-                                </span>
+                <!-- Grid: Orders by Status + Top Products -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+
+                    <!-- Orders by Status -->
+                    <div class="bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700">
+                        <div class="p-4 border-b border-gray-100 dark:border-gray-700">
+                            <h2 class="text-lg font-semibold">Pesanan per Status</h2>
+                        </div>
+                        <div class="p-4 space-y-3">
+                            <div *ngFor="let s of statusKeys"
+                                 class="flex items-center justify-between py-2 px-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                                <div class="flex items-center gap-3">
+                                    <span class="w-2 h-2 rounded-full" [class]="statusDot[s]"></span>
+                                    <span class="text-sm font-medium">{{ statusLabel[s] }}</span>
+                                </div>
+                                <div class="flex items-center gap-3">
+                                    <span class="text-sm font-bold">{{ data.orders_by_status[s] || 0 }}</span>
+                                    <span class="px-2 py-0.5 rounded-full text-xs font-medium" [class]="statusClass[s]">
+                                        {{ (data.orders_by_status[s] / (data.total_orders || 1)) | percent }}
+                                    </span>
+                                </div>
                             </div>
                         </div>
-                        <div *ngIf="data.recent_orders.length === 0" class="p-6 text-center text-gray-500 dark:text-gray-400 dark:text-gray-500">
-                            Belum ada pesanan
+                    </div>
+
+                    <!-- Top Products -->
+                    <div class="bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700">
+                        <div class="p-4 border-b border-gray-100 dark:border-gray-700">
+                            <h2 class="text-lg font-semibold">Produk Terlaris</h2>
+                        </div>
+                        <div class="divide-y divide-gray-100 dark:divide-gray-700">
+                            <div *ngFor="let p of data.top_products; let i = index" class="p-4 flex items-center justify-between hover:bg-gray-50 dark:hover:bg-gray-700">
+                                <div class="flex items-center gap-3 min-w-0">
+                                    <span class="w-7 h-7 rounded-full bg-amber-100 dark:bg-amber-900/50 flex items-center justify-center text-xs font-bold text-amber-700 dark:text-amber-300 shrink-0">
+                                        {{ i + 1 }}
+                                    </span>
+                                    <p class="text-sm font-medium truncate">{{ p.product_name }}</p>
+                                </div>
+                                <div class="text-right shrink-0 ml-4">
+                                    <p class="text-sm font-bold">{{ p.total_sold }} terjual</p>
+                                    <p class="text-xs text-gray-500 dark:text-gray-400 dark:text-gray-500">{{ p.total_revenue | number:'':'id' }}</p>
+                                </div>
+                            </div>
+                            <div *ngIf="data.top_products.length === 0" class="p-6 text-center text-gray-500 dark:text-gray-400 dark:text-gray-500">
+                                Belum ada data penjualan
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Low Stock Alert -->
+                <div class="bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700 mb-8"
+                     [class.border-red-200 dark:border-red-900]="data.low_stock.length > 0">
+                    <div class="p-4 border-b border-gray-100 dark:border-gray-700 flex items-center justify-between">
+                        <h2 class="text-lg font-semibold flex items-center gap-2">
+                            Stok Menipis
+                            <span *ngIf="data.low_stock.length > 0"
+                                  class="px-2 py-0.5 rounded-full bg-red-100 dark:bg-red-900/50 text-red-700 dark:text-red-300 text-xs font-bold">
+                                {{ data.low_stock.length }}
+                            </span>
+                        </h2>
+                        <a routerLink="/inventory" class="text-sm text-amber-600 hover:underline">Kelola Stok</a>
+                    </div>
+                    <div class="divide-y divide-gray-100 dark:divide-gray-700">
+                        <div *ngFor="let item of data.low_stock" class="p-4 flex items-center justify-between hover:bg-gray-50 dark:hover:bg-gray-700">
+                            <div class="min-w-0">
+                                <p class="text-sm font-medium truncate">{{ item.product_name }} — {{ item.variant_name }}</p>
+                                <p class="text-xs text-gray-500 dark:text-gray-400 dark:text-gray-500">SKU: {{ item.sku }}</p>
+                            </div>
+                            <div class="text-right shrink-0 ml-4">
+                                <p class="text-sm font-bold"
+                                   [class.text-red-600]="item.stock_qty === 0"
+                                   [class.text-amber-600]="item.stock_qty > 0 && item.stock_qty <= item.threshold">
+                                    {{ item.stock_qty }}
+                                </p>
+                                <p class="text-xs text-gray-500 dark:text-gray-400 dark:text-gray-500">threshold: {{ item.threshold }}</p>
+                            </div>
+                        </div>
+                        <div *ngIf="data.low_stock.length === 0" class="p-6 text-center text-gray-500 dark:text-gray-400 dark:text-gray-500">
+                            Semua stok aman
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Orders + Activity Grid -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+
+                    <!-- Recent Orders -->
+                    <div class="bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700">
+                        <div class="p-4 border-b border-gray-100 dark:border-gray-700 flex items-center justify-between">
+                            <h2 class="text-lg font-semibold">Pesanan Terbaru</h2>
+                            <a routerLink="/orders" class="text-sm text-amber-600 hover:underline">Lihat Semua</a>
+                        </div>
+                        <div class="divide-y divide-gray-100 dark:divide-gray-700">
+                            <div *ngFor="let order of data.recent_orders" class="p-4 flex items-center justify-between hover:bg-gray-50 dark:hover:bg-gray-700">
+                                <div>
+                                    <p class="font-medium text-sm">#{{ order.order_number }}</p>
+                                    <p class="text-xs text-gray-500 dark:text-gray-400 dark:text-gray-500">{{ order.customer_name }}</p>
+                                </div>
+                                <div class="text-right">
+                                    <p class="font-medium text-sm">{{ order.total | number:'':'id' }}</p>
+                                    <span class="px-2 py-0.5 rounded-full text-xs font-medium"
+                                          [class]="statusClass[order.status] || 'bg-gray-100'">
+                                        {{ statusLabel[order.status] || order.status }}
+                                    </span>
+                                </div>
+                            </div>
+                            <div *ngIf="data.recent_orders.length === 0" class="p-6 text-center text-gray-500 dark:text-gray-400 dark:text-gray-500">
+                                Belum ada pesanan
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Recent Activity -->
+                    <div class="bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700">
+                        <div class="p-4 border-b border-gray-100 dark:border-gray-700">
+                            <h2 class="text-lg font-semibold">Aktivitas Terbaru</h2>
+                        </div>
+                        <div class="divide-y divide-gray-100 dark:divide-gray-700 max-h-[420px] overflow-y-auto">
+                            <div *ngFor="let act of data.recent_activity" class="p-4 hover:bg-gray-50 dark:hover:bg-gray-700">
+                                <div class="flex items-start gap-3">
+                                    <div class="w-2 h-2 rounded-full mt-2 shrink-0" [class]="activityDot(act.action)"></div>
+                                    <div class="min-w-0">
+                                        <p class="text-sm font-medium truncate">{{ act.detail || act.action }}</p>
+                                        <p class="text-xs text-gray-500 dark:text-gray-400 dark:text-gray-500 mt-0.5">
+                                            {{ act.resource }} · {{ act.user_email }}
+                                        </p>
+                                        <p class="text-[11px] text-gray-400 dark:text-gray-600 mt-0.5">
+                                            {{ act.created_at | date:'dd/MM/yy HH:mm' }}
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div *ngIf="data.recent_activity.length === 0" class="p-6 text-center text-gray-500 dark:text-gray-400 dark:text-gray-500">
+                                Belum ada aktivitas
+                            </div>
                         </div>
                     </div>
                 </div>

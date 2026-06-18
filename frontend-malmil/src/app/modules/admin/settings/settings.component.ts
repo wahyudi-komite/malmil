@@ -23,11 +23,14 @@ export class SettingsComponent implements OnInit {
     constructor(private service: AdminSettingsService) {}
 
     ngOnInit() {
-        this.service.getSettings().subscribe((list) => {
-            for (const s of list) {
-                this.settings[s.key] = s.value;
-            }
-            this.loading = false;
+        this.service.getSettings().subscribe({
+            next: (list) => {
+                for (const s of list) {
+                    this.settings[s.key] = s.value;
+                }
+                this.loading = false;
+            },
+            error: () => (this.loading = false),
         });
     }
 

@@ -18,6 +18,31 @@ export interface DashboardData {
         customer_name: string;
         created_at: string;
     }>;
+    low_stock: Array<{
+        variant_id: string;
+        variant_name: string;
+        sku: string;
+        stock_qty: number;
+        threshold: number;
+        product_name: string;
+    }>;
+    orders_by_status: Record<string, number>;
+    top_products: Array<{
+        product_name: string;
+        total_sold: number;
+        total_revenue: number;
+    }>;
+    recent_activity: Array<{
+        id: string;
+        action: string;
+        resource: string;
+        detail: string;
+        user_email: string;
+        created_at: string;
+    }>;
+    alerts: {
+        pending_today: number;
+    };
 }
 
 export interface RevenuePoint {

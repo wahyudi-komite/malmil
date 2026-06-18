@@ -42,9 +42,15 @@ export class AuditLogsComponent implements OnInit {
         const params: any = { page: this.page, limit: this.pageSize };
         if (this.keyword) params.keyword = this.keyword;
         if (this.actionFilter) params.action = this.actionFilter;
-        this.service.getLogs(params).subscribe((res) => {
-            this.data = res.data || [];
-            this.total = res.meta?.total || 0;
+        this.service.getLogs(params).subscribe({
+            next: (res) => {
+                this.data = res.data || [];
+                this.total = res.meta?.total || 0;
+            },
+            error: () => {
+                this.data = [];
+                this.total = 0;
+            },
         });
     }
 
