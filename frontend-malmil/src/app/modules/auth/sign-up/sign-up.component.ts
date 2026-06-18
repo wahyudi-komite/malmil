@@ -98,7 +98,13 @@ export class AuthSignUpComponent implements OnInit {
         // Sign up
         this._authService.signUp(this.signUpForm.value).subscribe(
             () => {
-                this._router.navigateByUrl('/');
+                this.signUpForm.enable();
+                this.alert = {
+                    type: 'success',
+                    message: 'Pendaftaran Berhasil',
+                };
+                this.showAlert = true;
+                setTimeout(() => this._router.navigateByUrl('/'), 2000);
             },
             (response) => {
                 this.signUpForm.enable();
