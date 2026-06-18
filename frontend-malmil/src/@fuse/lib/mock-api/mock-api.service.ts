@@ -43,6 +43,16 @@ export class FuseMockApiService {
             urlParams: {},
         };
 
+        // Strip origin from full URLs so handlers registered with relative
+        // paths (e.g. 'api/v1/audit-logs') match requests made with absolute
+        // URLs (e.g. 'http://localhost:3007/api/v1/audit-logs').
+        try {
+            const parsed = new URL(url);
+            url = parsed.pathname.replace(/^\//, '');
+        } catch {
+            // already a relative path, keep as-is
+        }
+
         // Split the url
         const urlParts = url.split('/');
 
