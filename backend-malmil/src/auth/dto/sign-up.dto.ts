@@ -1,4 +1,4 @@
-import { IsEmail, IsNotEmpty, IsString, MinLength, Matches } from 'class-validator';
+import { IsBoolean, IsEmail, IsNotEmpty, IsOptional, IsString, MinLength, Matches } from 'class-validator';
 
 export class SignUpDto {
   @IsString()
@@ -15,4 +15,8 @@ export class SignUpDto {
   @Matches(/\d/, { message: 'Password must contain at least one number' })
   @Matches(/[^A-Za-z0-9]/, { message: 'Password must contain at least one special character' })
   password: string;
+
+  @IsOptional()
+  @IsBoolean()
+  agreements?: boolean;
 }
