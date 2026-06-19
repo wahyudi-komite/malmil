@@ -45,47 +45,51 @@ export class AuthController {
   ) {}
 
   private setAccessTokenCookie(response: Response, accessToken: string): void {
+    const secure = process.env.NODE_ENV !== 'development' && process.env.NODE_ENV !== 'test';
     response.cookie('accessToken', accessToken, {
       httpOnly: true,
-      secure: true,
-      sameSite: 'strict',
+      secure: secure,
+      sameSite: secure ? 'strict' : 'lax',
       maxAge: this.accessTokenMaxAge,
     });
   }
 
   private setRefreshTokenCookie(response: Response, refreshToken: string): void {
+    const secure = process.env.NODE_ENV !== 'development' && process.env.NODE_ENV !== 'test';
     response.cookie('refreshToken', refreshToken, {
       httpOnly: true,
-      secure: true,
-      sameSite: 'none',
+      secure: secure,
+      sameSite: secure ? 'none' : 'lax',
       maxAge: this.refreshTokenMaxAge,
     });
   }
 
   private setCsrfCookie(response: Response, csrfToken: string): void {
+    const secure = process.env.NODE_ENV !== 'development' && process.env.NODE_ENV !== 'test';
     response.cookie('XSRF-TOKEN', csrfToken, {
       httpOnly: false,
-      secure: true,
-      sameSite: 'none',
+      secure: secure,
+      sameSite: secure ? 'none' : 'lax',
       maxAge: this.accessTokenMaxAge,
     });
   }
 
   private clearAuthCookies(response: Response): void {
+    const secure = process.env.NODE_ENV !== 'development' && process.env.NODE_ENV !== 'test';
     response.clearCookie('refreshToken', {
       httpOnly: true,
-      secure: true,
-      sameSite: 'none',
+      secure: secure,
+      sameSite: secure ? 'none' : 'lax',
     });
     response.clearCookie('accessToken', {
       httpOnly: true,
-      secure: true,
-      sameSite: 'strict',
+      secure: secure,
+      sameSite: secure ? 'strict' : 'lax',
     });
     response.clearCookie('XSRF-TOKEN', {
       httpOnly: false,
-      secure: true,
-      sameSite: 'none',
+      secure: secure,
+      sameSite: secure ? 'none' : 'lax',
     });
   }
 
