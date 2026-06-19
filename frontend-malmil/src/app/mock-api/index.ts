@@ -31,7 +31,7 @@ export const mockApiServices = [
     AuditLogsMockApi,
     AdminDashboardMockApi,
     AnalyticsMockApi,
-    AuthMockApi,
+    // AuthMockApi removed — auth requests go to real backend for persistent session
     ChatMockApi,
     ContactsMockApi,
     CryptoMockApi,
