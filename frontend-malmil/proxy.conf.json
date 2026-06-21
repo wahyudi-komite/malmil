@@ -3,5 +3,15 @@
         "target": "http://localhost:3007",
         "secure": false,
         "logLevel": "debug"
+    },
+    "/uploads": {
+        "target": "http://localhost:3007",
+        "secure": false,
+        "logLevel": "debug"
+    },
+    "/images": {
+        "target": "http://localhost:3007",
+        "secure": false,
+        "logLevel": "debug"
     }
 }

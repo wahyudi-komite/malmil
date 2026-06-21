@@ -8,6 +8,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { resolveImageUrl } from 'app/core/utils/image-url';
 import { AdminProductsService } from './products.service';
 
 @Component({
@@ -40,6 +41,7 @@ export class ProductFormComponent implements OnInit {
     };
     categories: any[] = [];
     uploadProgress = false;
+    resolveImageUrl = resolveImageUrl;
 
     constructor(
         private service: AdminProductsService,

@@ -11,6 +11,7 @@ import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatSelectModule } from '@angular/material/select';
 import { MatMenuModule } from '@angular/material/menu';
 import { FuseConfirmationService } from '@fuse/services/confirmation';
+import { resolveImageUrl } from 'app/core/utils/image-url';
 import { AdminProductsService } from './products.service';
 
 @Component({
@@ -86,6 +87,9 @@ export class ProductsListComponent implements OnInit {
     }
 
     getPrimaryImage(v: any): string | null {
-        return v.images?.find((i: any) => i.is_primary)?.url || v.images?.[0]?.url || null;
+        const url = v.images?.find((i: any) => i.is_primary)?.url || v.images?.[0]?.url || null;
+        return url ? resolveImageUrl(url) : null;
     }
+
+    resolveImageUrl = resolveImageUrl;
 }
