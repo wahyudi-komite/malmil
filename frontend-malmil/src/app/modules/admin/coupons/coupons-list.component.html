@@ -27,11 +27,11 @@
                     </ng-container>
                     <ng-container matColumnDef="value">
                         <th mat-header-cell *matHeaderCellDef>Nilai</th>
-                        <td mat-cell *matCellDef="let v">{{ v.type === 'percentage' ? v.value + '%' : (v.value | number:'':'id') }}</td>
+                        <td mat-cell *matCellDef="let v">{{ v.type === 'percentage' ? v.value + '%' : (v.value | number) }}</td>
                     </ng-container>
                     <ng-container matColumnDef="min_order">
                         <th mat-header-cell *matHeaderCellDef>Min Pesanan</th>
-                        <td mat-cell *matCellDef="let v">{{ v.min_order ? (v.min_order | number:'':'id') : '-' }}</td>
+                        <td mat-cell *matCellDef="let v">{{ v.min_order ? (v.min_order | number) : '-' }}</td>
                     </ng-container>
                     <ng-container matColumnDef="usage">
                         <th mat-header-cell *matHeaderCellDef>Terpakai</th>

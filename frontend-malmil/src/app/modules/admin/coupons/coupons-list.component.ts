@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { DatePipe, NgForOf, NgIf } from '@angular/common';
+import { DatePipe, DecimalPipe, NgForOf, NgIf } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
@@ -20,7 +20,7 @@ import { AdminCouponsService } from './coupons.service';
     templateUrl: './coupons-list.component.html',
     encapsulation: ViewEncapsulation.None,
     imports: [
-        FormsModule, DatePipe, NgIf,
+        FormsModule, DatePipe, DecimalPipe, NgIf,
         MatButtonModule, MatIconModule, MatInputModule, MatFormFieldModule,
         MatTableModule, MatPaginatorModule, MatSelectModule, MatSlideToggleModule, MatMenuModule,
     ],
