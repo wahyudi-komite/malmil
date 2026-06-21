@@ -144,6 +144,7 @@ fuse-vertical-navigation {
             overflow-x: hidden;
             overflow-y: auto;
             overscroll-behavior: contain;
+            padding-bottom: 40px;
 
             /* Divider */
             > fuse-vertical-navigation-divider-item {
