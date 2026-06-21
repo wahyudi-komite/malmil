@@ -11,7 +11,7 @@ export class RefreshToken {
   id: string;
 
   /** SHA‑256 hash of the raw refresh token */
-  @Index()
+  @Index({ unique: true })
   @Column({ length: 64 })
   tokenHash: string;
 

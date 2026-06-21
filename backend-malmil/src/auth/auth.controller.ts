@@ -216,6 +216,8 @@ export class AuthController {
 
       return { user };
     } catch {
+      // Log token sign-in failure
+      this.auditService.log('SYSTEM', req.ip, 'TOKEN_SIGN_IN_FAIL', 'auth', null, 'Invalid or expired token during sign-in-with-token', req.ip);
       throw new UnauthorizedException('Token tidak valid atau kadaluarsa');
     }
   }
@@ -224,8 +226,7 @@ export class AuthController {
   // Note: CsrfGuard intentionally omitted here because the auth interceptor
   // cannot reliably send a valid XSRF-TOKEN on refresh (the CSRF cookie expires
   // at the same time as the access token). Refresh tokens are httpOnly + rotated.
-  @ApiOperation({ summary: 'Memperbarui token akses' })
-  @ApiResponse({ status: 401, description: 'Refresh token tidak valid atau kadaluarsa' })
+  @UseGuards(CsrfGuard)
   @Throttle({ default: { limit: 20, ttl: 60000 } })
   @Post('refresh')
   async refresh(@Req() req: Request, @Res() res: Response) {
@@ -235,6 +236,8 @@ export class AuthController {
     }
     const result = await this.authService.validateRefreshToken(rawRefresh);
     if (!result) {
+      // Log invalid/expired refresh token
+      this.auditService.log('SYSTEM', req.ip, 'REFRESH_FAIL', 'auth', null, 'Invalid or expired refresh token', req.ip);
       return res.status(401).json({ message: 'Invalid or expired refresh token' });
     }
 
@@ -289,6 +292,8 @@ export class AuthController {
       }
     }
     this.clearAuthCookies(response);
+    // Audit logout event (SYSTEM user as we may not have a user id)
+    this.auditService.log('SYSTEM', 'unknown', 'LOGOUT', 'auth', null, 'User logged out', req.ip);
     return { message: 'Success' };
   }
 
@@ -299,6 +304,7 @@ export class AuthController {
         { expiresIn: '24h' },
       );
       await this.mailService.sendEmailVerification(email, token);
+    this.auditService.log(userId, email, 'VERIFICATION_EMAIL_SENT', 'auth', userId, 'Sent email verification', 'system');
     } catch (e) {
       this.auditService.log(userId, email, 'VERIFICATION_EMAIL_FAILED', 'auth', userId, 'Failed to send verification email', 'system');
     }
@@ -323,6 +329,8 @@ export class AuthController {
   async resetPassword(@Body() dto: ResetPasswordDto, @Req() req: Request) {
     const record = await this.passwordResetService.validateToken(dto.token);
     if (!record) {
+      // Log invalid or expired reset token
+      this.auditService.log('SYSTEM', req.ip, 'RESET_PASSWORD_TOKEN_INVALID', 'auth', null, 'Invalid or expired password reset token', req.ip);
       throw new BadRequestException('Token tidak valid atau sudah kadaluarsa');
     }
     const user = await this.userService.findOne({ email: record.email });

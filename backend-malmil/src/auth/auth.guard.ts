@@ -1,9 +1,11 @@
 import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import { AuditService } from '../audit/audit.service';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
-  constructor(private jwtService: JwtService) {}
+  constructor(private jwtService: JwtService, private readonly auditService: AuditService) {}
+
   async canActivate(context: ExecutionContext) {
     const request = context.switchToHttp().getRequest();
     try {
@@ -13,7 +15,8 @@ export class AuthGuard implements CanActivate {
       }
       request.user = await this.jwtService.verifyAsync(jwt);
       return true;
-    } catch {
+    } catch (error) {
+      this.auditService.log('SYSTEM', request.ip, 'AUTH_GUARD_FAIL', 'auth', null, 'JWT verification failed or missing', request.ip);
       throw new UnauthorizedException('Authentication required');
     }
   }

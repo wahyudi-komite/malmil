@@ -1,0 +1,6 @@
+<div class="categories-container">
+  <h2>Daftar Kategori</h2>
+  <ul>
+    <li *ngFor="let cat of (categories$ | async)">{{ cat.name }}</li>
+  </ul>
+</div>
