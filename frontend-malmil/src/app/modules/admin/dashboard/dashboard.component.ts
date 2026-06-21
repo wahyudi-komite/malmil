@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { NgForOf, NgIf, DecimalPipe, DatePipe, PercentPipe } from '@angular/common';
+import { NgClass, NgForOf, NgIf, DecimalPipe, DatePipe, PercentPipe } from '@angular/common';
 import { AdminDashboardService } from './dashboard.service';
 
 @Component({
@@ -8,7 +8,7 @@ import { AdminDashboardService } from './dashboard.service';
     standalone: true,
     templateUrl: './dashboard.component.html',
     encapsulation: ViewEncapsulation.None,
-    imports: [RouterLink, NgForOf, NgIf, DecimalPipe, DatePipe, PercentPipe],
+    imports: [RouterLink, NgClass, NgForOf, NgIf, DecimalPipe, DatePipe, PercentPipe],
 })
 export class DashboardComponent implements OnInit {
     data: any = null;
