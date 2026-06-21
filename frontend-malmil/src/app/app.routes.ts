@@ -76,7 +76,6 @@ export const appRoutes: Route[] = [
         resolve: { initialData: initialDataResolver },
         children: [
             { path: 'dashboard', loadChildren: () => import('app/modules/admin/dashboard/dashboard.routes') },
-            { path: 'audit-log', loadChildren: () => import('app/modules/admin/audit-log/audit-log.routes') },
             { path: 'products', loadChildren: () => import('app/modules/admin/products/products.routes') },
             { path: 'orders', loadChildren: () => import('app/modules/admin/orders/orders.routes') },
             { path: 'coupons', loadChildren: () => import('app/modules/admin/coupons/coupons.routes') },
