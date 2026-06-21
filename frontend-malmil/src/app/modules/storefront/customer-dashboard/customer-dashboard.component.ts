@@ -7,6 +7,7 @@ import { OrderService } from '../../../services/order.service';
 import { WishlistService } from '../../../services/wishlist.service';
 import { ProductService } from '../../../services/product.service';
 import { CurrencyIdrPipe } from '../../../shared/pipes/currency-idr.pipe';
+import { resolveImageUrl } from 'app/core/utils/image-url';
 
 @Component({
     selector: 'app-customer-dashboard',
@@ -15,6 +16,7 @@ import { CurrencyIdrPipe } from '../../../shared/pipes/currency-idr.pipe';
     imports: [RouterLink, NgForOf, NgIf, FormsModule, CurrencyIdrPipe],
 })
 export class CustomerDashboardComponent implements OnInit {
+    resolveImageUrl = resolveImageUrl;
     activeTab: 'orders' | 'addresses' | 'wishlist' = 'orders';
     orders: any[] = [];
     addresses: any[] = [];

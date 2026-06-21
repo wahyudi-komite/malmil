@@ -38,7 +38,7 @@ export class DatabaseSeeder implements OnApplicationBootstrap {
     private readonly bannerRepository: Repository<Banner>,
     @InjectRepository(Setting)
     private readonly settingRepository: Repository<Setting>,
-  ) {}
+  ) { }
 
   async onApplicationBootstrap(): Promise<void> {
     this.logger.log('Seeding permissions...');
@@ -230,9 +230,7 @@ export class DatabaseSeeder implements OnApplicationBootstrap {
 
   private async seedCategories(): Promise<ProductCategory[]> {
     const categoriesData = [
-      { name: 'Original Popcorn', slug: 'original-popcorn', description: 'Popcorn gurih rasa original klasik' },
-      { name: 'Sweet Popcorn', slug: 'sweet-popcorn', description: 'Popcorn karamel manis dan lezat' },
-      { name: 'Spicy Popcorn', slug: 'spicy-popcorn', description: 'Popcorn pedas menggugah selera' },
+      { name: 'Popcorn', slug: 'popcorn', description: 'Popcorn gurih rasa original klasik' },
     ];
 
     const seededCategories: ProductCategory[] = [];

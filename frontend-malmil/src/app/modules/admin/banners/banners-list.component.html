@@ -20,7 +20,7 @@
                     <ng-container matColumnDef="image">
                         <th mat-header-cell *matHeaderCellDef class="w-20"></th>
                         <td mat-cell *matCellDef="let v">
-                            <img *ngIf="v.image_url; else noImg" [src]="v.image_url" class="w-16 h-10 object-cover rounded" />
+                             <img *ngIf="v.image_url; else noImg" [src]="resolveImageUrl(v.image_url)" class="w-16 h-10 object-cover rounded" />
                             <ng-template #noImg><div class="w-16 h-10 bg-gray-50 dark:bg-gray-700 rounded"></div></ng-template>
                         </td>
                     </ng-container>
@@ -90,7 +90,7 @@
                     <div>
                         <label class="text-sm font-medium text-gray-700 dark:text-gray-300">Gambar</label>
                         <div class="mt-1 flex gap-4 items-center">
-                            <img *ngIf="form.image_url" [src]="form.image_url" class="w-20 h-14 object-cover rounded border" />
+                             <img *ngIf="form.image_url" [src]="resolveImageUrl(form.image_url)" class="w-20 h-14 object-cover rounded border" />
                             <input type="file" accept="image/*" (change)="uploadImage($event)" class="text-sm" />
                         </div>
                     </div>

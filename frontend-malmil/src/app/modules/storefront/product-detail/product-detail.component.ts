@@ -5,6 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { ProductService } from '../../../services/product.service';
 import { CartService } from '../../../services/cart.service';
 import { CurrencyIdrPipe } from '../../../shared/pipes/currency-idr.pipe';
+import { resolveImageUrl } from 'app/core/utils/image-url';
 
 @Component({
     selector: 'app-product-detail',
@@ -19,6 +20,7 @@ export class ProductDetailComponent implements OnInit {
     quantity = 1;
     selectedImage = '';
     added = false;
+    resolveImageUrl = resolveImageUrl;
 
     constructor(
         private route: ActivatedRoute,
@@ -31,7 +33,7 @@ export class ProductDetailComponent implements OnInit {
             this.productService.getBySlug(params['slug']).subscribe((product) => {
                 this.product = product;
                 this.selectedVariant = product.variants?.[0] || null;
-                this.selectedImage = product.images?.find((img: any) => img.is_primary)?.url || product.images?.[0]?.url || '';
+                this.selectedImage = resolveImageUrl(product.images?.find((img: any) => img.is_primary)?.url || product.images?.[0]?.url || '');
             });
         });
     }

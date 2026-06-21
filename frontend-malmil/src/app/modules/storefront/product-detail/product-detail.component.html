@@ -22,8 +22,8 @@
             </div>
             <div class="flex gap-2 overflow-x-auto" *ngIf="product.images?.length > 1">
                 <img *ngFor="let img of product.images"
-                     [src]="img.url"
-                     (click)="selectedImage = img.url"
+                     [src]="resolveImageUrl(img.url)"
+                     (click)="selectedImage = resolveImageUrl(img.url)"
                      class="w-20 h-20 object-cover rounded-lg cursor-pointer border-2 transition-colors dark:border-gray-600"
                      [class.border-amber-500]="selectedImage === img.url"
                      [class.border-transparent]="selectedImage !== img.url" />

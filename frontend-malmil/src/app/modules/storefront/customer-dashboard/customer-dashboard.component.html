@@ -110,7 +110,7 @@
             <div *ngFor="let item of wishlist" class="bg-white dark:bg-gray-800 p-4 rounded-xl border border-gray-100 dark:border-gray-700">
                 <a [routerLink]="['/product', item.product?.slug]" class="block">
                     <img *ngIf="item.product?.images?.[0]?.url; else noImg"
-                         [src]="item.product.images[0].url" class="w-full aspect-square object-cover rounded-lg mb-2" />
+                         [src]="resolveImageUrl(item.product.images[0].url)" class="w-full aspect-square object-cover rounded-lg mb-2" />
                     <ng-template #noImg><div class="w-full aspect-square bg-gray-50 dark:bg-gray-700 rounded-lg mb-2 flex items-center justify-center text-3xl">🍿</div></ng-template>
                     <p class="font-medium text-sm text-gray-900 dark:text-white">{{ item.product?.name }}</p>
                     <p class="text-amber-700 dark:text-amber-400 font-semibold text-sm">{{ item.product?.base_price | currencyIdr }}</p>

@@ -12,6 +12,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatMenuModule } from '@angular/material/menu';
 import { FuseConfirmationService } from '@fuse/services/confirmation';
+import { resolveImageUrl } from 'app/core/utils/image-url';
 import { AdminBannersService } from './banners.service';
 
 @Component({
@@ -41,6 +42,7 @@ export class BannersListComponent implements OnInit {
     saving = false;
 
     positions = ['hero', 'promo_bar', 'sidebar'];
+    resolveImageUrl = resolveImageUrl;
 
     constructor(
         private service: AdminBannersService,
