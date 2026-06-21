@@ -1,3 +1,4 @@
+import { AsyncPipe, NgForOf } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { ProductService } from '../../../services/product.service';
 import { Observable } from 'rxjs';
@@ -9,6 +10,8 @@ interface Category {
 
 @Component({
   selector: 'app-categories-list',
+  standalone: true,
+  imports: [NgForOf, AsyncPipe],
   templateUrl: './categories-list.component.html',
   styleUrls: ['./categories-list.component.scss']
 })
@@ -18,7 +21,6 @@ export class CategoriesListComponent implements OnInit {
   constructor(private productService: ProductService) {}
 
   ngOnInit(): void {
-    // Assuming ProductsService has a method getCategories returning Observable<Category[]>
     this.categories$ = this.productService.getCategories();
   }
 }

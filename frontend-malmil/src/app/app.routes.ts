@@ -86,7 +86,7 @@ export const appRoutes: Route[] = [
             { path: 'banners', loadChildren: () => import('app/modules/admin/banners/banners.routes') },
             { path: 'settings', loadChildren: () => import('app/modules/admin/settings/settings.routes') },
             { path: 'roles', loadChildren: () => import('app/modules/admin/roles/roles.routes') },
-            { path: 'categories', loadChildren: () => import('app/modules/admin/categories/categories.module').then(m => m.CategoriesModule) },
+            { path: 'categories', loadChildren: () => import('app/modules/admin/categories/categories.routes') },
         ],
     },
 ];

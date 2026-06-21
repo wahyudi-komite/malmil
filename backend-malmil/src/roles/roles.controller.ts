@@ -100,7 +100,7 @@ export class RolesController {
   @Get(':id')
   @HasPermission('roles')
   async findOne(@Param('id') id: string) {
-    return this.rolesService.findOne(id, ['permissions']);
+    return this.rolesService.findOne({ id }, ['permissions']);
   }
 
   @ApiOperation({ summary: 'Memperbarui peran' })
