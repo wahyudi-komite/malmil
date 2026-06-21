@@ -154,6 +154,8 @@ export class DatabaseSeeder implements OnApplicationBootstrap {
         name: 'operator',
         permissions: permissions.filter((p) =>
           [
+            'audit_view',
+            'audit_view',
             'dashboard_view',
             'products_view',
             'categories_view',

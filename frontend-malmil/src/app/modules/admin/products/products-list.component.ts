@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { DatePipe, NgForOf, NgIf } from '@angular/common';
+import { DatePipe, DecimalPipe, NgForOf, NgIf } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
@@ -19,7 +19,7 @@ import { AdminProductsService } from './products.service';
     templateUrl: './products-list.component.html',
     encapsulation: ViewEncapsulation.None,
     imports: [
-        RouterLink, FormsModule, NgForOf, NgIf,
+        RouterLink, FormsModule, NgForOf, NgIf, DecimalPipe,
         MatButtonModule, MatIconModule, MatInputModule, MatFormFieldModule,
         MatTableModule, MatPaginatorModule, MatSelectModule, MatMenuModule,
     ],

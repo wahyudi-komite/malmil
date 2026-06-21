@@ -45,7 +45,7 @@ export const defaultNavigation: FuseNavigationItem[] = [
         id: 'banners',
         title: 'Banner',
         type: 'basic',
-        icon: 'heroicons_outline:photograph',
+        icon: 'heroicons_outline:photo',
         link: '/banners',
       },
       {
@@ -59,7 +59,7 @@ export const defaultNavigation: FuseNavigationItem[] = [
         id: 'inventory',
         title: 'Inventory',
         type: 'basic',
-        icon: 'heroicons_outline:archive',
+        icon: 'heroicons_outline:archive-box',
         link: '/inventory',
       },
     ],
