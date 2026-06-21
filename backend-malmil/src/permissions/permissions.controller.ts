@@ -85,7 +85,7 @@ export class PermissionsController {
   @Get(':id')
   @HasPermission('permissions')
   findOne(@Param('id') id: string) {
-    return this.permissionsService.findOne(id);
+    return this.permissionsService.findOne({ id });
   }
 
   @ApiOperation({ summary: 'Memperbarui izin' })
