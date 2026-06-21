@@ -43,8 +43,11 @@ export interface Category {
     id: string;
     name: string;
     slug: string;
-    parent_id?: string;
+    description?: string;
+    image_url?: string;
+    sort_order?: number;
     is_active: boolean;
+    created_at: string;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -79,6 +82,14 @@ export class AdminProductsService {
 
     createCategory(data: any): Observable<Category> {
         return this.http.post<Category>(`${this.api}/admin/categories`, data);
+    }
+
+    updateCategory(id: string, data: any): Observable<Category> {
+        return this.http.put<Category>(`${this.api}/admin/categories/${id}`, data);
+    }
+
+    deleteCategory(id: string): Observable<void> {
+        return this.http.delete<void>(`${this.api}/admin/categories/${id}`);
     }
 
     uploadFile(file: File): Observable<{ url: string; filename: string }> {
