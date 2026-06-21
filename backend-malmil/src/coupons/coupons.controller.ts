@@ -20,7 +20,7 @@ export class CouponsController {
   @ApiResponse({ status: 401, description: 'Tidak terautentikasi' })
   @ApiResponse({ status: 403, description: 'Tidak memiliki izin' })
   @UseGuards(AuthGuard, PermissionsGuard)
-  @HasPermission('coupons_view')
+  @HasPermission('coupons')
   @Get('admin/coupons')
   async findAll(@Query() query: any) {
     return this.couponsService.findAll(query);
@@ -32,7 +32,7 @@ export class CouponsController {
   @ApiResponse({ status: 403, description: 'Tidak memiliki izin' })
   @ApiResponse({ status: 404, description: 'Kupon tidak ditemukan' })
   @UseGuards(AuthGuard, PermissionsGuard)
-  @HasPermission('coupons_view')
+  @HasPermission('coupons')
   @Get('admin/coupons/:id')
   async findById(@Param('id') id: string) {
     return this.couponsService.findById(id);
@@ -42,7 +42,7 @@ export class CouponsController {
   @ApiResponse({ status: 401, description: 'Tidak terautentikasi' })
   @ApiResponse({ status: 403, description: 'Tidak memiliki izin' })
   @UseGuards(AuthGuard, PermissionsGuard)
-  @HasPermission('coupons_create')
+  @HasPermission('coupons')
   @Post('admin/coupons')
   async create(@Body() dto: CreateCouponDto) {
     return this.couponsService.create(dto);
@@ -54,7 +54,7 @@ export class CouponsController {
   @ApiResponse({ status: 403, description: 'Tidak memiliki izin' })
   @ApiResponse({ status: 404, description: 'Kupon tidak ditemukan' })
   @UseGuards(AuthGuard, PermissionsGuard)
-  @HasPermission('coupons_edit')
+  @HasPermission('coupons')
   @Put('admin/coupons/:id')
   async update(@Param('id') id: string, @Body() dto: UpdateCouponDto) {
     return this.couponsService.update(id, dto);
@@ -66,7 +66,7 @@ export class CouponsController {
   @ApiResponse({ status: 403, description: 'Tidak memiliki izin' })
   @ApiResponse({ status: 404, description: 'Kupon tidak ditemukan' })
   @UseGuards(AuthGuard, PermissionsGuard)
-  @HasPermission('coupons_delete')
+  @HasPermission('coupons')
   @Delete('admin/coupons/:id')
   async remove(@Param('id') id: string) {
     return this.couponsService.remove(id);

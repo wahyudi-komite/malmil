@@ -13,7 +13,7 @@ export class UploadController {
   @ApiOperation({ summary: 'Mengunggah file' })
   @ApiResponse({ status: 401, description: 'Tidak terautentikasi' })
   @ApiResponse({ status: 403, description: 'Tidak memiliki izin' })
-  @HasPermission('products_create', 'products_edit')
+  @HasPermission('products')
   @Post()
   @UseInterceptors(FileInterceptor('file'))
   async uploadFile(@UploadedFile() file: Express.Multer.File) {

@@ -71,6 +71,7 @@ export const defaultNavigation: FuseNavigationItem[] = [
     icon: 'heroicons_outline:lock-closed',
     link: '/roles',
   },
+
   {
     id: 'settings',
     title: 'Pengaturan',
@@ -85,6 +86,7 @@ export const defaultNavigation: FuseNavigationItem[] = [
     icon: 'heroicons_outline:document-text',
     link: '/audit-logs',
   },
+
 ];
 
 export const compactNavigation: FuseNavigationItem[] = [];

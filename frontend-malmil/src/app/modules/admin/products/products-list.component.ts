@@ -10,6 +10,7 @@ import { MatTableModule } from '@angular/material/table';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatSelectModule } from '@angular/material/select';
 import { MatMenuModule } from '@angular/material/menu';
+import { FuseConfirmationService } from '@fuse/services/confirmation';
 import { AdminProductsService } from './products.service';
 
 @Component({
@@ -33,7 +34,10 @@ export class ProductsListComponent implements OnInit {
     categoryFilter = '';
     categories: any[] = [];
 
-    constructor(private service: AdminProductsService) {}
+    constructor(
+        private service: AdminProductsService,
+        private _fuseConfirmationService: FuseConfirmationService,
+    ) {}
 
     ngOnInit() {
         this.load();
@@ -59,9 +63,16 @@ export class ProductsListComponent implements OnInit {
     }
 
     delete(id: string) {
-        if (confirm('Hapus produk ini?')) {
-            this.service.deleteProduct(id).subscribe(() => this.load());
-        }
+        const confirmation = this._fuseConfirmationService.open({
+            title: 'Hapus Produk',
+            message: 'Hapus produk ini?',
+            icon: { show: true, name: 'heroicons_outline:exclamation-triangle', color: 'warn' },
+            actions: { confirm: { show: true, label: 'Hapus', color: 'warn' }, cancel: { show: true, label: 'Batal' } },
+        });
+
+        confirmation.afterClosed().subscribe((result) => {
+            if (result === 'confirmed') this.service.deleteProduct(id).subscribe(() => this.load());
+        });
     }
 
     getStockLabel(v: any): string {

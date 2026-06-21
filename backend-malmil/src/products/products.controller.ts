@@ -56,7 +56,7 @@ export class ProductsController {
   @ApiResponse({ status: 401, description: 'Tidak terautentikasi' })
   @ApiResponse({ status: 403, description: 'Tidak memiliki izin' })
   @UseGuards(AuthGuard, PermissionsGuard)
-  @HasPermission('products_view')
+  @HasPermission('products')
   @Get('admin/products')
   async findAllAdmin(@Query() query: any) {
     return this.productsService.findAllAdmin(query);
@@ -68,7 +68,7 @@ export class ProductsController {
   @ApiResponse({ status: 403, description: 'Tidak memiliki izin' })
   @ApiResponse({ status: 404, description: 'Produk tidak ditemukan' })
   @UseGuards(AuthGuard, PermissionsGuard)
-  @HasPermission('products_view')
+  @HasPermission('products')
   @Get('admin/products/:id')
   async findById(@Param('id') id: string) {
     return this.productsService.findById(id);
@@ -78,7 +78,7 @@ export class ProductsController {
   @ApiResponse({ status: 401, description: 'Tidak terautentikasi' })
   @ApiResponse({ status: 403, description: 'Tidak memiliki izin' })
   @UseGuards(AuthGuard, PermissionsGuard)
-  @HasPermission('products_create')
+  @HasPermission('products')
   @Post('admin/products')
   async create(@Body() dto: CreateProductDto) {
     return this.productsService.create(dto);
@@ -90,7 +90,7 @@ export class ProductsController {
   @ApiResponse({ status: 403, description: 'Tidak memiliki izin' })
   @ApiResponse({ status: 404, description: 'Produk tidak ditemukan' })
   @UseGuards(AuthGuard, PermissionsGuard)
-  @HasPermission('products_edit')
+  @HasPermission('products')
   @Put('admin/products/:id')
   async update(@Param('id') id: string, @Body() dto: UpdateProductDto) {
     return this.productsService.update(id, dto);
@@ -102,7 +102,7 @@ export class ProductsController {
   @ApiResponse({ status: 403, description: 'Tidak memiliki izin' })
   @ApiResponse({ status: 404, description: 'Produk tidak ditemukan' })
   @UseGuards(AuthGuard, PermissionsGuard)
-  @HasPermission('products_delete')
+  @HasPermission('products')
   @Delete('admin/products/:id')
   async remove(@Param('id') id: string) {
     return this.productsService.remove(id);

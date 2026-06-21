@@ -15,7 +15,7 @@ export class AnalyticsController {
   @ApiOperation({ summary: 'Mendapatkan data dashboard' })
   @ApiResponse({ status: 401, description: 'Tidak terautentikasi' })
   @ApiResponse({ status: 403, description: 'Tidak memiliki izin' })
-  @HasPermission('dashboard_view')
+  @HasPermission('dashboard')
   @Get('dashboard')
   async getDashboard() {
     return this.analyticsService.getDashboard();
@@ -25,7 +25,7 @@ export class AnalyticsController {
   @ApiQuery({ name: 'days', required: false, description: 'Jumlah hari' })
   @ApiResponse({ status: 401, description: 'Tidak terautentikasi' })
   @ApiResponse({ status: 403, description: 'Tidak memiliki izin' })
-  @HasPermission('dashboard_view')
+  @HasPermission('dashboard')
   @Get('revenue-chart')
   async getRevenueChart(@Query('days') days?: number) {
     return this.analyticsService.getRevenueChart(days || 7);

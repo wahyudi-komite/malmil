@@ -1,4 +1,6 @@
 import { DatePipe, NgIf } from '@angular/common';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { FuseConfirmationService } from '@fuse/services/confirmation';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -16,7 +18,7 @@ import { AdminProductsService, Category } from '../products/products.service';
     imports: [
         NgIf, DatePipe, FormsModule,
         MatTableModule, MatPaginatorModule, MatButtonModule, MatIconModule,
-        MatFormFieldModule, MatInputModule, MatMenuModule,
+        MatFormFieldModule, MatInputModule, MatMenuModule, MatTooltipModule
     ],
     templateUrl: './categories-list.component.html',
     styleUrls: ['./categories-list.component.scss'],
@@ -34,7 +36,10 @@ export class CategoriesListComponent implements OnInit {
     formName = '';
     saving = false;
 
-    constructor(private service: AdminProductsService) {}
+    constructor(
+        private service: AdminProductsService,
+        private _fuseConfirmationService: FuseConfirmationService
+    ) {}
 
     ngOnInit(): void {
         this.load();
@@ -94,9 +99,29 @@ export class CategoriesListComponent implements OnInit {
         });
     }
 
-    delete(cat: Category): void {
-        this.service.deleteCategory(cat.id).subscribe({
-            next: () => this.load(),
+    deleteById(id: string): void {
+        const confirmation = this._fuseConfirmationService.open({
+            title: 'Hapus Kategori',
+            message: 'Apakah Anda yakin ingin menghapus kategori ini? Tindakan ini tidak dapat dibatalkan.',
+            icon: { show: true, name: 'heroicons_outline:exclamation-triangle', color: 'warn' },
+            actions: {
+                confirm: { show: true, label: 'Hapus', color: 'warn' },
+                cancel: { show: true, label: 'Batal' }
+            }
+        });
+
+        confirmation.afterClosed().subscribe((result) => {
+            if (result === 'confirmed') {
+                this.saving = true;
+                this.service.deleteCategory(id).subscribe({
+                    next: () => {
+                        this.saving = false;
+                        this.showForm = false;
+                        this.load();
+                    },
+                    error: () => (this.saving = false),
+                });
+            }
         });
     }
 }

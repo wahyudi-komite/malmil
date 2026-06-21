@@ -55,7 +55,7 @@ export class OrdersController {
   @ApiResponse({ status: 401, description: 'Tidak terautentikasi' })
   @ApiResponse({ status: 403, description: 'Tidak memiliki izin' })
   @UseGuards(AuthGuard, PermissionsGuard)
-  @HasPermission('orders_view')
+  @HasPermission('orders')
   @Get('admin/orders')
   async findAllAdmin(@Query() query: any) {
     return this.ordersService.findAllAdmin(query);
@@ -67,7 +67,7 @@ export class OrdersController {
   @ApiResponse({ status: 403, description: 'Tidak memiliki izin' })
   @ApiResponse({ status: 404, description: 'Pesanan tidak ditemukan' })
   @UseGuards(AuthGuard, PermissionsGuard)
-  @HasPermission('orders_edit')
+  @HasPermission('orders')
   @Put('admin/orders/:id/status')
   async updateStatus(
     @Param('id') id: string,

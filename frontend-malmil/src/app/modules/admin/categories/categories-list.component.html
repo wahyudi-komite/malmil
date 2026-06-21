@@ -44,17 +44,12 @@
                     <ng-container matColumnDef="actions">
                         <th mat-header-cell *matHeaderCellDef></th>
                         <td mat-cell *matCellDef="let v" class="text-right">
-                            <button mat-icon-button [matMenuTriggerFor]="menu">
-                                <mat-icon svgIcon="heroicons_outline:dots-vertical"></mat-icon>
+                            <button mat-icon-button color="primary" (click)="openEdit(v)" matTooltip="Edit">
+                                <mat-icon svgIcon="heroicons_outline:pencil"></mat-icon>
                             </button>
-                            <mat-menu #menu="matMenu">
-                                <button mat-menu-item (click)="openEdit(v)">
-                                    <mat-icon svgIcon="heroicons_outline:pencil"></mat-icon> Edit
-                                </button>
-                                <button mat-menu-item (click)="delete(v)">
-                                    <mat-icon svgIcon="heroicons_outline:trash"></mat-icon> Hapus
-                                </button>
-                            </mat-menu>
+                            <button mat-icon-button color="warn" (click)="deleteById(v.id)" matTooltip="Hapus">
+                                <mat-icon svgIcon="heroicons_outline:trash"></mat-icon>
+                            </button>
                         </td>
                     </ng-container>
                     <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
@@ -74,12 +69,21 @@
             <h2 class="text-xl font-bold mb-6">{{ editId ? 'Edit Kategori' : 'Tambah Kategori' }}</h2>
             <mat-form-field class="w-full" subscriptSizing="dynamic">
                 <mat-label>Nama Kategori</mat-label>
-                <input matInput [(ngModel)]="formName" />
+                <input matInput [(ngModel)]="formName" name="formName" required minlength="3" #nameCtrl="ngModel" />
+                <mat-error *ngIf="nameCtrl.hasError('required')">
+                    Nama kategori wajib diisi
+                </mat-error>
+                <mat-error *ngIf="nameCtrl.hasError('minlength')">
+                    Minimal 3 karakter
+                </mat-error>
             </mat-form-field>
             <div class="flex gap-3 mt-6">
-                <button (click)="save()" [disabled]="saving || !formName.trim()"
-                        class="px-6 py-2 rounded-lg bg-gray-900 text-white text-sm font-medium">
+                <button (click)="save()" [disabled]="saving || nameCtrl.invalid || !formName.trim()"
+                        class="px-6 py-2 rounded-lg bg-gray-900 text-white text-sm font-medium disabled:opacity-50">
                     {{ saving ? 'Menyimpan...' : 'Simpan' }}
+                </button>
+                <button *ngIf="editId" (click)="deleteById(editId)" class="px-6 py-2 rounded-lg bg-red-100 text-red-800 text-sm font-medium">
+                    Hapus
                 </button>
                 <button (click)="showForm = false" class="px-6 py-2 rounded-lg border border-gray-300 dark:border-gray-600 text-sm">Batal</button>
             </div>

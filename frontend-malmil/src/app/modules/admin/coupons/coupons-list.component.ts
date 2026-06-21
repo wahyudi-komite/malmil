@@ -11,6 +11,7 @@ import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatMenuModule } from '@angular/material/menu';
+import { FuseConfirmationService } from '@fuse/services/confirmation';
 import { AdminCouponsService } from './coupons.service';
 
 @Component({
@@ -41,7 +42,10 @@ export class CouponsListComponent implements OnInit {
     };
     saving = false;
 
-    constructor(private service: AdminCouponsService) {}
+    constructor(
+        private service: AdminCouponsService,
+        private _fuseConfirmationService: FuseConfirmationService,
+    ) {}
 
     ngOnInit() { this.load(); }
 
@@ -85,6 +89,15 @@ export class CouponsListComponent implements OnInit {
     }
 
     delete(id: string) {
-        if (confirm('Hapus kupon ini?')) this.service.deleteCoupon(id).subscribe(() => this.load());
+        const confirmation = this._fuseConfirmationService.open({
+            title: 'Hapus Kupon',
+            message: 'Hapus kupon ini?',
+            icon: { show: true, name: 'heroicons_outline:exclamation-triangle', color: 'warn' },
+            actions: { confirm: { show: true, label: 'Hapus', color: 'warn' }, cancel: { show: true, label: 'Batal' } },
+        });
+
+        confirmation.afterClosed().subscribe((result) => {
+            if (result === 'confirmed') this.service.deleteCoupon(id).subscribe(() => this.load());
+        });
     }
 }

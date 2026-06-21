@@ -11,6 +11,7 @@ import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatMenuModule } from '@angular/material/menu';
+import { FuseConfirmationService } from '@fuse/services/confirmation';
 import { AdminBannersService } from './banners.service';
 
 @Component({
@@ -41,7 +42,10 @@ export class BannersListComponent implements OnInit {
 
     positions = ['hero', 'promo_bar', 'sidebar'];
 
-    constructor(private service: AdminBannersService) {}
+    constructor(
+        private service: AdminBannersService,
+        private _fuseConfirmationService: FuseConfirmationService,
+    ) {}
 
     ngOnInit() { this.load(); }
 
@@ -85,7 +89,16 @@ export class BannersListComponent implements OnInit {
     }
 
     delete(id: string) {
-        if (confirm('Hapus banner ini?')) this.service.deleteBanner(id).subscribe(() => this.load());
+        const confirmation = this._fuseConfirmationService.open({
+            title: 'Hapus Banner',
+            message: 'Hapus banner ini?',
+            icon: { show: true, name: 'heroicons_outline:exclamation-triangle', color: 'warn' },
+            actions: { confirm: { show: true, label: 'Hapus', color: 'warn' }, cancel: { show: true, label: 'Batal' } },
+        });
+
+        confirmation.afterClosed().subscribe((result) => {
+            if (result === 'confirmed') this.service.deleteBanner(id).subscribe(() => this.load());
+        });
     }
 
     uploadImage(event: any) {

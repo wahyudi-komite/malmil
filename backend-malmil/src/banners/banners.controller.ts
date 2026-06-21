@@ -26,7 +26,7 @@ export class BannersController {
   @ApiResponse({ status: 401, description: 'Tidak terautentikasi' })
   @ApiResponse({ status: 403, description: 'Tidak memiliki izin' })
   @UseGuards(AuthGuard, PermissionsGuard)
-  @HasPermission('banners_view')
+  @HasPermission('banners')
   @Get('admin/banners')
   async findAllAdmin(@Query() query: any) {
     return this.bannersService.findAllAdmin(query);
@@ -38,7 +38,7 @@ export class BannersController {
   @ApiResponse({ status: 403, description: 'Tidak memiliki izin' })
   @ApiResponse({ status: 404, description: 'Banner tidak ditemukan' })
   @UseGuards(AuthGuard, PermissionsGuard)
-  @HasPermission('banners_view')
+  @HasPermission('banners')
   @Get('admin/banners/:id')
   async findById(@Param('id') id: string) {
     return this.bannersService.findById(id);
@@ -48,7 +48,7 @@ export class BannersController {
   @ApiResponse({ status: 401, description: 'Tidak terautentikasi' })
   @ApiResponse({ status: 403, description: 'Tidak memiliki izin' })
   @UseGuards(AuthGuard, PermissionsGuard)
-  @HasPermission('banners_create')
+  @HasPermission('banners')
   @Post('admin/banners')
   async create(@Body() data: any) {
     return this.bannersService.create(data);
@@ -60,7 +60,7 @@ export class BannersController {
   @ApiResponse({ status: 403, description: 'Tidak memiliki izin' })
   @ApiResponse({ status: 404, description: 'Banner tidak ditemukan' })
   @UseGuards(AuthGuard, PermissionsGuard)
-  @HasPermission('banners_edit')
+  @HasPermission('banners')
   @Put('admin/banners/:id')
   async update(@Param('id') id: string, @Body() data: any) {
     return this.bannersService.update(id, data);
@@ -72,7 +72,7 @@ export class BannersController {
   @ApiResponse({ status: 403, description: 'Tidak memiliki izin' })
   @ApiResponse({ status: 404, description: 'Banner tidak ditemukan' })
   @UseGuards(AuthGuard, PermissionsGuard)
-  @HasPermission('banners_delete')
+  @HasPermission('banners')
   @Delete('admin/banners/:id')
   async remove(@Param('id') id: string) {
     return this.bannersService.remove(id);

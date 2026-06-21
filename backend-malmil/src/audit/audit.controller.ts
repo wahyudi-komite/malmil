@@ -17,7 +17,7 @@ export class AuditController {
   @ApiResponse({ status: 401, description: 'Tidak terautentikasi' })
   @ApiResponse({ status: 403, description: 'Tidak memiliki izin' })
   @Get()
-  @HasPermission('audit_view')
+  @HasPermission('audit')
   async findAll(@Req() req: Request) {
     return this.auditService.paginate(req.query);
   }

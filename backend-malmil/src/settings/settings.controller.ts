@@ -26,7 +26,7 @@ export class SettingsController {
   @ApiResponse({ status: 401, description: 'Tidak terautentikasi' })
   @ApiResponse({ status: 403, description: 'Tidak memiliki izin' })
   @UseGuards(AuthGuard, PermissionsGuard)
-  @HasPermission('settings_view')
+  @HasPermission('settings')
   @Get('admin/settings')
   async findAll(@Query('group') group?: string) {
     return this.settingsService.findAll(group);
@@ -38,7 +38,7 @@ export class SettingsController {
   @ApiResponse({ status: 403, description: 'Tidak memiliki izin' })
   @ApiResponse({ status: 404, description: 'Pengaturan tidak ditemukan' })
   @UseGuards(AuthGuard, PermissionsGuard)
-  @HasPermission('settings_view')
+  @HasPermission('settings')
   @Get('admin/settings/:key')
   async findByKey(@Param('key') key: string) {
     const value = await this.settingsService.findByKey(key);
@@ -49,7 +49,7 @@ export class SettingsController {
   @ApiResponse({ status: 401, description: 'Tidak terautentikasi' })
   @ApiResponse({ status: 403, description: 'Tidak memiliki izin' })
   @UseGuards(AuthGuard, PermissionsGuard)
-  @HasPermission('settings_view')
+  @HasPermission('settings')
   @Put('admin/settings')
   async updateMultiple(@Body() body: Array<{ key: string; value: string; group?: string }>) {
     return this.settingsService.updateMultiple(body);
@@ -61,7 +61,7 @@ export class SettingsController {
   @ApiResponse({ status: 403, description: 'Tidak memiliki izin' })
   @ApiResponse({ status: 404, description: 'Pengaturan tidak ditemukan' })
   @UseGuards(AuthGuard, PermissionsGuard)
-  @HasPermission('settings_view')
+  @HasPermission('settings')
   @Delete('admin/settings/:key')
   async remove(@Param('key') key: string) {
     await this.settingsService.remove(key);

@@ -57,7 +57,7 @@ export class AdminProductsService {
     constructor(private http: HttpClient) {}
 
     getProducts(params: any): Observable<any> {
-        return this.http.get(`${this.api}/admin/products`, { params });
+        return this.http.get(`${this.api}/admin/products`, { params, withCredentials: true });
     }
 
     getProduct(id: string): Observable<Product> {

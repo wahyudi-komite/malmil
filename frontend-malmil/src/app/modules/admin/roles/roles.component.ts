@@ -7,6 +7,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatTableModule } from '@angular/material/table';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
+import { FuseConfirmationService } from '@fuse/services/confirmation';
 import { AdminRolesService, Permission } from './roles.service';
 
 type Tab = 'roles' | 'permissions';
@@ -49,7 +50,10 @@ export class RolesComponent implements OnInit {
     editingPerm: any = null;
     savingPerm = false;
 
-    constructor(private service: AdminRolesService) {}
+    constructor(
+        private service: AdminRolesService,
+        private _fuseConfirmationService: FuseConfirmationService,
+    ) {}
 
     ngOnInit() {
         this.loadRoles();
@@ -114,9 +118,18 @@ export class RolesComponent implements OnInit {
     }
 
     deleteRole(id: string) {
-        if (confirm('Hapus role ini?')) {
-            this.service.deleteRole(id).subscribe(() => this.loadRoles());
-        }
+        const confirmation = this._fuseConfirmationService.open({
+            title: 'Hapus Role',
+            message: 'Hapus role ini?',
+            icon: { show: true, name: 'heroicons_outline:exclamation-triangle', color: 'warn' },
+            actions: { confirm: { show: true, label: 'Hapus', color: 'warn' }, cancel: { show: true, label: 'Batal' } },
+        });
+
+        confirmation.afterClosed().subscribe((result) => {
+            if (result === 'confirmed') {
+                this.service.deleteRole(id).subscribe(() => this.loadRoles());
+            }
+        });
     }
 
     togglePerm(id: string) {
@@ -177,9 +190,18 @@ export class RolesComponent implements OnInit {
     }
 
     deletePerm(id: string) {
-        if (confirm('Hapus permission ini?')) {
-            this.service.deletePermission(id).subscribe(() => { this.loadPermissions(); this.loadAllPerms(); });
-        }
+        const confirmation = this._fuseConfirmationService.open({
+            title: 'Hapus Permission',
+            message: 'Hapus permission ini?',
+            icon: { show: true, name: 'heroicons_outline:exclamation-triangle', color: 'warn' },
+            actions: { confirm: { show: true, label: 'Hapus', color: 'warn' }, cancel: { show: true, label: 'Batal' } },
+        });
+
+        confirmation.afterClosed().subscribe((result) => {
+            if (result === 'confirmed') {
+                this.service.deletePermission(id).subscribe(() => { this.loadPermissions(); this.loadAllPerms(); });
+            }
+        });
     }
 
     private loadAllPerms() {
