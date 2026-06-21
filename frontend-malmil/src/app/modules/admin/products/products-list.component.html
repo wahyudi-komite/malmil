@@ -48,7 +48,7 @@
                     </ng-container>
                     <ng-container matColumnDef="stock">
                         <th mat-header-cell *matHeaderCellDef>Stok</th>
-                        <td mat-cell *matCellDef="let v" [className]="getStockClass(v)" class="text-sm font-medium">{{ getStockLabel(v) }}</td>
+                        <td mat-cell *matCellDef="let v" class="text-sm font-medium" [ngClass]="getStockClass(v)">{{ getStockLabel(v) }}</td>
                     </ng-container>
                     <ng-container matColumnDef="status">
                         <th mat-header-cell *matHeaderCellDef>Status</th>

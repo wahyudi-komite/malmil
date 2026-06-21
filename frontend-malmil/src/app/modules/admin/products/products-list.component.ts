@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { DatePipe, DecimalPipe, NgForOf, NgIf } from '@angular/common';
+import { DatePipe, DecimalPipe, NgClass, NgForOf, NgIf } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
@@ -20,7 +20,7 @@ import { AdminProductsService } from './products.service';
     templateUrl: './products-list.component.html',
     encapsulation: ViewEncapsulation.None,
     imports: [
-        RouterLink, FormsModule, NgForOf, NgIf, DecimalPipe,
+        RouterLink, FormsModule, NgClass, NgForOf, NgIf, DecimalPipe,
         MatButtonModule, MatIconModule, MatInputModule, MatFormFieldModule,
         MatTableModule, MatPaginatorModule, MatSelectModule, MatMenuModule,
     ],
@@ -81,9 +81,13 @@ export class ProductsListComponent implements OnInit {
         return total === 0 ? 'Habis' : total < 10 ? 'Sisa ' + total : String(total);
     }
 
-    getStockClass(v: any): string {
+    getStockClass(v: any): Record<string, boolean> {
         const total = v.variants?.reduce((s: number, v: any) => s + (v.stock_qty || 0), 0) ?? 0;
-        return total === 0 ? 'text-red-600' : total < 10 ? 'text-amber-600' : 'text-green-600';
+        return {
+            'text-red-600': total === 0,
+            'text-amber-600': total > 0 && total < 10,
+            'text-green-600': total >= 10,
+        };
     }
 
     getPrimaryImage(v: any): string | null {
