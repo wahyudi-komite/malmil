@@ -112,7 +112,7 @@ export class ProductsController {
   @ApiResponse({ status: 401, description: 'Tidak terautentikasi' })
   @ApiResponse({ status: 403, description: 'Tidak memiliki izin' })
   @UseGuards(AuthGuard, PermissionsGuard)
-  @HasPermission('categories_create')
+  @HasPermission('categories')
   @Post('admin/categories')
   async createCategory(@Body() data: any) {
     return this.productsService.createCategory(data);
@@ -124,7 +124,7 @@ export class ProductsController {
   @ApiResponse({ status: 403, description: 'Tidak memiliki izin' })
   @ApiResponse({ status: 404, description: 'Kategori tidak ditemukan' })
   @UseGuards(AuthGuard, PermissionsGuard)
-  @HasPermission('categories_edit')
+  @HasPermission('categories')
   @Put('admin/categories/:id')
   async updateCategory(@Param('id') id: string, @Body() data: any) {
     return this.productsService.updateCategory(id, data);
@@ -136,7 +136,7 @@ export class ProductsController {
   @ApiResponse({ status: 403, description: 'Tidak memiliki izin' })
   @ApiResponse({ status: 404, description: 'Kategori tidak ditemukan' })
   @UseGuards(AuthGuard, PermissionsGuard)
-  @HasPermission('categories_delete')
+  @HasPermission('categories')
   @Delete('admin/categories/:id')
   async removeCategory(@Param('id') id: string) {
     return this.productsService.removeCategory(id);
@@ -146,7 +146,7 @@ export class ProductsController {
   @ApiResponse({ status: 401, description: 'Tidak terautentikasi' })
   @ApiResponse({ status: 403, description: 'Tidak memiliki izin' })
   @UseGuards(AuthGuard, PermissionsGuard)
-  @HasPermission('categories_view')
+  @HasPermission('categories')
   @Get('admin/categories')
   async findAllCategoriesAdmin() {
     return this.productsService.findAllCategoriesAdmin();
